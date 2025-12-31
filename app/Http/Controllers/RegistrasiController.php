@@ -24,26 +24,98 @@ class RegistrasiController extends Controller
     }
 
     /**
+     * Validate UAD email for Teknik Kimia students
+     */
+    private function validateUADEmail($email)
+    {
+        // Pattern: YYXXXPPNNN@webmail.uad.ac.id
+        // YY = Angkatan (2 digit)
+        // XXX = Jenis mahasiswa (000 = reguler)
+        // PP = Kode Prodi (18 = Teknik Kimia)
+        // NNN = Nomor mahasiswa (3 digit)
+        
+        $pattern = '/^(\d{2})(\d{3})(18)(\d{3})@webmail\.uad\.ac\.id$/';
+        
+        if (!preg_match($pattern, $email, $matches)) {
+            return [
+                'valid' => false,
+                'message' => 'Email harus menggunakan format email UAD Teknik Kimia'
+            ];
+        }
+        
+        $angkatan = $matches[1];
+        $jenisMahasiswa = $matches[2];
+        $kodeProdi = $matches[3];
+        $nomorMahasiswa = $matches[4];
+        
+        // Validasi kode prodi harus 18 (Teknik Kimia)
+        if ($kodeProdi !== '18') {
+            return [
+                'valid' => false,
+                'message' => 'Email bukan untuk Prodi Teknik Kimia. Kode prodi harus 18.'
+            ];
+        }
+        
+        // Validasi angkatan (harus >= 20 dan <= tahun sekarang)
+        $currentYear = (int)date('y');
+        $angkatanInt = (int)$angkatan;
+        
+        if ($angkatanInt < 20 || $angkatanInt > $currentYear) {
+            return [
+                'valid' => false,
+                'message' => 'Angkatan tidak valid. Email harus untuk mahasiswa angkatan 2020 atau lebih baru.'
+            ];
+        }
+        
+        return [
+            'valid' => true,
+            'angkatan' => '20' . $angkatan,
+            'jenis_mahasiswa' => $jenisMahasiswa,
+            'kode_prodi' => $kodeProdi,
+            'nomor_mahasiswa' => $nomorMahasiswa
+        ];
+    }
+
+    /**
      * Store pending registration and send verification email
      */
     public function store(Request $request)
     {
-        // Validasi input
+        // Validasi input dasar
         $request->validate([
             'nama' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'email' => [
                 'required',
                 'email',
-                'unique:daftar_users,Email',
-                'unique:pending_registrations,email'
             ],
             'password' => 'required|string|min:8|confirmed',
         ], [
-            'email.unique' => 'Email sudah terdaftar atau sedang menunggu verifikasi',
             'password.confirmed' => 'Konfirmasi password tidak cocok',
             'password.min' => 'Password minimal 8 karakter'
         ]);
+
+        // Validasi email UAD Teknik Kimia
+        $emailValidation = $this->validateUADEmail($request->email);
+        
+        if (!$emailValidation['valid']) {
+            return back()
+                ->withInput()
+                ->withErrors(['email' => $emailValidation['message']]);
+        }
+
+        // Cek apakah email sudah terdaftar
+        if (DaftarUser::where('Email', $request->email)->exists()) {
+            return back()
+                ->withInput()
+                ->withErrors(['email' => 'Email sudah terdaftar. Silakan login atau gunakan email lain.']);
+        }
+
+        if (PendingRegistration::where('email', $request->email)->where('is_verified', false)->exists()) {
+            return back()
+                ->withInput()
+                ->withErrors(['email' => 'Email sedang menunggu verifikasi. Silakan cek inbox Anda atau kirim ulang email verifikasi.']);
+        }
 
         // Generate verification token
         $verificationToken = Str::random(64);
@@ -115,8 +187,16 @@ class RegistrasiController extends Controller
                 ->with('error', 'Token verifikasi sudah kadaluarsa. Silakan daftar ulang.');
         }
 
-        // Generate UserID untuk Mahasiswa
-        $userID = $this->generateMahasiswaUserID();
+        // Validasi ulang email (double check)
+        $emailValidation = $this->validateUADEmail($pending->email);
+        if (!$emailValidation['valid']) {
+            $pending->delete();
+            return redirect()->route('registrasi')
+                ->with('error', 'Email tidak valid untuk registrasi.');
+        }
+
+        // Generate UserID untuk Mahasiswa dengan format berdasarkan email
+        $userID = $this->generateMahasiswaUserID($pending->email, $emailValidation);
 
         // Create user di database utama
         try {
@@ -137,7 +217,7 @@ class RegistrasiController extends Controller
             ActivityLog::create([
                 'user_name' => 'System',
                 'action' => 'Registrasi Mahasiswa',
-                'description' => "Mahasiswa baru: {$pending->nama} - UserID: {$userID}",
+                'description' => "Mahasiswa baru: {$pending->nama} - UserID: {$userID} - Angkatan: {$emailValidation['angkatan']}",
                 'ip_address' => request()->ip()
             ]);
 
@@ -145,6 +225,7 @@ class RegistrasiController extends Controller
             return redirect()->route('registrasi.success')
                 ->with('userID', $userID)
                 ->with('nama', $pending->nama)
+                ->with('angkatan', $emailValidation['angkatan'])
                 ->with('success', 'Email berhasil diverifikasi! Akun Anda telah dibuat.');
 
         } catch (\Exception $e) {
@@ -171,8 +252,15 @@ class RegistrasiController extends Controller
     public function resendVerification(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:pending_registrations,email'
+            'email' => 'required|email'
         ]);
+
+        // Validasi email UAD Teknik Kimia
+        $emailValidation = $this->validateUADEmail($request->email);
+        
+        if (!$emailValidation['valid']) {
+            return back()->withErrors(['email' => $emailValidation['message']]);
+        }
 
         $pending = PendingRegistration::where('email', $request->email)
             ->where('is_verified', false)
@@ -203,14 +291,24 @@ class RegistrasiController extends Controller
     }
 
     /**
-     * Generate unique UserID for Mahasiswa
+     * Generate unique UserID for Mahasiswa based on email
      */
-    private function generateMahasiswaUserID()
+    private function generateMahasiswaUserID($email, $emailData)
     {
-        do {
-            // Format: MHS-YYMMDDXXXX
-            $userID = 'MHS-' . date('ymd') . rand(1000, 9999);
-        } while (DaftarUser::where('UserID', $userID)->exists());
+        // Format: TEKIM-ANGKATAN-NOMORURUT
+        // Contoh: TEKIM-23-199
+        $angkatan = $emailData['angkatan'];
+        $nomorMahasiswa = $emailData['nomor_mahasiswa'];
+        
+        $userID = "TEKIM-{$angkatan}-{$nomorMahasiswa}";
+        
+        // Jika sudah ada, tambahkan suffix
+        $suffix = 1;
+        $originalUserID = $userID;
+        while (DaftarUser::where('UserID', $userID)->exists()) {
+            $userID = $originalUserID . '-' . $suffix;
+            $suffix++;
+        }
 
         return $userID;
     }

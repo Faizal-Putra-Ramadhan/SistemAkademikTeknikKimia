@@ -158,6 +158,17 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="Password">Password <span class="required">*</span></label>
+                        <input type="text" 
+                               name="Password" 
+                               id="Password" 
+                               value="{{ old('Password', $laboran->Password) }}">
+                        @error('Password')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
                         <label for="Role_User">Role User <span class="required">*</span></label>
                         <select name="Role_User" id="Role_User">
                             <option value="">-- Pilih Role --</option>

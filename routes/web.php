@@ -7,6 +7,8 @@ use App\Http\Controllers\SafetyOfficer\SafetyOfficerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 
+use App\Http\Controllers\Admin\KelolaUserController;
+
 use App\Http\Controllers\RegistrasiController;
 
 // ============================================
@@ -47,6 +49,18 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::get('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showForgotPasswordForm'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showResetPasswordForm'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetPassword'])
+    ->name('password.update');
+
 // ============================================
 // ROUTE PUBLIK (TANPA AUTH)
 // ============================================
@@ -85,6 +99,22 @@ Route::post('/registrasi', [App\Http\Controllers\RegistrasiController::class, 's
 // ROUTE ADMIN (PERLU AUTH + ROLE:Admin)
 // ============================================
 
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Kelola User Routes
+    Route::get('/kelola-user', [KelolaUserController::class, 'index'])->name('kelola-user.index');
+    Route::get('/kelola-user/{id}/edit', [KelolaUserController::class, 'edit'])->name('kelola-user.edit');
+    Route::put('/kelola-user/{id}', [KelolaUserController::class, 'update'])->name('kelola-user.update');
+    Route::delete('/kelola-user/{id}', [KelolaUserController::class, 'destroy'])->name('kelola-user.destroy');
+    
+    // Reset Password Routes
+    Route::get('/kelola-user/{id}/reset-password', [KelolaUserController::class, 'showResetPassword'])->name('kelola-user.reset-password');
+    Route::put('/kelola-user/{id}/reset-password', [KelolaUserController::class, 'resetPassword'])->name('kelola-user.reset-password.update');
+    
+    // Toggle Status (Optional - jika ingin fitur aktif/nonaktif user)
+    Route::post('/kelola-user/{id}/toggle-status', [KelolaUserController::class, 'toggleStatus'])->name('kelola-user.toggle-status');
+});
+
 Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
     
     // Dashboard Admin (Welcome Page)
@@ -103,6 +133,18 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     // Route::get('/{id}/edit', [App\Http\Controllers\Admin\TambahUserController::class, 'edit'])->name('edit');
     // Route::put('/{id}', [App\Http\Controllers\Admin\TambahUserController::class, 'update'])->name('update');
     // Route::delete('/{id}', [App\Http\Controllers\Admin\TambahUserController::class, 'destroy'])->name('destroy');
+
+    Route::get('/kelola-user', [KelolaUserController::class, 'index'])->name('kelola-user.index');
+    Route::get('/kelola-user/{id}/edit', [KelolaUserController::class, 'edit'])->name('kelola-user.edit');
+    Route::put('/kelola-user/{id}', [KelolaUserController::class, 'update'])->name('kelola-user.update');
+    Route::delete('/kelola-user/{id}', [KelolaUserController::class, 'destroy'])->name('kelola-user.destroy');
+    
+    // Reset Password Routes
+    Route::get('/kelola-user/{id}/reset-password', [KelolaUserController::class, 'showResetPassword'])->name('kelola-user.reset-password');
+    Route::put('/kelola-user/{id}/reset-password', [KelolaUserController::class, 'resetPassword'])->name('kelola-user.reset-password.update');
+    
+    // Toggle Status (Optional - jika ingin fitur aktif/nonaktif user)
+    Route::post('/kelola-user/{id}/toggle-status', [KelolaUserController::class, 'toggleStatus'])->name('kelola-user.toggle-status');
 });
     
     // Alat Lab
@@ -123,6 +165,9 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
 // ============================================
 
 Route::middleware(['auth', 'role:Mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+
+    Route::get('/profil', [App\Http\Controllers\Mahasiswa\MahasiswaController::class, 'profil'])->name('profil');
+    Route::post('/profil', [App\Http\Controllers\Mahasiswa\MahasiswaController::class, 'updateProfil'])->name('profil.update');
     
     // Dashboard - Pilih Lab
     Route::get('/', [App\Http\Controllers\Mahasiswa\MahasiswaController::class, 'dashboard', 'pengumuman'])->name('dashboard');
@@ -337,13 +382,12 @@ Route::middleware(['auth', 'role:Safety Officer'])
     Route::get('/dashboard', [SafetyOfficerController::class, 'dashboard'])
         ->name('dashboard');
 
-    Route::get('/pengumuman', [App\Http\Controllers\SafetyOfficer\SafetyOfficerController::class, 'pengumuman'])->name('pengumuman.index');
-    Route::get('/pengumuman/create', [App\Http\Controllers\SafetyOfficer\SafetyOfficerController::class, 'createPengumuman'])->name('pengumuman.create');
-    Route::post('/pengumuman', [App\Http\Controllers\SafetyOfficer\SafetyOfficerController::class, 'storePengumuman'])->name('pengumuman.store');
-    Route::get('/pengumuman/{id}/edit', [App\Http\Controllers\SafetyOfficer\SafetyOfficerController::class, 'editPengumuman'])->name('pengumuman.edit');
-    Route::put('/pengumuman/{id}', [App\Http\Controllers\SafetyOfficer\SafetyOfficerController::class, 'updatePengumuman'])->name('pengumuman.update');
-    Route::delete('/pengumuman/{id}', [App\Http\Controllers\SafetyOfficer\SafetyOfficerController::class, 'destroyPengumuman'])->name('pengumuman.destroy');
-
+    Route::get('/pengumuman', [SafetyOfficerController::class, 'pengumuman'])->name('pengumuman.index');
+    Route::get('/pengumuman/create', [SafetyOfficerController::class, 'createPengumuman'])->name('pengumuman.create');
+    Route::post('/pengumuman', [SafetyOfficerController::class, 'storePengumuman'])->name('pengumuman.store');
+    Route::get('/pengumuman/{id}/edit', [SafetyOfficerController::class, 'editPengumuman'])->name('pengumuman.edit');
+    Route::put('/pengumuman/{id}', [SafetyOfficerController::class, 'updatePengumuman'])->name('pengumuman.update');
+    Route::delete('/pengumuman/{id}', [SafetyOfficerController::class, 'destroyPengumuman'])->name('pengumuman.destroy');
 
     Route::prefix('risk-assessment')->name('risk-assessment.')->group(function () {
 
@@ -351,25 +395,25 @@ Route::middleware(['auth', 'role:Safety Officer'])
         Route::get('/', [SafetyOfficerController::class, 'index'])
             ->name('index');
 
+        // ✅ Jadwal wawancara list (put specific routes before {id})
+        Route::get('/schedules/list', [SafetyOfficerController::class, 'schedules'])
+            ->name('schedules');
+
         // ✅ DETAIL RA (PAKAI ID)
         Route::get('/{id}', [SafetyOfficerController::class, 'show'])
             ->name('show');
 
-        // Jadwalkan wawancara
-        Route::post('/schedule-interview', [SafetyOfficerController::class, 'scheduleInterview'])
+        // ✅ Jadwalkan wawancara (with ID parameter)
+        Route::post('/{id}/schedule-interview', [SafetyOfficerController::class, 'scheduleInterview'])
             ->name('schedule-interview');
 
-        // Approve / Reject
-        Route::post('/approve', [SafetyOfficerController::class, 'approve'])
+        // ✅ Approve / Reject (with ID parameter)
+        Route::post('/{id}/approve', [SafetyOfficerController::class, 'approve'])
             ->name('approve');
 
-        // Minta revisi
-        Route::post('/request-revision', [SafetyOfficerController::class, 'requestRevision'])
+        // ✅ Minta revisi (with ID parameter)
+        Route::post('/{id}/request-revision', [SafetyOfficerController::class, 'requestRevision'])
             ->name('request-revision');
-
-        // Jadwal wawancara
-        Route::get('/schedules/list', [SafetyOfficerController::class, 'schedules'])
-            ->name('schedules');
     });
 });
 

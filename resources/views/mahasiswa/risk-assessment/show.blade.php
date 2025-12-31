@@ -455,6 +455,12 @@
                                     {{ $riskAssessment->safety_officer_nama }}
                                 </p>
                             @endif
+
+                            @if($riskAssessment->safetyOfficer?->Phone)
+                                <p style="color: #6b7280; font-size: 0.9rem;">
+                                    No Telp: {{ $riskAssessment->safetyOfficer->Phone }}
+                                </p>
+                            @endif
                             
                             @if($riskAssessment->jadwal_wawancara)
                                 <div style="margin-top: 0.75rem; padding: 0.75rem; background: #dbeafe; border-left: 3px solid #3b82f6; border-radius: 4px;">

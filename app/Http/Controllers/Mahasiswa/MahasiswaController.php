@@ -452,4 +452,53 @@ class MahasiswaController extends Controller
 
         return view('mahasiswa.pengumuman', compact('pengumuman', 'user'));
     }
+
+    public function profil()
+    {
+        $user = Auth::user();
+        $labs = DaftarLab::all();
+        return view('mahasiswa.profil', compact('user', 'labs'));
+    }
+
+    public function updateProfil(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'Nama' => 'required|string|max:255',
+            'Phone' => 'required|string|max:20',
+            'Email' => 'required|email|unique:daftar_users,Email,' . $user->id,
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $data = [
+                'Nama' => $request->Nama,
+                'Phone' => $request->Phone,
+                'Email' => $request->Email,
+            ];
+
+            // Upload foto jika ada
+            if ($request->hasFile('foto')) {
+                $file = $request->file('foto');
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/profile'), $filename);
+                $data['foto'] = $filename;
+
+                // Hapus foto lama jika ada
+                if ($user->foto && file_exists(public_path('uploads/profile/' . $user->foto))) {
+                    unlink(public_path('uploads/profile/' . $user->foto));
+                }
+            }
+
+            $user->update($data);
+
+            DB::commit();
+            return back()->with('success', 'Profil berhasil diupdate!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal mengupdate profil: ' . $e->getMessage());
+        }
+    }
 }

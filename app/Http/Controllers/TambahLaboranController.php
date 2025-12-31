@@ -151,6 +151,7 @@ class TambahLaboranController extends Controller
                     'Email'     => $request->Email,
                     'UserID'    => $userId,
                     'Role_User' => $request->Role_User,
+                    'Password' => $request->Password,
                 ];
 
                 // Update password hanya jika diisi
