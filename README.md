@@ -1,4 +1,4 @@
-# REGLAB SYSTEM — PANDUAN INSTALASI (UBUNTU SERVER)
+# REGLAB SYSTEM — PANDUAN INSTALASI
 
 **Aplikasi:** Sistem Informasi Regulasi Laboratorium Teknik Kimia UAD
 **Stack:** Laravel 12 · PHP 8.2+ · MySQL / MariaDB · Nginx · Vite + Tailwind CSS 4
@@ -14,6 +14,7 @@
 5. [Hak Akses Direktori](#5-hak-akses-direktori)
 6. [Migrasi Database](#6-migrasi-database)
 7. [Build Frontend](#7-build-frontend)
+8. [Optimasi Production](#11-optimasi-production)
 
 ---
 
@@ -78,9 +79,6 @@ cd /var/www/vhosts/
 cd Project_Tekkim
 ```
 
-> **PENTING:** Jangan upload folder `vendor/`, `node_modules/`, dan `public/build/` — folder ini akan di-generate ulang di server.
-
----
 
 ## 3. Dependensi & Environment
 
@@ -113,8 +111,6 @@ php artisan key:generate
 ```bash
 php artisan storage:link
 ```
-
-> Ini menghubungkan `storage/app/public` ke `public/storage` agar file upload dan dokumen yang di-generate bisa diakses via browser.
 
 ### Buat direktori upload yang diperlukan
 
@@ -150,13 +146,26 @@ chmod -R 775 public/storage
 php artisan migrate --force
 ```
 
-Jika ada data awal (seeder):
+### Data Awal (Seeder)
+
+Setelah migrasi, jalankan seeder untuk mengisi data awal sistem:
 
 ```bash
 php artisan db:seed --force
 ```
 
----
+Atau jalankan seeder secara individual:
+
+```bash
+php artisan db:seed --class=RoleSeeder --force
+php artisan db:seed --class=AdminSeeder --force
+php artisan db:seed --class=DosenLaboranLabSeeder --force
+```
+
+#### Penjelasan Seeder
+
+**PENTING:** RoleSeeder **harus** dijalankan lebih dulu sebelum seeder lainnya, karena tabel `roles` menjadi acuan untuk relasi role pada setiap user.
+
 
 ## 7. Build Frontend
 
@@ -165,8 +174,16 @@ npm install
 npm run build
 ```
 
-> Ini akan meng-compile Tailwind CSS dan JavaScript ke `public/build/`. Tanpa langkah ini, **tampilan aplikasi akan rusak** (tanpa CSS/JS).
 
+## 11. Optimasi Production
+
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+---
 
 ## Ringkasan Perintah Berurutan
 
@@ -175,7 +192,7 @@ npm run build
 sudo apt update
 sudo apt install -y php8.2-cli php8.2-fpm php8.2-mbstring php8.2-xml \
   php8.2-bcmath php8.2-curl php8.2-mysql php8.2-zip php8.2-gd php8.2-intl \
-  php8.2-readline php8.2-tokenizer mysql-server nodejs supervisor
+  php8.2-readline php8.2-tokenizer mysql-server nodejs
 
 # 2. Masuk ke direktori proyek
 cd /var/www/vhosts/Project_Tekkim
@@ -198,8 +215,9 @@ mkdir -p public/uploads/profile public/storage/alat-lab public/temp-msds
 sudo chown -R www-data:www-data /var/www/vhosts/Project_Tekkim
 chmod -R 775 storage bootstrap/cache public/uploads public/storage
 
-# 8. Migrasi database
+# 8. Migrasi database & seeder
 php artisan migrate --force
+php artisan db:seed --force
 
 # 9. Build frontend
 npm install
@@ -209,5 +227,4 @@ npm run build
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
 ```

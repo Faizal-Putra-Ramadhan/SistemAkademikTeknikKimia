@@ -16,10 +16,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RoleSeeder::class ,
+            RoleSeeder::class,
+            AdminSeeder::class,
             DosenLaboranLabSeeder::class,
             // Jika Anda punya Lab/Laboran testing data yang ingin diload juga, bisa di-uncomment:
-            // LaboranSeeder::class, 
+            // LaboranSeeder::class,
         ]);
     }
 }
