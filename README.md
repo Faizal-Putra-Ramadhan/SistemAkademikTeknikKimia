@@ -49,14 +49,7 @@ sudo apt install -y mysql-server
 sudo mysql_secure_installation
 ```
 
-Buat database dan user untuk aplikasi:
-
-```sql
-CREATE DATABASE reglab_tekkim CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'reglab_user'@'127.0.0.1' IDENTIFIED BY 'password_aman';
-GRANT ALL PRIVILEGES ON reglab_tekkim.* TO 'reglab_user'@'127.0.0.1';
-FLUSH PRIVILEGES;
-```
+Buat database
 
 ---
 
