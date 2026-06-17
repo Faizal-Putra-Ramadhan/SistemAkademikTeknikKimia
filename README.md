@@ -29,8 +29,6 @@ sudo apt install -y php8.2-cli php8.2-fpm php8.2-mbstring php8.2-xml \
   php8.2-readline php8.2-tokenizer
 ```
 
-> **Versi PHP minimal: 8.2** sesuai spesifikasi Laravel 12.
-
 ### Composer
 
 ```bash
@@ -43,8 +41,6 @@ curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/loca
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt install -y nodejs
 ```
-
-> **Node.js 18+** diperlukan untuk menjalankan Vite.
 
 ### MySQL / MariaDB
 
