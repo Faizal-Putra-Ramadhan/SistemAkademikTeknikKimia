@@ -1,76 +1,76 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Laboratorium - Teknik UAD</title>
-    @vite('resources/css/style.css')
-    @vite('resources/js/index.js')
-    <style>
-        .form-container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 15px; }
-        .form-group input:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 3px rgba(0,123,255,.1); }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .grid-full { grid-column: span 2; }
-        .error-message { color: #dc3545; font-size: 13px; margin-top: 5px; }
-        .success-message { background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #c3e6cb; }
-        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
-        .btn-submit, .btn-cancel { flex: 1; padding: 14px; border-radius: 4px; text-decoration: none; text-align: center; font-size: 16px; }
-        .btn-submit { background: #007bff; color: white; border: none; cursor: pointer; }
-        .btn-cancel { background: #6c757d; color: white; }
-        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
-    </style>
-</head>
-<body>
-    <x-header></x-header>
-    <div class="container">
-        <x-sidebar></x-sidebar>
-        <div class="main-content" id="mainContent">
-            <div class="form-container">
-                <h2>Tambah Laboratorium Baru</h2>
+@extends('layouts.app')
 
-                @if(session('success'))
-                    <div class="success-message">{{ session('success') }}</div>
-                @endif
+@section('title', 'Tambah Laboratorium')
+@section('page-title', 'Tambah Laboratorium')
 
-                <form action="{{ route('daftar-lab.store') }}" method="POST">
-                    @csrf
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Nama Laboratorium <span style="color:red">*</span></label>
-                            <input type="text" name="Nama_Laboratorium" value="{{ old('Nama_Laboratorium') }}" required placeholder="Lab Teknik Informatika">
-                            @error('Nama_Laboratorium') <div class="error-message">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="form-group">
-                            <label>Kepala Laboratorium <span style="color:red">*</span></label>
-                            <input type="text" name="Kepala_Labolatorium" value="{{ old('Kepala_Labolatorium') }}" required>
-                            @error('Kepala_Labolatorium') <div class="error-message">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="form-group">
-                            <label>Admin Laboratorium <span style="color:red">*</span></label>
-                            <input type="text" name="Admin_Laboratorium" value="{{ old('Admin_Laboratorium') }}" required>
-                            @error('Admin_Laboratorium') <div class="error-message">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="form-group">
-                            <label>Safety Officer <span style="color:red">*</span></label>
-                            <input type="text" name="Safety_Officer" value="{{ old('Safety_Officer') }}" required>
-                            @error('Safety_Officer') <div class="error-message">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="form-group grid-full">
-                            <label>Email Laboratorium <span style="color:red">*</span></label>
-                            <input type="email" name="email_lab" value="{{ old('email_lab') }}" required placeholder="lab@informatika.uad.ac.id">
-                            @error('email_lab') <div class="error-message">{{ $message }}</div> @enderror
-                        </div>
+@push('styles')
+<style>
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .form-group .required { color: #dc2626; }
+    .form-group .error-msg { color: #dc2626; font-size: 12px; margin-top: 4px; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+</style>
+@endpush
+
+@section('content')
+    <div class="card">
+        <div class="card-header">
+            <h3>Tambah Laboratorium Baru</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.daftar-lab.store') }}" method="POST">
+                @csrf
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="Nama_Laboratorium" class="form-label">Nama Laboratorium <span class="required">*</span></label>
+                        <input type="text" id="Nama_Laboratorium" name="Nama_Laboratorium" class="form-control" value="{{ old('Nama_Laboratorium') }}" placeholder="Lab Teknik Informatika" required>
+                        @error('Nama_Laboratorium') <span class="error-msg">{{ $message }}</span> @enderror
                     </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn-submit">Simpan Laboratorium</button>
-                        <a href="{{ route('daftar-lab.index') }}" class="btn-cancel">Batal</a>
+                    <div class="form-group">
+                        <label for="floor" class="form-label">Lantai <span class="required">*</span></label>
+                        <input type="text" id="floor" name="floor" class="form-control" value="{{ old('floor') }}" placeholder="Lt 2" required>
+                        @error('floor') <span class="error-msg">{{ $message }}</span> @enderror
                     </div>
-                </form>
-            </div>
+                    <div class="form-group">
+                        <label for="lab_type" class="form-label">Jenis Lab <span class="required">*</span></label>
+                        <select name="lab_type" id="lab_type" class="form-control" required>
+                            <option value="">-- Pilih Jenis Lab --</option>
+                            @foreach($labTypes as $labType)
+                                <option value="{{ $labType }}" {{ old('lab_type') == $labType ? 'selected' : '' }}>
+                                    {{ ucfirst($labType) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('lab_type') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="Kepala_Labolatorium" class="form-label">Kepala Laboratorium <span class="required">*</span></label>
+                        <select name="Kepala_Labolatorium" id="Kepala_Labolatorium" class="form-control" required>
+                            <option value="">-- Pilih Kepala Lab --</option>
+                            @foreach($kepalaLabList as $kepalaLab)
+                                <option value="{{ $kepalaLab->Nama }}" {{ old('Kepala_Labolatorium') == $kepalaLab->Nama ? 'selected' : '' }}>
+                                    {{ $kepalaLab->Nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('Kepala_Labolatorium') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="Admin_Laboratorium" class="form-label">Admin Laboratorium <span class="required">*</span></label>
+                        <input type="text" id="Admin_Laboratorium" name="Admin_Laboratorium" class="form-control" value="{{ old('Admin_Laboratorium') }}" required>
+                        @error('Admin_Laboratorium') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="email_lab" class="form-label">Email Laboratorium <small style="color:#6b7280;">(opsional)</small></label>
+                        <input type="email" id="email_lab" name="email_lab" class="form-control" value="{{ old('email_lab') }}" placeholder="lab@informatika.uad.ac.id">
+                        @error('email_lab') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="{{ route('admin.daftar-lab.index') }}" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan Laboratorium</button>
+                </div>
+            </form>
         </div>
     </div>
-</body>
-</html>
+@endsection

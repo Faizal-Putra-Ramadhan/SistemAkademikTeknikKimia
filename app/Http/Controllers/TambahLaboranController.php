@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DaftarLab;
-use App\Models\DaftarLaboranLaboratorium;
-use App\Models\DaftarUser; // Tambahkan ini
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash; // Tambahkan ini
 use App\Models\ActivityLog;
+use App\Models\DaftarLab;
+use App\Models\DaftarLaboranLaboratorium; // Tambahkan ini
+use App\Models\DaftarUser;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash; // Tambahkan ini
+use Illuminate\Support\Facades\Validator;
 
 class TambahLaboranController extends Controller
 {
@@ -17,8 +17,8 @@ class TambahLaboranController extends Controller
      */
     public function index()
     {
-        $daftar_laborans = DaftarLaboranLaboratorium::orderBy('created_at', 'desc')->paginate(10);
-        
+        $daftar_laborans = DaftarLaboranLaboratorium::with('laboratoriums')->orderBy('created_at', 'desc')->paginate(10);
+
         return view('tambah-laboran.index', compact('daftar_laborans'));
     }
 
@@ -28,7 +28,12 @@ class TambahLaboranController extends Controller
     public function create()
     {
         $daftar_labs = DaftarLab::orderBy('Nama_Laboratorium', 'asc')->get();
-        return view('tambah-laboran.create', compact('daftar_labs'));
+        $potentialParents = DaftarUser::where('is_primary', true)
+            ->orWhereNull('parent_user_id')
+            ->orderBy('Nama')
+            ->get();
+
+        return view('tambah-laboran.create', compact('daftar_labs', 'potentialParents'));
     }
 
     /**
@@ -37,14 +42,19 @@ class TambahLaboranController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'Laboratorium' => 'required|string|max:255',
+            'laboratorium_ids' => 'required|array|min:1',
+            'laboratorium_ids.*' => 'exists:daftar_labs,id',
             'Nama_Laboran' => 'required|string|max:255',
             'Phone' => 'required|string|max:20',
             'Email' => 'required|email|max:255|unique:daftar_laboran_laboratoriums,Email|unique:daftar_users,Email',
             'Role_User' => 'required|string|max:255',
-            'Password' => 'required|string|min:6', // Tambahkan validasi password
+            'Password' => 'required|string|min:6',
+            'link_to_parent' => 'nullable|exists:daftar_users,id',
         ], [
-            'Laboratorium.required' => 'Nama laboratorium wajib diisi',
+            'laboratorium_ids.required' => 'Minimal pilih satu laboratorium',
+            'laboratorium_ids.array' => 'Format laboratorium tidak valid',
+            'laboratorium_ids.min' => 'Minimal pilih satu laboratorium',
+            'laboratorium_ids.*.exists' => 'Laboratorium yang dipilih tidak valid',
             'Nama_Laboran.required' => 'Nama laboran wajib diisi',
             'Phone.required' => 'Nomor telepon wajib diisi',
             'Email.required' => 'Email wajib diisi',
@@ -53,6 +63,7 @@ class TambahLaboranController extends Controller
             'Role_User.required' => 'Role user wajib diisi',
             'Password.required' => 'Password wajib diisi',
             'Password.min' => 'Password minimal 6 karakter',
+            'link_to_parent.exists' => 'Akun parent tidak valid',
         ]);
 
         if ($validator->fails()) {
@@ -62,39 +73,51 @@ class TambahLaboranController extends Controller
         try {
             $userId = $this->generateUserId($request->Role_User);
 
+            // Ambil nama laboratorium pertama untuk backward compatibility (kolom Laboratorium)
+            $firstLab = DaftarLab::find($request->laboratorium_ids[0]);
+            $firstLabName = $firstLab ? $firstLab->Nama_Laboratorium : '';
+
             // 1. Simpan ke tabel daftar_laboran_laboratoriums
             $laboran = DaftarLaboranLaboratorium::create([
-                'Laboratorium' => $request->Laboratorium,
+                'Laboratorium' => $firstLabName, // Backward compatibility
                 'Nama_Laboran' => $request->Nama_Laboran,
-                'UserID'       => $userId,
-                'Phone'        => $request->Phone,
-                'Email'        => $request->Email,
-                'Role_User'    => $request->Role_User,
+                'UserID' => $userId,
+                'Phone' => $request->Phone,
+                'Email' => $request->Email,
+                'Role_User' => $request->Role_User,
             ]);
 
-            // 2. Simpan ke tabel daftar_users (TAMBAHAN INI)
+            // 2. Simpan relasi many-to-many ke tabel pivot
+            $laboran->laboratoriums()->sync($request->laboratorium_ids);
+
+            // 3. Simpan ke tabel daftar_users (dengan opsi Account Linking)
+            $isPrimary = ! $request->filled('link_to_parent');
+            $parentUserId = $request->link_to_parent;
             DaftarUser::create([
-                'Nama'      => $request->Nama_Laboran,
-                'Phone'     => $request->Phone,
-                'Email'     => $request->Email,
-                'UserID'    => $userId,
-                'Password'  => Hash::make($request->Password),
+                'Nama' => $request->Nama_Laboran,
+                'Phone' => $request->Phone,
+                'Email' => $request->Email,
+                'UserID' => $userId,
+                'Password' => Hash::make($request->Password),
                 'Role_User' => $request->Role_User,
-                'foto'      => null, // Optional, bisa ditambahkan jika ada upload foto
+                'foto' => null,
+                'is_primary' => $isPrimary,
+                'parent_user_id' => $parentUserId,
             ]);
 
             // LOG TAMBAH LABORAN
+            $labNames = DaftarLab::whereIn('id', $request->laboratorium_ids)->pluck('Nama_Laboratorium')->implode(', ');
             ActivityLog::create([
-                'user_name'   => 'Administrator', // nanti: auth()->user()->name
-                'action'      => 'Menambah Laboran',
-                'description' => "{$laboran->Nama_Laboran} ({$laboran->Role_User}) - {$laboran->Laboratorium} - UserID: {$userId}",
-                'ip_address'  => request()->ip(),
+                'user_name' => 'Administrator', // nanti: auth()->user()->name
+                'action' => 'Menambah Laboran',
+                'description' => "{$laboran->Nama_Laboran} ({$laboran->Role_User}) - {$labNames} - UserID: {$userId}",
+                'ip_address' => request()->ip(),
             ]);
 
-            return redirect()->route('tambah-laboran.index')
+            return redirect()->route('admin.tambah-laboran.index')
                 ->with('success', "Data laboran berhasil ditambahkan! User ID: {$userId}");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menambahkan laboran: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Gagal menambahkan laboran: '.$e->getMessage())->withInput();
         }
     }
 
@@ -103,24 +126,41 @@ class TambahLaboranController extends Controller
      */
     public function edit($id)
     {
-        $laboran = DaftarLaboranLaboratorium::findOrFail($id);
-        return view('tambah-laboran.edit', compact('laboran'));
+        $laboran = DaftarLaboranLaboratorium::with('laboratoriums')->findOrFail($id);
+        $user = DaftarUser::where('UserID', $laboran->UserID)->first();
+        $currentLinkToParent = $user ? $user->parent_user_id : null;
+        $daftar_labs = DaftarLab::orderBy('Nama_Laboratorium', 'asc')->get();
+        $selectedLabIds = $laboran->laboratoriums->pluck('id')->toArray();
+        $potentialParents = DaftarUser::where('is_primary', true)
+            ->orWhereNull('parent_user_id')
+            ->where('UserID', '!=', $laboran->UserID)
+            ->orderBy('Nama')
+            ->get();
+
+        return view('tambah-laboran.edit', compact('laboran', 'daftar_labs', 'potentialParents', 'currentLinkToParent', 'selectedLabIds'));
     }
 
     /**
      * Update the specified laboran in storage.
      */
-   public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $laboran = DaftarLaboranLaboratorium::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'Laboratorium' => 'required|string|max:255',
+            'laboratorium_ids' => 'required|array|min:1',
+            'laboratorium_ids.*' => 'exists:daftar_labs,id',
             'Nama_Laboran' => 'required|string|max:255',
-            'Phone'        => 'required|string|max:20',
-            'Email'        => 'required|email|max:255|unique:daftar_laboran_laboratoriums,Email,' . $id . '|unique:daftar_users,Email,' . $laboran->UserID . ',UserID',
-            'Role_User'    => 'required|string|max:255',
-            'Password'     => 'nullable|string|min:6', // Password optional saat update
+            'Phone' => 'required|string|max:20',
+            'Email' => 'required|email|max:255|unique:daftar_laboran_laboratoriums,Email,'.$id.'|unique:daftar_users,Email,'.$laboran->UserID.',UserID',
+            'Role_User' => 'required|string|max:255',
+            'Password' => 'nullable|string|min:6',
+            'link_to_parent' => 'nullable|exists:daftar_users,id',
+        ], [
+            'laboratorium_ids.required' => 'Minimal pilih satu laboratorium',
+            'laboratorium_ids.array' => 'Format laboratorium tidak valid',
+            'laboratorium_ids.min' => 'Minimal pilih satu laboratorium',
+            'laboratorium_ids.*.exists' => 'Laboratorium yang dipilih tidak valid',
         ]);
 
         if ($validator->fails()) {
@@ -132,29 +172,38 @@ class TambahLaboranController extends Controller
                 ? $this->generateUserId($request->Role_User)
                 : $laboran->UserID;
 
+            // Ambil nama laboratorium pertama untuk backward compatibility (kolom Laboratorium)
+            $firstLab = DaftarLab::find($request->laboratorium_ids[0]);
+            $firstLabName = $firstLab ? $firstLab->Nama_Laboratorium : '';
+
             // 1. Update tabel daftar_laboran_laboratoriums
             $laboran->update([
-                'Laboratorium' => $request->Laboratorium,
+                'Laboratorium' => $firstLabName, // Backward compatibility
                 'Nama_Laboran' => $request->Nama_Laboran,
-                'UserID'       => $userId,
-                'Phone'        => $request->Phone,
-                'Email'        => $request->Email,
-                'Role_User'    => $request->Role_User,
+                'UserID' => $userId,
+                'Phone' => $request->Phone,
+                'Email' => $request->Email,
+                'Role_User' => $request->Role_User,
             ]);
 
-            // 2. Update tabel daftar_users (TAMBAHAN INI)
+            // 2. Update relasi many-to-many ke tabel pivot
+            $laboran->laboratoriums()->sync($request->laboratorium_ids);
+
+            // 3. Update tabel daftar_users (termasuk Account Linking)
             $user = DaftarUser::where('UserID', $laboran->UserID)->first();
             if ($user) {
+                $isPrimary = ! $request->filled('link_to_parent');
+                $parentUserId = $request->link_to_parent;
                 $userData = [
-                    'Nama'      => $request->Nama_Laboran,
-                    'Phone'     => $request->Phone,
-                    'Email'     => $request->Email,
-                    'UserID'    => $userId,
+                    'Nama' => $request->Nama_Laboran,
+                    'Phone' => $request->Phone,
+                    'Email' => $request->Email,
+                    'UserID' => $userId,
                     'Role_User' => $request->Role_User,
-                    'Password' => $request->Password,
+                    'is_primary' => $isPrimary,
+                    'parent_user_id' => $parentUserId,
                 ];
 
-                // Update password hanya jika diisi
                 if ($request->filled('Password')) {
                     $userData['Password'] = Hash::make($request->Password);
                 }
@@ -163,17 +212,18 @@ class TambahLaboranController extends Controller
             }
 
             // LOG EDIT LABORAN
+            $labNames = DaftarLab::whereIn('id', $request->laboratorium_ids)->pluck('Nama_Laboratorium')->implode(', ');
             ActivityLog::create([
-                'user_name'   => 'Administrator',
-                'action'      => 'Mengedit Laboran',
-                'description' => "{$laboran->Nama_Laboran} ({$laboran->Role_User}) - {$laboran->Laboratorium}",
-                'ip_address'  => request()->ip(),
+                'user_name' => 'Administrator',
+                'action' => 'Mengedit Laboran',
+                'description' => "{$laboran->Nama_Laboran} ({$laboran->Role_User}) - {$labNames}",
+                'ip_address' => request()->ip(),
             ]);
 
-            return redirect()->route('tambah-laboran.index')
+            return redirect()->route('admin.tambah-laboran.index')
                 ->with('success', 'Data laboran berhasil diperbarui');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memperbarui laboran: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Gagal memperbarui laboran: '.$e->getMessage())->withInput();
         }
     }
 
@@ -183,29 +233,32 @@ class TambahLaboranController extends Controller
     public function destroy($id)
     {
         try {
-            $laboran = DaftarLaboranLaboratorium::findOrFail($id);
-            $nama    = $laboran->Nama_Laboran;
-            $lab     = $laboran->Laboratorium;
-            $userId  = $laboran->UserID;
+            $laboran = DaftarLaboranLaboratorium::with('laboratoriums')->findOrFail($id);
+            $nama = $laboran->Nama_Laboran;
+            $labNames = $laboran->laboratoriums->pluck('Nama_Laboratorium')->implode(', ') ?: $laboran->Laboratorium;
+            $userId = $laboran->UserID;
 
-            // 1. Hapus dari daftar_laboran_laboratoriums
+            // 1. Hapus relasi many-to-many dari tabel pivot
+            $laboran->laboratoriums()->detach();
+
+            // 2. Hapus dari daftar_laboran_laboratoriums
             $laboran->delete();
 
-            // 2. Hapus dari daftar_users (TAMBAHAN INI)
+            // 3. Hapus dari daftar_users
             DaftarUser::where('UserID', $userId)->delete();
 
             // LOG HAPUS LABORAN
             ActivityLog::create([
-                'user_name'   => 'Administrator',
-                'action'      => 'Menghapus Laboran',
-                'description' => "{$nama} - {$lab}",
-                'ip_address'  => request()->ip(),
+                'user_name' => 'Administrator',
+                'action' => 'Menghapus Laboran',
+                'description' => "{$nama} - {$labNames}",
+                'ip_address' => request()->ip(),
             ]);
 
-            return redirect()->route('tambah-laboran.index')
+            return redirect()->route('admin.tambah-laboran.index')
                 ->with('success', 'Data laboran berhasil dihapus');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menghapus laboran: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus laboran: '.$e->getMessage());
         }
     }
 
@@ -221,7 +274,7 @@ class TambahLaboranController extends Controller
     private function generateUserId($role)
     {
         $prefix = '';
-        
+
         switch ($role) {
             case 'Admin':
                 $prefix = 'ADM';
@@ -243,19 +296,19 @@ class TambahLaboranController extends Controller
             default:
                 $prefix = 'USR';
         }
-        
+
         // Generate unique ID dengan timestamp + random
         $timestamp = now()->format('ymd'); // Format: YYMMDD
         $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
         $userId = "{$prefix}-{$timestamp}{$random}";
-        
+
         // Cek apakah UserID sudah ada di KEDUA tabel
-        while (DaftarLaboranLaboratorium::where('UserID', $userId)->exists() 
-               || DaftarUser::where('UserID', $userId)->exists()) {
+        while (DaftarLaboranLaboratorium::where('UserID', $userId)->exists()
+        || DaftarUser::where('UserID', $userId)->exists()) {
             $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
             $userId = "{$prefix}-{$timestamp}{$random}";
         }
-        
+
         return $userId;
     }
 }

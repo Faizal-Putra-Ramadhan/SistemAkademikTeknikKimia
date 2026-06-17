@@ -13,8 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'throttle.sensitive' => \App\Http\Middleware\ThrottleSensitiveOperations::class,
+            'secure.password' => \App\Http\Middleware\CheckSecurePassword::class,
+            'stock.group.access' => \App\Http\Middleware\EnsureStockGroupAccess::class,
+            // 'role.switching' => \App\Http\Middleware\HandleRoleSwitching::class,
         ]);
-        
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleRoleSwitching::class,
+        ]);
+
         // PENTING: Pastikan route login dikecualikan dari redirect auth
         $middleware->redirectGuestsTo(fn () => route('login'));
     })

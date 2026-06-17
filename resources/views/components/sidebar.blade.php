@@ -25,8 +25,8 @@
         <span>Kelola User</span>
     </a>
 
-    <a href="{{ route('tambah-laboran.index') }}"
-       class="menu-item {{ request()->routeIs('tambah-laboran.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2"
+    <a href="{{ route('admin.tambah-laboran.index') }}"
+       class="menu-item {{ request()->routeIs('admin.tambah-laboran.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2"
        style="text-decoration: none !important; color: white;">
         <svg fill="currentColor" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="3"/>
@@ -35,14 +35,14 @@
         <span>Tambah Laboran</span>
     </a>
 
-    <a href="{{ route('daftar-lab.index') }}"
-       class="menu-item {{ request()->routeIs('daftar-lab.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2" style="text-decoration: none !important; color: white;">
+    <a href="{{ route('admin.daftar-lab.index') }}"
+       class="menu-item {{ request()->routeIs('admin.daftar-lab.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2" style="text-decoration: none !important; color: white;">
         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
         <span>Daftar Laboratorium</span>
     </a>
 
-    <a href="{{ route('profile.edit') }}"
-   class="menu-item {{ request()->routeIs('profile.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2" style="text-decoration: none !important; color: white;">
+    <a href="{{ route('admin.profile.edit') }}"
+       class="menu-item {{ request()->routeIs('admin.profile.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2" style="text-decoration: none !important; color: white;">
     <svg fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
     </svg>
@@ -51,8 +51,8 @@
 
     
 
-    <a href="{{ route('aktivitas-administrator') }}"
-       class="menu-item {{ request()->is('aktivitas-administrator') ? 'active' : '' }} !no-underline text-white flex items-center gap-2"
+    <a href="{{ route('admin.aktivitas-administrator') }}"
+       class="menu-item {{ request()->routeIs('admin.aktivitas-administrator') ? 'active' : '' }} !no-underline text-white flex items-center gap-2"
        style="text-decoration: none !important; color: white;">
         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M3.5 18.5L9.5 12.5L13.5 16.5L22 6.92L20.59 5.5L13.5 13.5L9.5 9.5L2 17Z"/></svg>
         <span>Aktivitas Administrator</span>
@@ -65,8 +65,8 @@
         <span>Hapus Akun Mahasiswa</span>
     </a>
 
-    <a href="{{ route('pengumuman.index') }}"
-       class="menu-item {{ request()->routeIs('pengumuman.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2"
+    <a href="{{ route('admin.pengumuman.index') }}"
+       class="menu-item {{ request()->routeIs('admin.pengumuman.*') ? 'active' : '' }} !no-underline text-white flex items-center gap-2"
        style="text-decoration: none !important; color: white;">
         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
         <span>Kelola Pengumuman</span>

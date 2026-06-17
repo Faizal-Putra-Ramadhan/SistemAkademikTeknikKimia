@@ -1,173 +1,153 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Edit User - Teknik UAD</title>
-    @vite('resources/css/style.css')
-    @vite('resources/js/index.js')
-</head>
-<body>
-    
-    <x-header></x-header>
-    <div class="container">
-        <x-sidebar></x-sidebar>
-        <div class="main-content" id="mainContent">
-            
-            <div class="page-header">
-                <h1 class="page-title">Edit User</h1>
-                <p class="page-subtitle">Perbarui informasi user dalam sistem</p>
-            </div>
+@extends('layouts.app')
 
-            <!-- Alert Messages -->
-            @if(session('error'))
-            <div class="alert alert-error">
-                <svg class="alert-icon" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                </svg>
-                {{ session('error') }}
-            </div>
-            @endif
+@section('title', 'Edit User')
+@section('page-title', 'Edit User')
 
-            <!-- Info Box -->
-            <div class="info-box">
-                <svg class="info-icon" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                <div>
-                    <strong>Informasi:</strong>
-                    <p>User ID <strong>{{ $user->UserID }}</strong> tidak dapat diubah. Untuk mengganti password, gunakan menu "Reset Password".</p>
-                </div>
-            </div>
+@push('styles')
+<style>
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .form-group .required { color: #dc2626; }
+    .form-group .error-msg { color: #dc2626; font-size: 12px; margin-top: 4px; }
+    .form-control.readonly { background: #f0f2f5; cursor: not-allowed; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+</style>
+@endpush
 
-            <!-- Edit Form -->
-            <div class="section">
-                <form action="{{ route('admin.kelola-user.update', $user->id) }}" method="POST" class="registration-form">
-                    @csrf
-                    @method('PUT')
+@section('content')
+    <!-- Info Box -->
+    <div class="alert-box info">
+        <strong>Informasi:</strong> User ID <strong>{{ $user->UserID }}</strong> tidak dapat diubah. Untuk mengganti password, gunakan menu "Reset Password".
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Edit User</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.kelola-user.update', $user->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                @php
+                    // Nilai dari data user (fallback untuk old() agar form selalu terisi nilai sebelumnya)
+                    $prevNama = old('nama', $user->Nama ?? '');
+                    $prevEmail = old('email', $user->Email ?? '');
+                    $prevPhone = old('Phone', $user->Phone ?? '');
+                    $prevNomorIdentitas = old('nomor_identitas', $user->Nomor_Identitas ?? $user->nomor_identitas ?? '');
+                @endphp
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="userid" class="form-label">User ID</label>
+                        <input type="text" id="userid" class="form-control readonly" value="{{ $user->UserID ?? '' }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
+                        <input type="text" id="nama" name="nama" class="form-control" value="{{ $prevNama }}" placeholder="Masukkan nama lengkap" required>
+                        @error('nama') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ $prevEmail }}" placeholder="contoh@email.com" required>
+                        @error('email') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Phone" class="form-label">Nomor Telepon <span class="required">*</span></label>
+                        <input type="tel" id="Phone" name="Phone" class="form-control" value="{{ $prevPhone }}" placeholder="08123456789" required>
+                        @error('Phone') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nomor_identitas" class="form-label">Nomor Identitas</label>
+                        <input type="text" id="nomor_identitas" name="nomor_identitas" class="form-control" value="{{ $prevNomorIdentitas }}" placeholder="NIM / NIY (opsional)">
+                        @error('nomor_identitas') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Roles <span class="required">*</span></label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 8px;">
+                            @foreach($roles as $role)
+                                @php
+                                    // Get user roles - check both new roles table and old Role_User
+                                    $userRolesFromDb = $user->roles->pluck('name')->toArray();
+                                    $userRoles = old('roles', !empty($userRolesFromDb) ? $userRolesFromDb : [$user->Role_User]);
+                                    $isChecked = in_array($role->name, $userRoles);
+                                    $primaryRoleFromDb = $user->primaryRole()?->name;
+                                    $primaryRole = old('primary_role', $primaryRoleFromDb ?? $user->Role_User);
+                                    $isPrimary = $primaryRole == $role->name;
+                                @endphp
+                                <label style="display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; background: {{ $isChecked ? '#f0f9ff' : '#fff' }};">
+                                    <input type="checkbox" name="roles[]" value="{{ $role->name }}" {{ $isChecked ? 'checked' : '' }} style="width: 18px; height: 18px; cursor: pointer;">
+                                    <span style="flex: 1; font-weight: {{ $isPrimary ? '600' : '400' }};">{{ $role->display_name ?? $role->name }}</span>
+                                    @if($isChecked)
+                                        <input type="radio" name="primary_role" value="{{ $role->name }}" {{ $isPrimary ? 'checked' : '' }} style="width: 16px; height: 16px; cursor: pointer;" title="Set as primary role">
+                                    @endif
+                                </label>
+                            @endforeach
+                        </div>
+                        <small style="display: block; margin-top: 8px; color: #6b7280;">Pilih satu atau lebih role. Centang radio button untuk set primary role.</small>
+                        @error('roles') <span class="error-msg">{{ $message }}</span> @enderror
+                        @error('roles.*') <span class="error-msg">{{ $message }}</span> @enderror
+                        @error('primary_role') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
                     
-                    <div class="form-grid">
-                        <!-- User ID (Read Only) -->
-                        <div class="form-group">
-                            <label for="userid" class="form-label">User ID</label>
-                            <input 
-                                type="text" 
-                                id="userid" 
-                                class="form-input" 
-                                value="{{ $user->UserID }}"
-                                readonly
-                                style="background: #f8f9fa; cursor: not-allowed;"
-                            >
-                        </div>
+                    @push('scripts')
+                    <script>
+                        function updatePrimaryRoleOptions() {
+                            // Get all checked checkboxes
+                            const checkedBoxes = document.querySelectorAll('input[name="roles[]"]:checked');
+                            
+                            // Hide/show radio buttons based on checkbox state
+                            document.querySelectorAll('input[name="roles[]"]').forEach((checkbox) => {
+                                const label = checkbox.closest('label');
+                                const radio = label.querySelector('input[type="radio"]');
+                                if (radio) {
+                                    radio.style.display = checkbox.checked ? 'block' : 'none';
+                                    if (!checkbox.checked) {
+                                        radio.checked = false;
+                                    }
+                                }
+                            });
+                            
+                            // If no primary role is selected and there are checked roles, select first one
+                            const checkedRoles = Array.from(checkedBoxes);
+                            const primaryRadios = document.querySelectorAll('input[name="primary_role"]:checked');
+                            if (checkedRoles.length > 0 && primaryRadios.length === 0) {
+                                const firstChecked = checkedRoles[0];
+                                const firstLabel = firstChecked.closest('label');
+                                const firstRadio = firstLabel.querySelector('input[type="radio"]');
+                                if (firstRadio) {
+                                    firstRadio.checked = true;
+                                }
+                            }
+                        }
+                        
+                        // Initialize on page load
+                        document.addEventListener('DOMContentLoaded', function() {
+                            updatePrimaryRoleOptions();
+                            
+                            // Add event listeners to all checkboxes
+                            document.querySelectorAll('input[name="roles[]"]').forEach((checkbox) => {
+                                checkbox.addEventListener('change', updatePrimaryRoleOptions);
+                            });
+                        });
+                    </script>
+                    @endpush
 
-                        <!-- Nama Lengkap -->
-                        <div class="form-group">
-                            <label for="nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
-                            <input 
-                                type="text" 
-                                id="nama" 
-                                name="nama" 
-                                class="form-input @error('nama') error @enderror" 
-                                value="{{ old('nama', $user->Nama) }}"
-                                placeholder="Masukkan nama lengkap"
-                                required
-                            >
-                            @error('nama')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Email -->
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email <span class="required">*</span></label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                class="form-input @error('email') error @enderror" 
-                                value="{{ old('email', $user->Email) }}"
-                                placeholder="contoh@email.com"
-                                required
-                            >
-                            @error('email')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="form-group">
-                            <label for="Phone" class="form-label">Nomor Telepon <span class="required">*</span></label>
-                            <input 
-                                type="tel" 
-                                id="Phone" 
-                                name="Phone" 
-                                class="form-input @error('Phone') error @enderror" 
-                                value="{{ old('Phone', $user->Phone) }}"
-                                placeholder="08123456789"
-                                required
-                            >
-                            @error('Phone')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Role -->
-                        <div class="form-group">
-                            <label for="role" class="form-label">Role User <span class="required">*</span></label>
-                            <select 
-                                id="role" 
-                                name="role" 
-                                class="form-input @error('role') error @enderror"
-                                required
-                            >
-                                <option value="">Pilih Role</option>
-                                <option value="Admin" {{ old('role', $user->Role_User) == 'Admin' ? 'selected' : '' }}>⚙️ Admin</option>
-                                <option value="Dosen" {{ old('role', $user->Role_User) == 'Dosen' ? 'selected' : '' }}>👨‍🏫 Dosen</option>
-                                <option value="Safety Officer" {{ old('role', $user->Role_User) == 'Safety Officer' ? 'selected' : '' }}>👤 Safety Officer</option>
-                                <option value="Kepala Laboratorium" {{ old('role', $user->Role_User) == 'Kepala Laboratorium' ? 'selected' : '' }}>👤 Kepala Laboratorium</option>
-                                <option value="Mahasiswa" {{ old('role', $user->Role_User) == 'Mahasiswa' ? 'selected' : '' }}>🎓 Mahasiswa</option>
-                                <option value="Laboran" {{ old('role', $user->Role_User) == 'Laboran' ? 'selected' : '' }}>🎓 Laboran</option>
-                            </select>
-                            @error('role')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Created At (Read Only) -->
-                        <div class="form-group">
-                            <label for="created_at" class="form-label">Terdaftar Sejak</label>
-                            <input 
-                                type="text" 
-                                id="created_at" 
-                                class="form-input" 
-                                value="{{ $user->created_at->format('d M Y H:i') }}"
-                                readonly
-                                style="background: #f8f9fa; cursor: not-allowed;"
-                            >
-                        </div>
+                    <div class="form-group">
+                        <label for="created_at" class="form-label">Terdaftar Sejak</label>
+                        <input type="text" id="created_at" class="form-control readonly" value="{{ $user->created_at->format('d M Y H:i') }}" readonly>
                     </div>
+                </div>
 
-                    <!-- Form Actions -->
-                    <div class="form-actions">
-                        <a href="{{ route('admin.kelola-user.index') }}" class="btn btn-secondary">
-                            <svg class="btn-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
-                            </svg>
-                            Kembali
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <svg class="btn-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
-            </div>
-
+                <div class="form-actions">
+                    <a href="{{ route('admin.kelola-user.index') }}" class="btn btn-outline btn-sm">Kembali</a>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan Perubahan</button>
+                </div>
+            </form>
         </div>
     </div>
-    
-</body>
-</html>
+@endsection

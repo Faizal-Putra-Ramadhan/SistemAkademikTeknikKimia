@@ -1,131 +1,101 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $lab->Nama_Laboratorium }} - Daftar Alat</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-        }
-        .navbar {
-            background: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar h1 {
-            color: #667eea;
-            font-size: 1.5rem;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .back-btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #6c757d;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-bottom: 1rem;
-        }
-        .lab-header {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        .lab-header h2 {
-            color: #333;
-            margin-bottom: 1rem;
-        }
-        .alat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        .alat-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        .alat-card:hover {
-            transform: translateY(-5px);
-        }
-        .alat-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-        }
-        .alat-body {
-            padding: 1.5rem;
-        }
-        .alat-body h3 {
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        .alat-body p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        .stock {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-top: 0.5rem;
-        }
-        .stock-available {
-            background: #d4edda;
-            color: #155724;
-        }
-        .stock-low {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .stock-empty {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: 10px;
-        }
-        .empty-state p {
-            color: #666;
-            font-size: 1.1rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="navbar">
-        <h1>🔬 {{ $lab->Nama_Laboratorium }}</h1>
-    </div>
+@extends('layouts.app')
 
-    <div class="container">
+@section('title', 'Detail Lab - Daftar Alat')
+@section('page-title', 'Detail Lab - Daftar Alat')
+
+@push('styles')
+<style>
+    .back-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #6c757d;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-bottom: 1rem;
+    }
+    .lab-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    .lab-header h2 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    .alat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    .alat-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    .alat-card:hover {
+        transform: translateY(-5px);
+    }
+    .alat-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+    }
+    .alat-body {
+        padding: 1.5rem;
+    }
+    .alat-body h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    .alat-body p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    .stock {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+    .stock-available {
+        background: #d4edda;
+        color: #155724;
+    }
+    .stock-low {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .stock-empty {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 10px;
+    }
+    .empty-state p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+</style>
+@endpush
+
+@section('content')
         <a href="{{ route('mahasiswa.dashboard') }}" class="back-btn">← Kembali ke Dashboard</a>
 
         <div class="lab-header">
@@ -164,6 +134,4 @@
             <p>Belum ada alat yang terdaftar di laboratorium ini.</p>
         </div>
         @endif
-    </div>
-</body>
-</html>
+@endsection

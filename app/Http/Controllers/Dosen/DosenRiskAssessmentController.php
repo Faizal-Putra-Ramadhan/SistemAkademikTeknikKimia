@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RiskAssessmentMail;
 use App\Models\DaftarLab;
-use App\Models\RiskAssessment;
 use App\Models\DaftarUser;
+use App\Models\RiskAssessment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class DosenRiskAssessmentController extends Controller
 {
@@ -46,7 +48,7 @@ class DosenRiskAssessmentController extends Controller
             'kategoriHazardBahan',
             'peralatanOperasi',
             'pelakuKerja',
-            'pernyataanMahasiswa'
+            'pernyataanMahasiswa',
         ])->findOrFail($id);
 
         // Pastikan ini memang risk assessment untuk dosen yang login
@@ -55,6 +57,7 @@ class DosenRiskAssessmentController extends Controller
         }
         $user = Auth::user();
         $labs = DaftarLab::all();
+
         return view('dosen.risk-assessment.review', compact('riskAssessment', 'labs', 'user'));
     }
 
@@ -88,11 +91,24 @@ class DosenRiskAssessmentController extends Controller
             'catatan_dosen' => $request->catatan,
             'tanggal_persetujuan_dosen' => now(),
             'status' => $disetujui ? 'menunggu_safety_officer' : 'ditolak',
+            'nomor_identitas_dosen' => Auth::user()->nomor_identitas,
         ]);
 
-        $message = $disetujui 
+        $message = $disetujui
             ? 'Risk Assessment berhasil disetujui. Akan dilanjutkan ke Safety Officer.'
             : 'Risk Assessment ditolak. Mahasiswa dapat mengajukan kembali setelah perbaikan.';
+
+        // Di dalam method approve()
+        // 1. Notif ke Mahasiswa
+        Mail::to($riskAssessment->user->Email)->send(new RiskAssessmentMail($riskAssessment, 'dosen_setuju'));
+
+        // 2. Notif ke Semua Safety Officer
+        $safetyOfficers = DaftarUser::where('Role_User', 'Safety Officer')->get();
+        foreach ($safetyOfficers as $so) {
+            if ($so->Email) {
+                Mail::to($so->Email)->send(new RiskAssessmentMail($riskAssessment, 'ke_so'));
+            }
+        }
 
         return redirect()
             ->route('dosen.risk-assessment.index')

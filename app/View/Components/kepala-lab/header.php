@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\kepala-lab;
+namespace App\View\Components\KepalaLab;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class header extends Component
+class Header extends Component
 {
     /**
      * Create a new component instance.

@@ -1,38 +1,32 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Alat Lab - Admin</title>
-    @vite('resources/css/style.css')
-    @vite('resources/js/index.js')
-</head>
-<body>
-    <x-header></x-header>
-    <div class="container">
-        <x-sidebar></x-sidebar>
-        <div class="main-content" id="mainContent">
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-title">Kelola Alat / Aset Laboratorium</div>
-                    <a href="{{ route('admin.alat-lab.create') }}" class="btn-tambah">
-                        + Tambah Alat Baru
-                    </a>
-                </div>
+@extends('layouts.app')
 
-                @if(session('success'))
-                    <div style="background:#d4edda;color:#155724;padding:12px;border-radius:4px;margin:15px 0;">
-                        {{ session('success') }}
-                    </div>
-                @endif
+@section('title', 'Kelola Alat Lab')
+@section('page-title', 'Kelola Alat Lab')
 
-                <table>
+@push('styles')
+<style>
+    .alat-img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; }
+    .alat-placeholder { width: 56px; height: 56px; background: #f3f4f6; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 11px; }
+    .td-actions { display: flex; gap: 6px; }
+</style>
+@endpush
+
+@section('content')
+    <div class="card">
+        <div class="card-header">
+            <h3>Kelola Alat / Aset Laboratorium</h3>
+            <a href="{{ route('admin.alat-lab.create') }}" class="btn btn-primary btn-sm">+ Tambah Alat Baru</a>
+        </div>
+        <div class="card-body">
+            <div class="table-wrapper">
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Foto</th>
                             <th>Nama Alat</th>
-                            <th>Laboratorium</th>
+                            <th>Lantai</th>
+                            <th>Jenis Lab</th>
                             <th>Jumlah</th>
                             <th>Deskripsi</th>
                             <th>Aksi</th>
@@ -44,56 +38,50 @@
                             <td>{{ $alats->firstItem() + $i }}</td>
                             <td>
                                 @if($alat->foto)
-                                    <img src="{{ asset('storage/' . $alat->foto) }}" 
-                                         style="width:60px;height:60px;object-fit:cover;border-radius:8px;"
-                                         alt="{{ $alat->nama_alat }}">
+                                    <img src="{{ asset('uploads/' . $alat->foto) }}" 
+                                     class="size-12 rounded-lg object-cover border" 
+                                     alt="{{ $alat->nama_alat }}">
                                 @else
-                                    <div style="width:60px;height:60px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;">
-                                        No Image
-                                    </div>
+                                    <div class="alat-placeholder">No Image</div>
                                 @endif
                             </td>
                             <td><strong>{{ $alat->nama_alat }}</strong></td>
-                            <td>{{ $alat->daftarLab->Nama_Laboratorium }}</td>
+                            <td>{{ $alat->stockGroup->floor ?? '-' }}</td>
                             <td>
-                                <span style="padding:5px 10px;background:#{{ $alat->jumlah_tersedia > 0 ? 'd4edda;color:#155724' : 'f8d7da;color:#721c24' }};border-radius:4px;">
+                                <span class="badge {{ ($alat->stockGroup->lab_type ?? '') === 'penelitian' ? 'badge-primary' : 'badge-info' }}">
+                                    {{ ucfirst($alat->stockGroup->lab_type ?? 'N/A') }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {{ $alat->jumlah_tersedia > 0 ? 'badge-success' : 'badge-danger' }}">
                                     {{ $alat->jumlah_tersedia }}
                                 </span>
                             </td>
                             <td>{{ Str::limit($alat->deskripsi, 80) }}</td>
                             <td>
-                                <div style="display:flex;gap:8px;">
-                                    <a href="{{ route('admin.alat-lab.edit', $alat) }}" 
-                                       style="background:#ffc107;color:white;padding:6px 12px;border-radius:4px;font-size:13px;text-decoration:none;">
-                                       Edit
-                                    </a>
-                                    <form action="{{ route('admin.alat-lab.destroy', $alat) }}" method="POST" 
-                                          onsubmit="return confirm('Yakin hapus alat ini?')">
+                                <div class="td-actions">
+                                    <a href="{{ route('admin.alat-lab.edit', $alat) }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <form action="{{ route('admin.alat-lab.destroy', $alat) }}" method="POST" onsubmit="return confirm('Yakin hapus alat ini?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" 
-                                                style="background:#dc3545;color:white;padding:6px 12px;border:none;border-radius:4px;font-size:13px;cursor:pointer;">
-                                            Hapus
-                                        </button>
+                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" style="text-align:center;padding:50px;color:#666;">
-                                Belum ada alat laboratorium. 
-                                <a href="{{ route('admin.alat-lab.create') }}">Tambah sekarang</a>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #6b7280;">
+                                Belum ada alat laboratorium. <a href="{{ route('admin.alat-lab.create') }}">Tambah sekarang</a>
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
+            </div>
 
-                <div style="margin-top:20px;">
-                    {{ $alats->links() }}
-                </div>
+            <div style="margin-top: 16px;">
+                {{ $alats->links() }}
             </div>
         </div>
     </div>
-</body>
-</html>
+@endsection

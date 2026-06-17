@@ -3,18 +3,25 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
-use App\Models\RiskAssessment;
-use App\Models\RaBahanKimia;
-use App\Models\RaKategoriHazardBahan;
-use App\Models\RaPeralatanOperasi;
-use App\Models\RaPelakuKerja;
-use App\Models\RaPernyataanMahasiswa;
+use App\Mail\RiskAssessmentMail;
+use App\Models\ActivityLog;
 use App\Models\DaftarLab;
 use App\Models\DaftarUser;
+use App\Models\RaBahanKimia;
+use App\Models\RaKategoriHazardBahan;
+use App\Models\RaPelakuKerja;
+use App\Models\RaPeralatanOperasi;
+use App\Models\RaPernyataanMahasiswa;
+use App\Models\RiskAssessment;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class RiskAssessmentController extends Controller
 {
@@ -25,17 +32,20 @@ class RiskAssessmentController extends Controller
     {
         $lab = DaftarLab::findOrFail($labId);
         $user = Auth::user();
-        $labs = DaftarLab::all();
-        
-        // Ambil daftar dosen untuk dropdown
-        $dosens = DaftarUser::where('Role_User', 'Dosen')
-                            ->orderBy('Nama')
-                            ->get();
+        $labs = DaftarLab::penelitian()->get();
+        $daftar_labs = DaftarLab::penelitian()->orderBy('Nama_Laboratorium')->get();
 
-        return view('mahasiswa.risk-assessment.create', compact('lab', 'user', 'dosens', 'labs'));
+        if ($lab->lab_type !== 'penelitian') {
+            return back()->with('error', 'Risk Assessment hanya dapat dibuat untuk lab penelitian.');
+        }
+
+        // Ambil daftar dosen untuk dropdown (termasuk user yang punya role Dosen + role lain)
+        $dosens = DaftarUser::withDosenRole()
+            ->orderBy('Nama')
+            ->get();
+
+        return view('mahasiswa.risk-assessment.create', compact('lab', 'user', 'dosens', 'labs', 'daftar_labs'));
     }
-
-    
 
     /**
      * Simpan Risk Assessment baru
@@ -51,23 +61,27 @@ class RiskAssessmentController extends Controller
             'jenis_ra' => 'required|in:Penelitian,Praktikum,Lain-lain',
             'topik_judul' => 'required|string|max:255',
             'dosen_pembimbing_id' => 'required|exists:daftar_users,id',
-            
+            'laboratorium_id' => [
+                'required',
+                Rule::exists('daftar_labs', 'id')->where('lab_type', 'penelitian'),
+            ],
+
             // Bahan Kimia
             'bahan_kimia.*.nama_bahan' => 'required|string|max:255',
             'bahan_kimia.*.sifat' => 'required|array',
             'bahan_kimia.*.lain_lain' => 'nullable|string',
             'bahan_kimia.*.msds_file' => 'nullable|file|mimes:pdf|max:5120',
             'kategori_hazard_bahan' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
-            
+
             // Peralatan & Kondisi Operasi
-            'peralatan.tekanan_tinggi' => 'required|boolean',
-            'peralatan.suhu_tinggi' => 'required|boolean',
-            'peralatan.nyala_api' => 'required|boolean',
-            'peralatan.peralatan_berputar' => 'required|boolean',
+            'peralatan.tekanan_tinggi' => 'nullable|boolean',
+            'peralatan.suhu_tinggi' => 'nullable|boolean',
+            'peralatan.nyala_api' => 'nullable|boolean',
+            'peralatan.peralatan_berputar' => 'nullable|boolean',
             'peralatan.temperatur_maksimum' => 'nullable|numeric',
             'peralatan.tekanan_maksimum' => 'nullable|numeric',
             'peralatan.kategori_hazard' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
-            
+
             // Pelaku Kerja
             'pelaku_kerja.menyadari_faktor_manusia' => 'required|boolean',
             'pelaku_kerja.memahami_bahaya_diri' => 'required|boolean',
@@ -76,11 +90,13 @@ class RiskAssessmentController extends Controller
             'pelaku_kerja.memahami_bahaya_peralatan' => 'required|boolean',
             'pelaku_kerja.paham_tindakan_kecelakaan' => 'required|boolean',
             'pelaku_kerja.penilaian_keterampilan' => 'required|in:ceroboh,kurang_terampil,cukup_terampil,sangat_terampil',
-            
+
             // Pernyataan Mahasiswa
             'setuju_bertanggung_jawab' => 'required|accepted',
             'tanda_tangan' => 'nullable|string', // base64 signature
         ]);
+
+        // Izinkan lab dipilih dari form (tidak dipaksa sama dengan labId di route)
 
         DB::beginTransaction();
         try {
@@ -94,11 +110,12 @@ class RiskAssessmentController extends Controller
                 'nim' => $request->nim,
                 'no_kontak' => $request->no_kontak,
                 'alamat_kontak' => $request->alamat_kontak,
-                'daftar_lab_id' => $labId,
+                'daftar_lab_id' => $request->laboratorium_id,
                 'jenis_ra' => $request->jenis_ra,
                 'topik_judul' => $request->topik_judul,
                 'dosen_pembimbing_id' => $request->dosen_pembimbing_id,
                 'dosen_pembimbing_nama' => $dosen->Nama,
+                'nomor_identitas_dosen' => $dosen->nomor_identitas,
                 'status' => 'menunggu_dosen',
             ]);
 
@@ -166,15 +183,20 @@ class RiskAssessmentController extends Controller
 
             DB::commit();
 
+            if ($dosen && $dosen->Email) {
+                Mail::to($dosen->Email)->send(new RiskAssessmentMail($riskAssessment, 'ke_dosen'));
+            }
+
             return redirect()
                 ->route('mahasiswa.risk-assessment.show', $riskAssessment->id)
                 ->with('success', 'Risk Assessment berhasil diajukan! Menunggu persetujuan dosen pembimbing.');
 
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()
                 ->withInput()
-                ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Terjadi kesalahan: '.$e->getMessage()]);
         }
     }
 
@@ -193,12 +215,16 @@ class RiskAssessmentController extends Controller
             'kategoriHazardBahan',
             'peralatanOperasi',
             'pelakuKerja',
-            'pernyataanMahasiswa'
+            'pernyataanMahasiswa',
         ])->findOrFail($id);
-        $labs = DaftarLab::all();
+        $labs = DaftarLab::penelitian()->get();
         $user = Auth::user();
 
-        return view('mahasiswa.risk-assessment.show', compact('riskAssessment' , 'labs' , 'user'));
+        if ($riskAssessment->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki akses ke Risk Assessment ini.');
+        }
+
+        return view('mahasiswa.risk-assessment.show', compact('riskAssessment', 'labs', 'user'));
     }
 
     /**
@@ -207,14 +233,14 @@ class RiskAssessmentController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $labs = DaftarLab::all();
+        $labs = DaftarLab::penelitian()->get();
         $riskAssessments = RiskAssessment::with(['daftarLab', 'dosenPembimbing'])
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(10);
         $user = Auth::user();
 
-        return view('mahasiswa.risk-assessment.index', compact('riskAssessments' , 'labs', 'user'));
+        return view('mahasiswa.risk-assessment.index', compact('riskAssessments', 'labs', 'user'));
     }
 
     /**
@@ -227,11 +253,15 @@ class RiskAssessmentController extends Controller
             'kategoriHazardBahan',
             'peralatanOperasi',
             'pelakuKerja',
-            'pernyataanMahasiswa'
+            'pernyataanMahasiswa',
         ])->findOrFail($id);
 
-        $labs = DaftarLab::all();
+        $labs = DaftarLab::penelitian()->get();
         $user = Auth::user();
+        if ($riskAssessment->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki akses untuk mengedit Risk Assessment ini.');
+        }
+
         // Hanya bisa edit jika masih draft
         if ($riskAssessment->status !== 'draft') {
             return redirect()
@@ -240,9 +270,9 @@ class RiskAssessmentController extends Controller
         }
 
         $lab = $riskAssessment->daftarLab;
-        $dosens = DaftarUser::where('Role_User', 'Dosen')->orderBy('Nama')->get();
+        $dosens = DaftarUser::withDosenRole()->orderBy('Nama')->get();
 
-        return view('mahasiswa.risk-assessment.edit', compact('riskAssessment', 'lab', 'dosens' , 'labs', 'user'));
+        return view('mahasiswa.risk-assessment.edit', compact('riskAssessment', 'lab', 'dosens', 'labs', 'user'));
     }
 
     /**
@@ -260,197 +290,609 @@ class RiskAssessmentController extends Controller
             'kategoriHazardBahan',
             'peralatanOperasi',
             'pelakuKerja',
-            'pernyataanMahasiswa'
+            'pernyataanMahasiswa',
         ])->findOrFail($id);
+
+        if ($riskAssessment->user_id !== Auth::user()->id) {
+            abort(403, 'Anda tidak memiliki akses untuk mengunduh Risk Assessment ini.');
+        }
 
         // Implementasi PDF generation bisa menggunakan DomPDF atau library lain
         // return PDF::loadView('pdf.risk-assessment', compact('riskAssessment'))->download();
-        
-        return view('pdf.risk-assessment', compact('riskAssessment'));
-    }
 
-        /**
- * Update Risk Assessment
- */
-public function update(Request $request, $id)
-{
-    $riskAssessment = RiskAssessment::findOrFail($id);
-    
-    // Check authorization - only owner can edit
-    if ($riskAssessment->user_id !== Auth::user()->id) {
-        abort(403, 'Anda tidak memiliki akses untuk mengedit Risk Assessment ini.');
-    }
-    
-    // Check if still in draft status (only draft can be edited)
-    if ($riskAssessment->status !== 'draft') {
-        return redirect()
-            ->route('mahasiswa.risk-assessment.show', $id)
-            ->with('error', 'Hanya Risk Assessment dengan status Draft yang dapat diedit.');
-    }
-    
-    // Validate request
-    $request->validate([
-        // Data Mahasiswa
-        'nama' => 'required|string|max:255',
-        'nim' => 'required|string|max:50',
-        'no_kontak' => 'required|string|max:20',
-        'alamat_kontak' => 'required|string',
-        'jenis_ra' => 'required|in:Penelitian,Praktikum,Lain-lain',
-        'topik_judul' => 'required|string|max:255',
-        'dosen_pembimbing_id' => 'required|exists:daftar_users,id',
-        
-        // Bahan Kimia
-        'bahan_kimia.*.nama_bahan' => 'required|string|max:255',
-        'bahan_kimia.*.sifat' => 'required|array',
-        'bahan_kimia.*.lain_lain' => 'nullable|string',
-        'bahan_kimia.*.msds_file' => 'nullable|file|mimes:pdf|max:5120',
-        'kategori_hazard_bahan' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
-        
-        // Peralatan & Kondisi Operasi
-        'peralatan.tekanan_tinggi' => 'required|boolean',
-        'peralatan.suhu_tinggi' => 'required|boolean',
-        'peralatan.nyala_api' => 'required|boolean',
-        'peralatan.peralatan_berputar' => 'required|boolean',
-        'peralatan.temperatur_maksimum' => 'nullable|numeric',
-        'peralatan.tekanan_maksimum' => 'nullable|numeric',
-        'peralatan.kategori_hazard' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
-        
-        // Pelaku Kerja
-        'pelaku_kerja.menyadari_faktor_manusia' => 'required|boolean',
-        'pelaku_kerja.memahami_bahaya_diri' => 'required|boolean',
-        'pelaku_kerja.memahami_bahaya_orang_lain' => 'required|boolean',
-        'pelaku_kerja.memahami_bahaya_lingkungan' => 'required|boolean',
-        'pelaku_kerja.memahami_bahaya_peralatan' => 'required|boolean',
-        'pelaku_kerja.paham_tindakan_kecelakaan' => 'required|boolean',
-        'pelaku_kerja.penilaian_keterampilan' => 'required|in:ceroboh,kurang_terampil,cukup_terampil,sangat_terampil',
-        
-        // Pernyataan Mahasiswa
-        'setuju_bertanggung_jawab' => 'required|accepted',
-        'tanda_tangan' => 'nullable|string', // base64 signature
-    ]);
+        // Path template
+        $templatePath = storage_path('app/templates/template1.docx');
 
-    DB::beginTransaction();
-    try {
-        // Ambil data dosen
-        $dosen = DaftarUser::findOrFail($request->dosen_pembimbing_id);
+        App::setLocale('id');
+        Carbon::setLocale('id');
+        CarbonImmutable::setLocale('id');
+        // Load template
+        $phpWord = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
 
-        // 1. Update Risk Assessment utama
-        $riskAssessment->update([
-            'nama' => $request->nama,
-            'nim' => $request->nim,
-            'no_kontak' => $request->no_kontak,
-            'alamat_kontak' => $request->alamat_kontak,
-            'jenis_ra' => $request->jenis_ra,
-            'topik_judul' => $request->topik_judul,
-            'dosen_pembimbing_id' => $request->dosen_pembimbing_id,
-            'dosen_pembimbing_nama' => $dosen->Nama,
+        $current_time = Carbon::now('Asia/Jakarta')->translatedFormat(('d F Y'));
+        $formatDate = fn ($value) => $value ? Carbon::parse($value)->translatedFormat('d F Y') : '-';
+
+        // Isi nilai
+        $phpWord->setValues([
+            'NAMA_MAHASISWA' => $riskAssessment->nama ?? '-',
+            'NIM' => $riskAssessment->nim ?? '-',
+            'ALAMAT_MAHASISWA' => $riskAssessment->alamat_kontak ?? '-',
+            'TELP_MAHASISWA' => $riskAssessment->no_kontak ?? '-',
+            'NAMA_DOSEN' => $riskAssessment->dosen_pembimbing_nama ?? '-',
+            'JUDUL_RA' => $riskAssessment->topik_judul ?? '-',
+            'NAMA_KEPALA_LAB' => $riskAssessment->kepala_lab_nama ?? '-',
+            'CURRENT_TIME' => $current_time ?? '-',
+            'WAKTU_PENGAJUAN' => $formatDate($riskAssessment->created_at),
+            'PENELITIAN' => $riskAssessment->jenis_ra == 'Penelitian' ? '✔' : '',
+            'PRAKTIKUM' => $riskAssessment->jenis_ra == 'Praktikum' ? '✔' : '',
+            'LAIN' => $riskAssessment->jenis_ra == 'Lain-lain' ? '✔' : '',
+            'KATEGORI_BAHAN_KIMIA' => ucwords(str_replace('_', ' ', $riskAssessment->kategoriHazardBahan?->kategori ?? '-')),
+            'TEMPERATURE_MAKS' => $riskAssessment->peralatanOperasi?->temperatur_maksimum ?? '-',
+            'TEKANAN_MAKS' => $riskAssessment->peralatanOperasi?->tekanan_maksimum ?? '-',
+            'KATEGORI_PERALATAN' => ucwords(str_replace('_', ' ', $riskAssessment->peralatanOperasi?->kategori_hazard ?? '-')),
+            'PENILAIAN_KETERAMPILAN' => ucwords(str_replace('_', ' ', $riskAssessment->pelakuKerja?->penilaian_keterampilan ?? '-')),
+            'KATEGORI_RISIKO_DOSEN' => ucwords(str_replace('_', ' ', $riskAssessment->kategori_resiko_dosen ?? '-')),
+            'NAMA_SO' => $riskAssessment->safety_officer_nama ?? '-',
+            'TGL_PERSETUJUAN_DOSEN' => $formatDate($riskAssessment->tanggal_persetujuan_dosen),
+            'TGL_PERSETUJUAN_KLAB' => $formatDate($riskAssessment->tanggal_persetujuan_kepala_lab),
+            'TGL_PERSETUJUAN_SO' => $formatDate($riskAssessment->tanggal_persetujuan_safety_officer),
+            'NOMOR_IDENTITAS' => $riskAssessment->nim ?? '-',
+            'NOMOR_IDENTITAS_DOSEN' => $riskAssessment->nomor_identitas_dosen ?? $riskAssessment->dosenPembimbing?->nomor_identitas ?? '-',
+            'NOMOR_IDENTITAS_KEPALA_LAB' => $riskAssessment->nomor_identitas_kepala_lab ?? $riskAssessment->kepalaLab?->nomor_identitas ?? '-',
+            'NAMA_LAB' => $riskAssessment->daftarLab?->Nama_Laboratorium ?? '-',
+            'NAMA_KAPRODI' => $riskAssessment->kaprodi_nama ?? $riskAssessment->kaprodi?->Nama ?? '-',
+            'PERSETUJUAN_MAHASISWA' => 'Disetujui',
         ]);
 
-        // 2. Update Bahan Kimia - Hapus yang lama, insert yang baru
-        if ($request->has('bahan_kimia')) {
-            // Hapus file MSDS lama
-            $oldBahanKimias = RaBahanKimia::where('risk_assessment_id', $riskAssessment->id)->get();
-            foreach ($oldBahanKimias as $oldBahan) {
-                if ($oldBahan->msds_file) {
-                    Storage::disk('public')->delete($oldBahan->msds_file);
-                }
-            }
-            
-            // Hapus data lama
-            RaBahanKimia::where('risk_assessment_id', $riskAssessment->id)->delete();
-            
-            // Insert data baru
-            foreach ($request->bahan_kimia as $bahan) {
-                $msdsPath = null;
-                if (isset($bahan['msds_file']) && $bahan['msds_file']) {
-                    $msdsPath = $bahan['msds_file']->store('msds', 'public');
-                }
-
-                $sifat = $bahan['sifat'] ?? [];
-                RaBahanKimia::create([
-                    'risk_assessment_id' => $riskAssessment->id,
-                    'nama_bahan' => $bahan['nama_bahan'],
-                    'explosive' => in_array('explosive', $sifat),
-                    'flammable' => in_array('flammable', $sifat),
-                    'toxic' => in_array('toxic', $sifat),
-                    'corrosive' => in_array('corrosive', $sifat),
-                    'irritant' => in_array('irritant', $sifat),
-                    'oxidizing' => in_array('oxidizing', $sifat),
-                    'lain_lain' => $bahan['lain_lain'] ?? null,
-                    'msds_file' => $msdsPath,
-                ]);
-            }
+        // cek apakah disetujui kaprodi
+        if ($riskAssessment->persetujuan_kaprodi == 1) {
+            $phpWord->setValue('PERSETUJUAN_KAPRODI', 'Disetujui');
+        } else {
+            $phpWord->setValue('PERSETUJUAN_KAPRODI', 'Tidak Disetujui');
         }
 
-        // 3. Update Kategori Hazard Bahan
-        RaKategoriHazardBahan::updateOrCreate(
-            ['risk_assessment_id' => $riskAssessment->id],
-            ['kategori' => $request->kategori_hazard_bahan]
-        );
+        // cek apakah disetujui kepala lab
+        if ($riskAssessment->persetujuan_kepala_lab == 1) {
+            $phpWord->setValue('PERSETUJUAN_KEPALA_LAB', 'Disetujui');
+        } else {
+            $phpWord->setValue('PERSETUJUAN_KEPALA_LAB', 'Tidak Disetujui');
+        }
 
-        // 4. Update Peralatan & Kondisi Operasi
-        RaPeralatanOperasi::updateOrCreate(
-            ['risk_assessment_id' => $riskAssessment->id],
-            [
-                'tekanan_tinggi' => $request->input('peralatan.tekanan_tinggi', false),
-                'suhu_tinggi' => $request->input('peralatan.suhu_tinggi', false),
-                'nyala_api' => $request->input('peralatan.nyala_api', false),
-                'peralatan_berputar' => $request->input('peralatan.peralatan_berputar', false),
-                'temperatur_maksimum' => $request->input('peralatan.temperatur_maksimum'),
-                'tekanan_maksimum' => $request->input('peralatan.tekanan_maksimum'),
-                'kategori_hazard' => $request->input('peralatan.kategori_hazard'),
-            ]
-        );
+        // cek apakah disetujui safety officer
+        if ($riskAssessment->persetujuan_safety_officer == 1) {
+            $phpWord->setValue('PERSETUJUAN_SAFETY_OFFICER', 'Disetujui');
+        } else {
+            $phpWord->setValue('PERSETUJUAN_SAFETY_OFFICER', 'Tidak Disetujui');
+        }
 
-        // 5. Update Pelaku Kerja
-        RaPelakuKerja::updateOrCreate(
-            ['risk_assessment_id' => $riskAssessment->id],
-            [
-                'menyadari_faktor_manusia' => $request->input('pelaku_kerja.menyadari_faktor_manusia', false),
-                'memahami_bahaya_diri' => $request->input('pelaku_kerja.memahami_bahaya_diri', false),
-                'memahami_bahaya_orang_lain' => $request->input('pelaku_kerja.memahami_bahaya_orang_lain', false),
-                'memahami_bahaya_lingkungan' => $request->input('pelaku_kerja.memahami_bahaya_lingkungan', false),
-                'memahami_bahaya_peralatan' => $request->input('pelaku_kerja.memahami_bahaya_peralatan', false),
-                'paham_tindakan_kecelakaan' => $request->input('pelaku_kerja.paham_tindakan_kecelakaan', false),
-                'penilaian_keterampilan' => $request->input('pelaku_kerja.penilaian_keterampilan'),
-            ]
-        );
+        // cek apakah disetujui dosen pembimbing
+        if ($riskAssessment->persetujuan_dosen == 1) {
+            $phpWord->setValue('PERSETUJUAN_DOSEN', 'Disetujui');
+        } else {
+            $phpWord->setValue('PERSETUJUAN_DOSEN', 'Tidak Disetujui');
+        }
 
-        // 6. Update Pernyataan Mahasiswa
-        RaPernyataanMahasiswa::updateOrCreate(
-            ['risk_assessment_id' => $riskAssessment->id],
-            [
-                'setuju_bertanggung_jawab' => $request->setuju_bertanggung_jawab,
-                'tanda_tangan' => $request->tanda_tangan,
-                'tanggal_pernyataan' => now(),
-            ]
-        );
+        $bahanList = $riskAssessment->bahanKimias;
 
-        DB::commit();
-        $riskAssessment->update([
-    'status' => 'menunggu_dosen',
-]);
+        // selalu buat 10 baris
+        $totalRows = 10;
 
-        // Check if user wants to submit for review
-        if ($request->has('submit_for_review')) {
+        for ($i = 1; $i <= $totalRows; $i++) {
+
+            $bahan = $bahanList[$i - 1] ?? null;
+
+            // helper fungsi tanda ceklis
+            $cek = fn ($v) => $v == 1 ? '✓' : '';
+
+            $phpWord->setValue("BAHAN_KIMIA_{$i}", $bahan->nama_bahan ?? '');
+
+            $phpWord->setValue("EXPLOSIVE_{$i}", $bahan ? $cek($bahan->explosive) : '');
+            $phpWord->setValue("FLAMMABLE_{$i}", $bahan ? $cek($bahan->flammable) : '');
+            $phpWord->setValue("TOXIC_{$i}", $bahan ? $cek($bahan->toxic) : '');
+            $phpWord->setValue("CORROSIVE_{$i}", $bahan ? $cek($bahan->corrosive) : '');
+            $phpWord->setValue("IRRITANT_{$i}", $bahan ? $cek($bahan->irritant) : '');
+            $phpWord->setValue("OXIDIXING_{$i}", $bahan ? $cek($bahan->oxidizing) : '');
+            $phpWord->setValue("BAHAN_LAIN_{$i}", $bahan ? $cek($bahan->lain_lain) : '');
+        }
+
+        $ops = $riskAssessment->pernyataanMahasiswa;
+
+        // fungsi helper
+        $ya = function ($val) {
+            return $val == 1 ? '✓' : '';
+        };
+
+        $tidak = function ($val) {
+            return $val == 0 ? '✓' : '';
+        };
+
+        if ($riskAssessment->peralatanOperasi?->tekanan_tinggi == 1) {
+            $phpWord->setValue('TTY', '✓');
+            $phpWord->setValue('TTT', '');
+        } else {
+            $phpWord->setValue('TTY', '');
+            $phpWord->setValue('TTT', '✓');
+        }
+
+        if ($riskAssessment->peralatanOperasi?->suhu_tinggi == 1) {
+            $phpWord->setValue('SHY', '✓');
+            $phpWord->setValue('SHT', '');
+        } else {
+            $phpWord->setValue('SHY', '');
+            $phpWord->setValue('SHT', '✓');
+        }
+
+        if ($riskAssessment->peralatanOperasi?->nyala_api == 1) {
+            $phpWord->setValue('NAY', '✓');
+            $phpWord->setValue('NAT', '');
+        } else {
+            $phpWord->setValue('NAY', '');
+            $phpWord->setValue('NAT', '✓');
+        }
+
+        if ($riskAssessment->peralatanOperasi?->peralatan_berputar == 1) {
+            $phpWord->setValue('PBY', '✓');
+            $phpWord->setValue('PBT', '');
+        } else {
+            $phpWord->setValue('PBY', '');
+            $phpWord->setValue('PBT', '✓');
+        }
+
+        // // mapping ke template
+        // $phpWord->setValues([
+
+        //     // Tekanan tinggi
+        //     'TTY' => $ya($ops->tekanan_tinggi),
+        //     'TTT' => $tidak($ops->tekanan_tinggi),
+
+        //     // Suhu tinggi
+        //     'SHY' => $ya($ops->suhu_tinggi),
+        //     'SHT' => $tidak($ops->suhu_tinggi),
+
+        //     // Nyala api
+        //     'NAY' => $ya($ops->nyala_api),
+        //     'NAT' => $tidak($ops->nyala_api),
+
+        //     // Peralatan berputar
+        //     'PBY' => $ya($ops->peralatan_berputar),
+        //     'PBT' => $tidak($ops->peralatan_berputar),
+
+        // ]);
+
+        $ops = $riskAssessment->pelakuKerja;
+
+        // fungsi helper
+        $ya = function ($val) {
+            return $val == 1 ? '✓' : '';
+        };
+
+        $tidak = function ($val) {
+            return $val == 0 ? '✓' : '';
+        };
+
+        // mapping ke template
+        $phpWord->setValues([
+
+            // Tekanan tinggi
+            'MFMY' => $ya($ops->menyadari_faktor_manusia),
+            'MFMT' => $tidak($ops->menyadari_faktor_manusia),
+
+            // Suhu tinggi
+            'MBDY' => $ya($ops->memahami_bahaya_diri),
+            'MBDT' => $tidak($ops->memahami_bahaya_diri),
+
+            // Nyala api
+            'MBRY' => $ya($ops->memahami_bahaya_orang_lain),
+            'MBRT' => $tidak($ops->memahami_bahaya_orang_lain),
+
+            // Peralatan berputar
+            'MBLY' => $ya($ops->memahami_bahaya_lingkungan),
+            'MBLT' => $tidak($ops->memahami_bahaya_lingkungan),
+
+            'MBPY' => $ya($ops->memahami_bahaya_peralatan),
+            'MBPT' => $tidak($ops->memahami_bahaya_peralatan),
+
+            'PTKY' => $ya($ops->paham_tindakan_kecelakaan),
+            'PTKT' => $tidak($ops->paham_tindakan_kecelakaan),
+
+        ]);
+
+        // Nama file final
+        $fileName = 'Risk_Assessment_'.$riskAssessment->id.'.docx';
+
+        // Simpan sementara di storage
+        $savePath = storage_path('app/public/'.$fileName);
+
+        $phpWord->saveAs($savePath);
+
+        // Download lalu hapus setelah terkirim
+        return response()->download($savePath)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Update Risk Assessment
+     */
+    public function update(Request $request, $id)
+    {
+        $riskAssessment = RiskAssessment::findOrFail($id);
+
+        // Check authorization - only owner can edit
+        if ($riskAssessment->user_id !== Auth::user()->id) {
+            abort(403, 'Anda tidak memiliki akses untuk mengedit Risk Assessment ini.');
+        }
+
+        // Check if still in draft status (only draft can be edited)
+        if ($riskAssessment->status !== 'draft') {
+            return redirect()
+                ->route('mahasiswa.risk-assessment.show', $id)
+                ->with('error', 'Hanya Risk Assessment dengan status Draft yang dapat diedit.');
+        }
+
+        // Validate request
+        $request->validate([
+            // Data Mahasiswa
+            'nama' => 'required|string|max:255',
+            'nim' => 'required|string|max:50',
+            'no_kontak' => 'required|string|max:20',
+            'alamat_kontak' => 'required|string',
+            'jenis_ra' => 'required|in:Penelitian,Praktikum,Lain-lain',
+            'topik_judul' => 'required|string|max:255',
+            'dosen_pembimbing_id' => 'required|exists:daftar_users,id',
+
+            // Bahan Kimia
+            'bahan_kimia.*.nama_bahan' => 'required|string|max:255',
+            'bahan_kimia.*.sifat' => 'required|array',
+            'bahan_kimia.*.lain_lain' => 'nullable|string',
+            'bahan_kimia.*.msds_file' => 'nullable|file|mimes:pdf|max:5120',
+            'kategori_hazard_bahan' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
+
+            // Peralatan & Kondisi Operasi
+            'peralatan.tekanan_tinggi' => 'required|boolean',
+            'peralatan.suhu_tinggi' => 'required|boolean',
+            'peralatan.nyala_api' => 'required|boolean',
+            'peralatan.peralatan_berputar' => 'required|boolean',
+            'peralatan.temperatur_maksimum' => 'nullable|numeric',
+            'peralatan.tekanan_maksimum' => 'nullable|numeric',
+            'peralatan.kategori_hazard' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
+
+            // Pelaku Kerja
+            'pelaku_kerja.menyadari_faktor_manusia' => 'required|boolean',
+            'pelaku_kerja.memahami_bahaya_diri' => 'required|boolean',
+            'pelaku_kerja.memahami_bahaya_orang_lain' => 'required|boolean',
+            'pelaku_kerja.memahami_bahaya_lingkungan' => 'required|boolean',
+            'pelaku_kerja.memahami_bahaya_peralatan' => 'required|boolean',
+            'pelaku_kerja.paham_tindakan_kecelakaan' => 'required|boolean',
+            'pelaku_kerja.penilaian_keterampilan' => 'required|in:ceroboh,kurang_terampil,cukup_terampil,sangat_terampil',
+
+            // Pernyataan Mahasiswa
+            'setuju_bertanggung_jawab' => 'required|accepted',
+            'tanda_tangan' => 'nullable|string', // base64 signature
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Ambil data dosen
+            $dosen = DaftarUser::findOrFail($request->dosen_pembimbing_id);
+
+            // 1. Update Risk Assessment utama
+            $riskAssessment->update([
+                'nama' => $request->nama,
+                'nim' => $request->nim,
+                'no_kontak' => $request->no_kontak,
+                'alamat_kontak' => $request->alamat_kontak,
+                'jenis_ra' => $request->jenis_ra,
+                'topik_judul' => $request->topik_judul,
+                'dosen_pembimbing_id' => $request->dosen_pembimbing_id,
+                'dosen_pembimbing_nama' => $dosen->Nama,
+                'nomor_identitas_dosen' => $dosen->nomor_identitas,
+            ]);
+
+            // 2. Update Bahan Kimia - Hapus yang lama, insert yang baru
+            if ($request->has('bahan_kimia')) {
+                // Hapus file MSDS lama
+                $oldBahanKimias = RaBahanKimia::where('risk_assessment_id', $riskAssessment->id)->get();
+                foreach ($oldBahanKimias as $oldBahan) {
+                    if ($oldBahan->msds_file) {
+                        Storage::disk('public')->delete($oldBahan->msds_file);
+                    }
+                }
+
+                // Hapus data lama
+                RaBahanKimia::where('risk_assessment_id', $riskAssessment->id)->delete();
+
+                // Insert data baru
+                foreach ($request->bahan_kimia as $bahan) {
+                    $msdsPath = null;
+                    if (isset($bahan['msds_file']) && $bahan['msds_file']) {
+                        $msdsPath = $bahan['msds_file']->store('msds', 'public');
+                    }
+
+                    $sifat = $bahan['sifat'] ?? [];
+                    RaBahanKimia::create([
+                        'risk_assessment_id' => $riskAssessment->id,
+                        'nama_bahan' => $bahan['nama_bahan'],
+                        'explosive' => in_array('explosive', $sifat),
+                        'flammable' => in_array('flammable', $sifat),
+                        'toxic' => in_array('toxic', $sifat),
+                        'corrosive' => in_array('corrosive', $sifat),
+                        'irritant' => in_array('irritant', $sifat),
+                        'oxidizing' => in_array('oxidizing', $sifat),
+                        'lain_lain' => $bahan['lain_lain'] ?? null,
+                        'msds_file' => $msdsPath,
+                    ]);
+                }
+            }
+
+            // 3. Update Kategori Hazard Bahan
+            RaKategoriHazardBahan::updateOrCreate(
+                ['risk_assessment_id' => $riskAssessment->id],
+                ['kategori' => $request->kategori_hazard_bahan]
+            );
+
+            // 4. Update Peralatan & Kondisi Operasi
+            RaPeralatanOperasi::updateOrCreate(
+                ['risk_assessment_id' => $riskAssessment->id],
+                [
+                    'tekanan_tinggi' => $request->input('peralatan.tekanan_tinggi', false),
+                    'suhu_tinggi' => $request->input('peralatan.suhu_tinggi', false),
+                    'nyala_api' => $request->input('peralatan.nyala_api', false),
+                    'peralatan_berputar' => $request->input('peralatan.peralatan_berputar', false),
+                    'temperatur_maksimum' => $request->input('peralatan.temperatur_maksimum'),
+                    'tekanan_maksimum' => $request->input('peralatan.tekanan_maksimum'),
+                    'kategori_hazard' => $request->input('peralatan.kategori_hazard'),
+                ]
+            );
+
+            // 5. Update Pelaku Kerja
+            RaPelakuKerja::updateOrCreate(
+                ['risk_assessment_id' => $riskAssessment->id],
+                [
+                    'menyadari_faktor_manusia' => $request->input('pelaku_kerja.menyadari_faktor_manusia', false),
+                    'memahami_bahaya_diri' => $request->input('pelaku_kerja.memahami_bahaya_diri', false),
+                    'memahami_bahaya_orang_lain' => $request->input('pelaku_kerja.memahami_bahaya_orang_lain', false),
+                    'memahami_bahaya_lingkungan' => $request->input('pelaku_kerja.memahami_bahaya_lingkungan', false),
+                    'memahami_bahaya_peralatan' => $request->input('pelaku_kerja.memahami_bahaya_peralatan', false),
+                    'paham_tindakan_kecelakaan' => $request->input('pelaku_kerja.paham_tindakan_kecelakaan', false),
+                    'penilaian_keterampilan' => $request->input('pelaku_kerja.penilaian_keterampilan'),
+                ]
+            );
+
+            // 6. Update Pernyataan Mahasiswa
+            RaPernyataanMahasiswa::updateOrCreate(
+                ['risk_assessment_id' => $riskAssessment->id],
+                [
+                    'setuju_bertanggung_jawab' => $request->setuju_bertanggung_jawab,
+                    'tanda_tangan' => $request->tanda_tangan,
+                    'tanggal_pernyataan' => now(),
+                ]
+            );
+
+            DB::commit();
             $riskAssessment->update([
                 'status' => 'menunggu_dosen',
             ]);
-            
+
+            // Check if user wants to submit for review
+            if ($request->has('submit_for_review')) {
+                $riskAssessment->update([
+                    'status' => 'menunggu_dosen',
+                ]);
+
+                return redirect()
+                    ->route('mahasiswa.risk-assessment.show', $id)
+                    ->with('success', 'Risk Assessment berhasil diupdate dan diajukan untuk review!');
+            }
+
             return redirect()
                 ->route('mahasiswa.risk-assessment.show', $id)
-                ->with('success', 'Risk Assessment berhasil diupdate dan diajukan untuk review!');
+                ->with('success', 'Risk Assessment berhasil diupdate!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan: '.$e->getMessage()]);
+        }
+    }
+
+    /**
+     * Form pengajuan perpanjangan
+     */
+    public function formPerpanjangan($id)
+    {
+        $riskAssessment = RiskAssessment::findOrFail($id);
+        $user = Auth::user();
+        $labs = DaftarLab::penelitian()->get();
+
+        // Check authorization
+        if ($riskAssessment->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki akses untuk mengajukan perpanjangan RA ini.');
         }
 
-        return redirect()
-            ->route('mahasiswa.risk-assessment.show', $id)
-            ->with('success', 'Risk Assessment berhasil diupdate!');
+        // Check if dapat mengajukan perpanjangan
+        if (! $riskAssessment->bisaAjukanPerpanjangan()) {
+            return redirect()
+                ->route('mahasiswa.risk-assessment.show', $id)
+                ->with('error', 'Anda tidak dapat mengajukan perpanjangan untuk Risk Assessment ini.');
+        }
 
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return back()
-            ->withInput()
-            ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        return view('mahasiswa.risk-assessment.perpanjangan', compact('riskAssessment', 'user', 'labs'));
     }
-}
+
+    /**
+     * Simpan pengajuan perpanjangan
+     */
+    public function ajukanPerpanjangan(Request $request, $id)
+    {
+        $request->validate([
+            'alasan_perpanjangan' => 'required|string|min:50|max:1000',
+            'durasi_perpanjangan_diminta' => 'required|integer|min:1|max:12',
+        ], [
+            'alasan_perpanjangan.required' => 'Alasan perpanjangan wajib diisi.',
+            'alasan_perpanjangan.min' => 'Alasan perpanjangan minimal 50 karakter.',
+            'durasi_perpanjangan_diminta.required' => 'Durasi perpanjangan wajib diisi.',
+            'durasi_perpanjangan_diminta.min' => 'Durasi minimal 1 bulan.',
+            'durasi_perpanjangan_diminta.max' => 'Durasi maksimal 12 bulan.',
+        ]);
+
+        $riskAssessment = RiskAssessment::findOrFail($id);
+
+        // Check authorization
+        if ($riskAssessment->user_id !== Auth::user()->id) {
+            abort(403);
+        }
+
+        // Check if dapat mengajukan perpanjangan
+        if (! $riskAssessment->bisaAjukanPerpanjangan()) {
+            return back()->with('error', 'Anda tidak dapat mengajukan perpanjangan untuk Risk Assessment ini.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $riskAssessment->update([
+                'pengajuan_perpanjangan' => true,
+                'alasan_perpanjangan' => $request->alasan_perpanjangan,
+                'tanggal_pengajuan_perpanjangan' => now(),
+                'durasi_perpanjangan_diminta' => (int) $request->durasi_perpanjangan_diminta,
+            ]);
+
+            // Log aktivitas
+            ActivityLog::create([
+                'user_name' => Auth::user()->Nama,
+                'action' => 'Mengajukan Perpanjangan RA',
+                'description' => "RA #{$riskAssessment->id} - {$riskAssessment->topik_judul} (Durasi diminta: {$request->durasi_perpanjangan_diminta} bulan)",
+                'ip_address' => $request->ip(),
+            ]);
+
+            DB::commit();
+            // LOGIKA BARU: Kirim email ke Kaprodi
+            $kaprodi = DaftarUser::where('Role_User', 'Kaprodi')->first();
+            if ($kaprodi && $kaprodi->Email) {
+                Mail::to($kaprodi->Email)->send(new RiskAssessmentMail($riskAssessment, 'ajukan_perpanjangan'));
+            }
+
+            return redirect()
+                ->route('mahasiswa.risk-assessment.show', $id)
+                ->with('success', 'Pengajuan perpanjangan berhasil dikirim! Menunggu persetujuan Kaprodi.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            \Log::error('Error saat mengajukan perpanjangan RA: '.$e->getMessage(), [
+                'risk_assessment_id' => $id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Gagal mengajukan perpanjangan: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Batalkan pengajuan perpanjangan
+     */
+    public function batalkanPerpanjangan($id)
+    {
+        $riskAssessment = RiskAssessment::findOrFail($id);
+
+        // Check authorization
+        if ($riskAssessment->user_id !== Auth::user()->id) {
+            abort(403);
+        }
+
+        // Check if ada pending perpanjangan
+        if (! $riskAssessment->hasPendingPerpanjangan()) {
+            return back()->with('error', 'Tidak ada pengajuan perpanjangan yang dapat dibatalkan.');
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $kaprodi = DaftarUser::where('Role_User', 'Kaprodi')->first();
+            $riskAssessment->update([
+                'pengajuan_perpanjangan' => false,
+                'alasan_perpanjangan' => null,
+                'tanggal_pengajuan_perpanjangan' => null,
+                'durasi_perpanjangan_diminta' => null,
+            ]);
+
+            // Log aktivitas
+            ActivityLog::create([
+                'user_name' => Auth::user()->Nama,
+                'action' => 'Membatalkan Pengajuan Perpanjangan RA',
+                'description' => "RA #{$riskAssessment->id} - {$riskAssessment->topik_judul}",
+                'ip_address' => request()->ip(),
+            ]);
+
+            DB::commit();
+            // LOGIKA BARU: Kirim email pembatalan ke Kaprodi
+            if ($kaprodi && $kaprodi->Email) {
+                Mail::to($kaprodi->Email)->send(new RiskAssessmentMail($riskAssessment, 'batal_perpanjangan'));
+            }
+
+            return redirect()
+                ->route('mahasiswa.risk-assessment.show', $id)
+                ->with('success', 'Pengajuan perpanjangan berhasil dibatalkan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Gagal membatalkan pengajuan: '.$e->getMessage());
+        }
+    }
+    // 👇👇👇 TAMBAHKAN METHOD BARU DI SINI 👇👇👇
+
+    /**
+     * Ajukan Risk Assessment ke Kaprodi
+     */
+    public function ajukanKeKaprodi($id)
+    {
+        $riskAssessment = RiskAssessment::findOrFail($id);
+
+        // Check authorization - hanya pemilik yang bisa mengajukan
+        if ($riskAssessment->user_id !== Auth::user()->id) {
+            abort(403, 'Anda tidak memiliki akses untuk mengajukan Risk Assessment ini.');
+        }
+
+        // Check if bisa diajukan ke Kaprodi
+        if (! $riskAssessment->bisaAjukanKeKaprodi()) {
+            return back()->with('error', 'Risk Assessment ini tidak dapat diajukan ke Kaprodi. Pastikan sudah disetujui Kepala Lab.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Update status menjadi menunggu_kaprodi
+            $riskAssessment->update([
+                'status' => 'menunggu_kaprodi',
+            ]);
+
+            // Log aktivitas
+            ActivityLog::create([
+                'user_name' => Auth::user()->Nama,
+                'action' => 'Mengajukan RA ke Kaprodi',
+                'description' => "RA #{$riskAssessment->id} - {$riskAssessment->topik_judul}",
+                'ip_address' => request()->ip(),
+            ]);
+
+            DB::commit();
+
+            $kaprodi = DaftarUser::where('Role_User', 'Kaprodi')->first();
+            if ($kaprodi) {
+                Mail::to($kaprodi->Email)->send(new RiskAssessmentMail($riskAssessment, 'ke_kaprodi'));
+            }
+
+            return redirect()
+                ->route('mahasiswa.risk-assessment.show', $id)
+                ->with('success', 'Risk Assessment berhasil diajukan ke Kaprodi! Menunggu persetujuan akhir.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error saat mengajukan RA ke Kaprodi: '.$e->getMessage(), [
+                'risk_assessment_id' => $id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Gagal mengajukan ke Kaprodi: '.$e->getMessage());
+        }
+    }
 }

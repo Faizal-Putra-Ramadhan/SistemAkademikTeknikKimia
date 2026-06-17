@@ -1,148 +1,162 @@
-{{-- resources/views/laboran/pengumuman-create.blade.php --}}
 @extends('layouts.app')
 
+@section('title', 'Buat Pengumuman')
+@section('page-title', 'Buat Pengumuman Baru')
+
+@push('styles')
+<style>
+    .announce-page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem 2.5rem;
+    }
+    .announce-card {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+    .announce-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #eef2f7;
+        background: #f8fafc;
+    }
+    .announce-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 0;
+    }
+    .announce-subtitle {
+        margin: 0.4rem 0 0;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+    .announce-body {
+        padding: 1.5rem;
+    }
+    .form-grid {
+        display: grid;
+        gap: 1.2rem;
+    }
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #334155;
+    }
+    .form-input,
+    .form-textarea,
+    .form-select {
+        width: 100%;
+        border: 1px solid #d5dce6;
+        border-radius: 12px;
+        padding: 0.7rem 0.9rem;
+        font-size: 0.95rem;
+        background: #fff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-textarea {
+        resize: vertical;
+    }
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: #0f6fff;
+        box-shadow: 0 0 0 3px rgba(15, 111, 255, 0.15);
+    }
+    .form-error {
+        font-size: 0.8rem;
+        color: #d92d20;
+    }
+    .status-note {
+        padding: 0.85rem 1rem;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 0.85rem;
+    }
+    .action-row {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        padding-top: 0.5rem;
+        border-top: 1px solid #eef2f7;
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="min-h-screen bg-gray-100 py-6">
-    <div class="max-w-4xl mx-auto px-4">
-        <div class="bg-white rounded-lg shadow">
-            <div class="p-6 border-b">
-                <h2 class="text-2xl font-bold">Buat Pengumuman Baru</h2>
+    <div class="announce-page">
+        <div class="announce-card">
+            <div class="announce-header">
+                <h2 class="announce-title">Form Pengumuman Baru</h2>
+                <p class="announce-subtitle">Tulis informasi penting yang akan tampil untuk mahasiswa.</p>
             </div>
             
-            <form action="{{ route('laboran.pengumuman.store') }}" method="POST" class="p-6">
-                @csrf
-                
-                <div class="mb-6">
-                    <label for="judul" class="block text-sm font-medium text-gray-700 mb-2">Judul Pengumuman</label>
-                    <input type="text" 
-                           name="judul" 
-                           id="judul" 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="Masukkan judul pengumuman"
-                           value="{{ old('judul') }}"
-                           required>
-                    @error('judul')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div class="mb-6">
-                    <label for="isi" class="block text-sm font-medium text-gray-700 mb-2">Isi Pengumuman</label>
-                    <textarea name="isi" 
-                              id="isi" 
-                              rows="10" 
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="Tuliskan isi pengumuman..."
-                              required>{{ old('isi') }}</textarea>
-                    @error('isi')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div class="mb-6">
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                    <select name="status" 
-                            id="status" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            required>
-                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="publish" {{ old('status') == 'publish' ? 'selected' : '' }}>Publish</option>
-                    </select>
-                    @error('status')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                    <p class="text-sm text-gray-500 mt-1">
-                        <strong>Draft:</strong> Pengumuman disimpan tapi tidak ditampilkan ke mahasiswa<br>
-                        <strong>Publish:</strong> Pengumuman akan langsung ditampilkan ke mahasiswa
-                    </p>
-                </div>
-                
-                <div class="flex gap-3">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">
-                        Simpan Pengumuman
-                    </button>
-                    <a href="{{ route('laboran.dashboard') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg font-semibold">
-                        Batal
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-@endsection
-
-{{-- ============================================ --}}
-{{-- resources/views/laboran/pengumuman-edit.blade.php --}}
-
-@extends('layouts.app')
-
-@section('content')
-<div class="min-h-screen bg-gray-100 py-6">
-    <div class="max-w-4xl mx-auto px-4">
-        <div class="bg-white rounded-lg shadow">
-            <div class="p-6 border-b">
-                <h2 class="text-2xl font-bold">Edit Pengumuman</h2>
+            <div class="announce-body">
+                <form action="{{ route('laboran.pengumuman.store') }}" method="POST" class="form-grid">
+                    @csrf
+                    
+                    <div class="form-field">
+                        <label for="judul" class="form-label">Judul Pengumuman</label>
+                        <input type="text" 
+                               name="judul" 
+                               id="judul" 
+                               class="form-input @error('judul') border-red-500 @enderror"
+                               placeholder="Masukkan judul pengumuman"
+                               value="{{ old('judul') }}"
+                               required>
+                        @error('judul')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="isi" class="form-label">Isi Pengumuman</label>
+                        <textarea name="isi" 
+                                  id="isi" 
+                                  rows="10" 
+                                  class="form-textarea @error('isi') border-red-500 @enderror"
+                                  placeholder="Tuliskan isi pengumuman..."
+                                  required>{{ old('isi') }}</textarea>
+                        @error('isi')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="status" 
+                                id="status" 
+                                class="form-select @error('status') border-red-500 @enderror"
+                                required>
+                            <option value="">-- Pilih Status --</option>
+                            <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="publish" {{ old('status') == 'publish' ? 'selected' : '' }}>Publish</option>
+                        </select>
+                        @error('status')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                        <div class="status-note">
+                            <strong>Draft:</strong> Pengumuman disimpan tapi tidak ditampilkan ke mahasiswa.<br>
+                            <strong>Publish:</strong> Pengumuman akan langsung ditampilkan ke mahasiswa.
+                        </div>
+                    </div>
+                    
+                    <div class="action-row">
+                        <button type="submit" class="btn btn-primary">Simpan Pengumuman</button>
+                        <a href="javascript:history.back()" class="btn btn-secondary">Batal</a>
+                    </div>
+                </form>
             </div>
-            
-            <form action="{{ route('laboran.pengumuman.update', $pengumuman->id) }}" method="POST" class="p-6">
-                @csrf
-                @method('PUT')
-                
-                <div class="mb-6">
-                    <label for="judul" class="block text-sm font-medium text-gray-700 mb-2">Judul Pengumuman</label>
-                    <input type="text" 
-                           name="judul" 
-                           id="judul" 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="Masukkan judul pengumuman"
-                           value="{{ old('judul', $pengumuman->judul) }}"
-                           required>
-                    @error('judul')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div class="mb-6">
-                    <label for="isi" class="block text-sm font-medium text-gray-700 mb-2">Isi Pengumuman</label>
-                    <textarea name="isi" 
-                              id="isi" 
-                              rows="10" 
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="Tuliskan isi pengumuman..."
-                              required>{{ old('isi', $pengumuman->isi) }}</textarea>
-                    @error('isi')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div class="mb-6">
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                    <select name="status" 
-                            id="status" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            required>
-                        <option value="draft" {{ old('status', $pengumuman->status) == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="publish" {{ old('status', $pengumuman->status) == 'publish' ? 'selected' : '' }}>Publish</option>
-                    </select>
-                    @error('status')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                    <p class="text-sm text-gray-500 mt-1">
-                        <strong>Draft:</strong> Pengumuman disimpan tapi tidak ditampilkan ke mahasiswa<br>
-                        <strong>Publish:</strong> Pengumuman akan langsung ditampilkan ke mahasiswa
-                    </p>
-                </div>
-                
-                <div class="flex gap-3">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">
-                        Update Pengumuman
-                    </button>
-                    <a href="{{ route('laboran.dashboard') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg font-semibold">
-                        Batal
-                    </a>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 @endsection

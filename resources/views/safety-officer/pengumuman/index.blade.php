@@ -1,212 +1,199 @@
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-100">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    @vite('resources/js/app.js')
-    @vite('resources/css/app.css')
+@extends('layouts.app')
+@section('title', 'Pengumuman')
+@section('page-title', 'Pengumuman')
 
-    <style>
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        .back-btn, .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: opacity 0.3s;
-        }
-        .back-btn {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-        .btn:hover, .back-btn:hover {
-            opacity: 0.8;
-        }
-        .alert {
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        .pengumuman-grid {
-            display: grid;
-            gap: 1rem;
-        }
-        .pengumuman-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            border-left: 4px solid #667eea;
-        }
-        .pengumuman-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-        .pengumuman-title {
-            flex: 1;
-        }
-        .pengumuman-title h3 {
-            color: #333;
-            margin-bottom: 0.25rem;
-        }
-        .pengumuman-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.85rem;
-            color: #666;
-        }
-        .pengumuman-content {
-            color: #666;
-            margin-bottom: 1rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
-        .pengumuman-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            text-decoration: none;
-            transition: opacity 0.3s;
-        }
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-        .status-publish {
-            background: #d4edda;
-            color: #155724;
-        }
-        .status-draft {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .empty-state {
-            background: white;
-            padding: 3rem;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .empty-state p {
-            color: #666;
-            margin-bottom: 1rem;
-        }
-    </style>
-  
-</head>
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* ===== Pengumuman Index ===== */
+    .pn-page { max-width: 1000px; margin: 0 auto; }
 
-<body>
+    /* Header */
+    .pn-header {
+        display: flex; align-items: flex-start;
+        justify-content: space-between; gap: 16px;
+        margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .pn-header-text h1 {
+        font-size: 22px; font-weight: 700; color: #111827;
+        display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    }
+    .pn-header-text h1 i { color: #2563eb; font-size: 20px; }
+    .pn-header-text p { font-size: 14px; color: #6b7280; }
 
-  <div class="min-h-full">
+    .pn-create-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 10px 20px; border-radius: 10px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #fff; font-size: 13.5px; font-weight: 600;
+        text-decoration: none; border: none; cursor: pointer;
+        box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+        transition: all 0.2s;
+    }
+    .pn-create-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
+    .pn-create-btn i { font-size: 13px; }
 
-    <x-safety-officer.navbar :labs="$labs" :user="$user" />
+    /* Alert */
+    .pn-alert {
+        display: flex; align-items: center; gap: 10px;
+        padding: 12px 18px; border-radius: 10px;
+        margin-bottom: 20px; font-size: 13.5px; font-weight: 500;
+    }
+    .pn-alert.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .pn-alert i { font-size: 16px; }
 
-    <x-safety-officer.header>Kelola Pengumuman</x-safety-officer.header>
+    /* Card container */
+    .pn-list { display: flex; flex-direction: column; gap: 14px; }
 
-    <main>
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-<div class="header">
-            <a href="{{ route('safety-officer.dashboard') }}" class="back-btn">← Kembali</a>
-            <a href="{{ route('safety-officer.pengumuman.create') }}" class="btn btn-primary">+ Buat Pengumuman</a>
+    /* Card */
+    .pn-card {
+        background: #fff; border: 1px solid #e5e7eb;
+        border-radius: 14px; overflow: hidden;
+        transition: all 0.2s;
+    }
+    .pn-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+
+    .pn-card-inner { padding: 22px 24px; }
+
+    /* Top row: title + badge */
+    .pn-card-top {
+        display: flex; align-items: flex-start;
+        justify-content: space-between; gap: 14px;
+        margin-bottom: 10px;
+    }
+    .pn-card-title {
+        font-size: 16px; font-weight: 700; color: #111827;
+        line-height: 1.35; flex: 1;
+    }
+
+    .pn-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 3px 11px; border-radius: 20px;
+        font-size: 11.5px; font-weight: 600; white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .pn-badge.publish { background: #dcfce7; color: #166534; }
+    .pn-badge.draft   { background: #fef9c3; color: #854d0e; }
+
+    /* Meta info */
+    .pn-meta {
+        display: flex; align-items: center; gap: 16px;
+        margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .pn-meta-item {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 12.5px; color: #6b7280;
+    }
+    .pn-meta-item i { font-size: 12px; color: #9ca3af; }
+
+    /* Content preview */
+    .pn-content {
+        font-size: 13.5px; color: #4b5563; line-height: 1.65;
+        display: -webkit-box; -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical; overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    /* Actions row */
+    .pn-actions {
+        display: flex; align-items: center; gap: 8px;
+        padding-top: 14px; border-top: 1px solid #f3f4f6;
+    }
+    .pn-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 7px 14px; border-radius: 8px;
+        font-size: 12.5px; font-weight: 600;
+        text-decoration: none; border: none; cursor: pointer;
+        transition: all 0.15s;
+    }
+    .pn-btn.edit {
+        background: #fef3c7; color: #92400e;
+        border: 1px solid #fde68a;
+    }
+    .pn-btn.edit:hover { background: #fde68a; }
+    .pn-btn.delete {
+        background: #fee2e2; color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+    .pn-btn.delete:hover { background: #fecaca; }
+
+    /* Accent stripe */
+    .pn-stripe {
+        height: 4px; border-radius: 4px 4px 0 0;
+    }
+    .pn-stripe.publish { background: linear-gradient(90deg, #22c55e, #16a34a); }
+    .pn-stripe.draft   { background: linear-gradient(90deg, #eab308, #ca8a04); }
+
+    /* Empty */
+    .pn-empty {
+        background: #fff; border: 1px solid #e5e7eb;
+        border-radius: 14px; padding: 60px 24px;
+        text-align: center;
+    }
+    .pn-empty i { font-size: 48px; color: #d1d5db; margin-bottom: 14px; display: block; }
+    .pn-empty h4 { font-size: 15px; font-weight: 600; color: #6b7280; margin-bottom: 6px; }
+    .pn-empty p { font-size: 13px; color: #9ca3af; margin-bottom: 20px; }
+</style>
+@endpush
+
+@section('content')
+<div class="pn-page">
+
+    {{-- Header --}}
+    <div class="pn-header">
+        <div class="pn-header-text">
+            <h1><i class="fas fa-bullhorn"></i> Pengumuman</h1>
+            <p>Daftar pengumuman terbaru untuk seluruh pengguna laboratorium</p>
         </div>
+    </div>
 
-        @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-        @endif
+    {{-- Alert --}}
+    @if(session('success'))
+    <div class="pn-alert success">
+        <i class="fas fa-check-circle"></i> {{ session('success') }}
+    </div>
+    @endif
 
-        @if($pengumuman->count() > 0)
-        <div class="pengumuman-grid">
-            @foreach($pengumuman as $item)
-            <div class="pengumuman-card">
-                <div class="pengumuman-header">
-                    <div class="pengumuman-title">
-                        <h3>{{ $item->judul }}</h3>
-                        <div class="pengumuman-meta">
-                            <span>👤 {{ $item->author }}</span>
-                            <span>📅 {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</span>
-                            <span class="status-badge status-{{ $item->status }}">
-                                {{ ucfirst($item->status) }}
-                            </span>
-                        </div>
-                    </div>
+    {{-- List --}}
+    @if($pengumuman->count() > 0)
+    <div class="pn-list">
+        @foreach($pengumuman as $item)
+        <div class="pn-card">
+            <div class="pn-stripe {{ $item->status }}"></div>
+            <div class="pn-card-inner">
+                <div class="pn-card-top">
+                    <span class="pn-card-title">{{ $item->judul }}</span>
+                    <span class="pn-badge {{ $item->status }}">
+                        @if($item->status === 'publish')
+                            <i class="fas fa-globe"></i> Publish
+                        @else
+                            <i class="fas fa-file-pen"></i> Draft
+                        @endif
+                    </span>
                 </div>
-                <div class="pengumuman-content">
-                    {{ Str::limit($item->isi, 200) }}
+
+                <div class="pn-meta">
+                    <span class="pn-meta-item">
+                        <i class="fas fa-user"></i> {{ $item->author }}
+                    </span>
+                    <span class="pn-meta-item">
+                        <i class="fas fa-calendar"></i> {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}
+                    </span>
                 </div>
-                
-                @if($item->author === $user->Nama)
-                <div class="pengumuman-actions">
-                    <a href="{{ route('safety-officer.pengumuman.edit', $item->id) }}" class="btn-sm btn-warning">
-                        ✏️ Edit
-                    </a>
-                    <form action="{{ route('safety-officer.pengumuman.destroy', $item->id) }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus pengumuman ini?')">
-                            🗑️ Hapus
-                        </button>
-                    </form>
-                </div>
-                @endif
+
+                <div class="pn-content">{{ $item->isi }}</div>
+
             </div>
-            @endforeach
         </div>
-        @else
-        <div class="empty-state">
-            <p>Belum ada pengumuman.</p>
-            <a href="{{ route('safety-officer.pengumuman.create') }}" class="btn btn-primary">Buat Pengumuman Pertama</a>
-        </div>
-        @endif
-        </div>
-    </main>
+        @endforeach
+    </div>
+    @else
+    <div class="pn-empty">
+        <i class="fas fa-bullhorn"></i>
+        <h4>Belum ada pengumuman</h4>
+        <p>Pengumuman terbaru akan muncul di sini.</p>
+    </div>
+    @endif
 
-    
-
-  </div>
-  
-
-  {{-- Pindahkan ke paling bawah, SETELAH konten --}}
-  {{-- Pindahkan semua skrip ke paling bawah, SEBELUM </body> --}}
-  
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-
-</body>
-</html>
+</div>
+@endsection

@@ -1,96 +1,67 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Pengumuman - Teknik UAD</title>
-    @vite('resources/css/style.css')
-    @vite('resources/js/index.js')
-    <style>
-        .form-container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-        }
-        textarea { 
-            width: 100%; 
-            min-height: 250px; 
-            padding: 12px; 
-            border: 1px solid #ddd; 
-            border-radius: 4px; 
-            font-family: inherit; 
-            font-size: 15px;
-        }
-        input, select, textarea { 
-            margin-top: 8px; 
-        }
-        label { 
-            font-weight: 600; 
-            color: #333; 
-        }
-    </style>
-</head>
-<body>
-    <x-header></x-header>
-    <div class="container">
-        <x-sidebar></x-sidebar>
-        <div class="main-content" id="mainContent">
-            <div class="form-container">
-                <h2>Edit Pengumuman</h2>
+@extends('layouts.app')
 
-                @if(session('success'))
-                    <div style="background:#d4edda;color:#155724;padding:12px;border-radius:4px;margin-bottom:20px;">
-                        {{ session('success') }}
-                    </div>
-                @endif
+@section('title', 'Edit Pengumuman')
+@section('page-title', 'Edit Pengumuman')
 
-                <form action="{{ route('pengumuman.update', $pengumuman) }}" method="POST">
-                    @csrf
-                    @method('PUT') <!-- INI YANG WAJIB! -->
+@push('styles')
+<style>
+    .form-group .required { color: #dc2626; }
+    .form-group .error-msg { color: #dc2626; font-size: 12px; margin-top: 4px; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+    .form-hint { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    textarea.form-control { min-height: 250px; resize: vertical; font-family: inherit; line-height: 1.6; }
+</style>
+@endpush
 
-                    <div style="margin-bottom:20px;">
-                        <label>Judul Pengumuman</label>
-                        <input type="text" name="judul" value="{{ old('judul', $pengumuman->judul) }}" required 
-                               style="width:100%;padding:12px;border:1px solid #ddd;border-radius:4px;">
-                        @error('judul')
-                            <small style="color:#dc3545;">{{ $message }}</small>
-                        @enderror
-                    </div>
+@section('content')
+    <!-- Alerts -->
+    @if(session('success'))
+        <div class="alert-box success">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            {{ session('success') }}
+        </div>
+    @endif
 
-                    <div style="margin-bottom:20px;">
-                        <label>Isi Pengumuman</label>
-                        <textarea name="isi" required>{{ old('isi', $pengumuman->isi) }}</textarea>
-                        @error('isi')
-                            <small style="color:#dc3545;">{{ $message }}</small>
-                        @enderror
-                    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3>Edit Pengumuman</h3>
+            <span class="badge {{ $pengumuman->status == 'publish' ? 'badge-success' : 'badge-warning' }}">
+                {{ $pengumuman->status == 'publish' ? 'Publish' : 'Draft' }}
+            </span>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.pengumuman.update', $pengumuman) }}" method="POST">
+                @csrf
+                @method('PUT')
 
-                    <div style="margin-bottom:25px;">
-                        <label>Status</label>
-                        <select name="status" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:4px;">
-                            <option value="publish" {{ old('status', $pengumuman->status) == 'publish' ? 'selected' : '' }}>Publish</option>
-                            <option value="draft" {{ old('status', $pengumuman->status) == 'draft' ? 'selected' : '' }}>Draft</option>
-                        </select>
-                        @error('status')
-                            <small style="color:#dc3545;">{{ $message }}</small>
-                        @enderror
-                    </div>
+                <div class="form-group">
+                    <label for="judul" class="form-label">Judul Pengumuman <span class="required">*</span></label>
+                    <input type="text" name="judul" id="judul" class="form-control"
+                           value="{{ old('judul', $pengumuman->judul) }}" placeholder="Masukkan judul pengumuman" required>
+                    @error('judul') <span class="error-msg">{{ $message }}</span> @enderror
+                </div>
 
-                    <div style="display:flex;gap:15px;">
-                        <button type="submit" style="background:#007bff;color:white;padding:12px 30px;border:none;border-radius:4px;cursor:pointer;font-weight:600;">
-                            Simpan Perubahan
-                        </button>
-                        <a href="{{ route('pengumuman.index') }}" 
-                           style="background:#6c757d;color:white;padding:12px 30px;border-radius:4px;text-decoration:none;">
-                            Batal
-                        </a>
-                    </div>
-                </form>
-            </div>
+                <div class="form-group">
+                    <label for="isi" class="form-label">Isi Pengumuman <span class="required">*</span></label>
+                    <textarea name="isi" id="isi" class="form-control" placeholder="Tulis isi pengumuman di sini..." required>{{ old('isi', $pengumuman->isi) }}</textarea>
+                    @error('isi') <span class="error-msg">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="form-group" style="max-width: 300px;">
+                    <label for="status" class="form-label">Status <span class="required">*</span></label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="publish" {{ old('status', $pengumuman->status) == 'publish' ? 'selected' : '' }}>Publish</option>
+                        <option value="draft" {{ old('status', $pengumuman->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                    </select>
+                    <p class="form-hint">Pilih "Publish" agar pengumuman langsung tampil</p>
+                    @error('status') <span class="error-msg">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="form-actions">
+                    <a href="{{ route('admin.pengumuman.index') }}" class="btn btn-outline btn-sm">Batal</a>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan Perubahan</button>
+                </div>
+            </form>
         </div>
     </div>
-</body>
-</html>
+@endsection

@@ -1,306 +1,349 @@
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-100">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    @vite('resources/js/app.js')
-    @vite('resources/css/app.css')
+@extends('layouts.app')
 
-    <style>
-      .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .logout-btn {
-            padding: 0.5rem 1.5rem;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .alert {
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .stat-icon {
-            font-size: 3rem;
-        }
-        .stat-info h3 {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        .stat-info p {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #333;
-        }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .menu-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.3s;
-        }
-        .menu-card:hover {
-            transform: translateY(-5px);
-        }
-        .menu-card .icon {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-        .menu-card h3 {
-            color: #333;
-        }
-        .section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
-        }
-        .section h2 {
-            color: #333;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #667eea;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background: #f8f9fa;
-            color: #333;
-            font-weight: 600;
-        }
-        .status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-        .status-menunggu {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .status-disetujui {
-            background: #d4edda;
-            color: #155724;
-        }
-        .status-ditolak {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.85rem;
-            display: inline-block;
-        }
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
-    </style>
-  
-</head>
+@section('title', 'Dashboard Dosen')
+@section('page-title', 'Dashboard')
 
-<body>
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .so-page { max-width: 1200px; margin: 0 auto; }
 
-  <div class="min-h-full">
+    .so-welcome {
+        background: linear-gradient(135deg, #0e7490 0%, #06b6d4 60%, #22d3ee 100%);
+        border-radius: 14px;
+        padding: 28px 32px;
+        color: #fff;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .so-welcome::after {
+        content: '';
+        position: absolute;
+        top: -50px; right: -30px;
+        width: 180px; height: 180px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 50%;
+    }
+    .so-welcome::before {
+        content: '';
+        position: absolute;
+        bottom: -30px; right: 60px;
+        width: 100px; height: 100px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    .so-welcome h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; position: relative; }
+    .so-welcome p  { font-size: 14px; opacity: 0.85; position: relative; }
 
-    <x-dosen.navbar :labs="$labs" :user="$user" />
+    .so-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .so-section-title i { color: #d97706; font-size: 15px; }
 
-    <x-dosen.header>Dashboard</x-dosen.header>
+    .so-actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    @media (max-width: 768px) { .so-actions { grid-template-columns: 1fr; } }
 
-    <main>
-    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div class="section">
-    <h2>📋 Risk Assessment Terbaru</h2>
+    .so-action {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px 20px;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .so-action:hover {
+        border-color: var(--ac, #06b6d4);
+        box-shadow: 0 0 0 1px var(--ac, #06b6d4), 0 4px 16px rgba(0,0,0,0.05);
+        transform: translateY(-2px);
+    }
 
-    @if($riskAssessments->count())
-    <table>
-        <thead>
-            <tr>
-                <th>Judul</th>
-                <th>Mahasiswa</th>
-                <th>Lab</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($riskAssessments as $ra)
-            <tr>
-                <td>{{ $ra->topik_judul }}</td>
-                <td>{{ $ra->nama }}</td>
-                <td>{{ $ra->daftarLab->Nama_Laboratorium ?? '-' }}</td>
-                <td>
-                    @php
-                        $statusClass = match($ra->status) {
-                            'disetujui' => 'status-disetujui',
-                            'ditolak' => 'status-ditolak',
-                            default => 'status-menunggu'
-                        };
-                    @endphp
-                    <span class="status {{ $statusClass }}">
-                        {{ $ra->getStatusLabel() }}
-                    </span>
-                </td>
-                <td>
-                    <a href="{{ route('dosen.risk-assessment.show', $ra->id) }}"
-                       class="btn btn-primary">
-                        Lihat
-                    </a>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @else
-        <div class="empty-state">Belum ada Risk Assessment</div>
-    @endif
-</div>
+    .so-action-icon {
+        width: 50px; height: 50px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        margin-bottom: 14px;
+        transition: all 0.2s;
+    }
+    .so-action:hover .so-action-icon { color: #fff !important; }
 
-<div class="section">
-    <h2>📅 Peminjaman Ruangan</h2>
+    .so-action.act-cyan .so-action-icon    { background: #ecfeff; color: #0891b2; }
+    .so-action.act-cyan:hover .so-action-icon { background: #0891b2; }
+    .so-action.act-blue .so-action-icon    { background: #eff6ff; color: #2563eb; }
+    .so-action.act-blue:hover .so-action-icon { background: #2563eb; }
+    .so-action.act-amber .so-action-icon   { background: #fffbeb; color: #d97706; }
+    .so-action.act-amber:hover .so-action-icon { background: #d97706; }
 
-    @if($peminjamanRuangan->count())
-    <table>
-        <thead>
-            <tr>
-                <th>Tanggal</th>
-                <th>Waktu</th>
-                <th>Keperluan</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($peminjamanRuangan as $item)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</td>
-                <td>{{ $item->jam_mulai }} - {{ $item->jam_selesai }}</td>
-                <td>{{ $item->keperluan }}</td>
-                <td>
-                    <span class="status status-{{ $item->status }}">
-                        {{ ucfirst($item->status) }}
-                    </span>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @else
-        <div class="empty-state">Belum ada peminjaman ruangan</div>
-    @endif
-</div>
+    .so-action h4 { font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
+    .so-action p  { font-size: 12.5px; color: #6b7280; line-height: 1.5; }
 
-    <div class="section">
-    <h2>🔧 Peminjaman Alat</h2>
+    .so-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+    .so-card-head {
+        padding: 18px 24px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .so-card-head i { color: #6b7280; font-size: 15px; }
+    .so-card-head h3 { font-size: 15px; font-weight: 700; color: #1f2937; }
+    .so-card-body { padding: 0; }
 
-    @if($peminjamanAlat->count())
-    <table>
-        <thead>
-            <tr>
-                <th>Nama Alat</th>
-                <th>Tanggal Pinjam</th>
-                <th>Tanggal Kembali</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($peminjamanAlat as $item)
-            <tr>
-                <td>{{ $item->alatLab->nama_alat ?? '-' }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</td>
-                <td>
-                    {{ $item->tanggal_kembali
-                        ? \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y')
-                        : '-' }}
-                </td>
-                <td>
-                    <span class="status status-{{ $item->status }}">
-                        {{ ucfirst($item->status) }}
-                    </span>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @else
-        <div class="empty-state">Belum ada peminjaman alat</div>
-    @endif
-</div>
+    .so-empty {
+        text-align: center;
+        padding: 32px 20px;
+        color: #9ca3af;
+    }
+    .so-empty i { font-size: 36px; margin-bottom: 10px; display: block; opacity: 0.4; }
+    .so-empty p { font-size: 13px; }
 
+    .so-alert {
+        display: flex; align-items: center; gap: 10px;
+        padding: 12px 16px; border-radius: 10px;
+        margin-bottom: 20px; font-size: 13.5px; font-weight: 500;
+    }
+    .so-alert.success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+    .so-alert i { font-size: 16px; flex-shrink: 0; }
+</style>
+@endpush
+
+@section('content')
+<div class="so-page">
+
+    {{-- Alert --}}
+    @if(session('success'))
+    <div class="so-alert success">
+        <i class="fas fa-check-circle"></i>
+        {{ session('success') }}
     </div>
-  </main>
+    @endif
 
-  </div>
-  
+    {{-- Welcome Banner --}}
+    <div class="so-welcome">
+        <h2><i class="fas fa-chalkboard-teacher" style="margin-right:8px;opacity:0.7;"></i> Dashboard Dosen</h2>
+        <p>Kelola pengajuan, peminjaman, dan Risk Assessment mahasiswa Anda</p>
+    </div>
 
-  {{-- Pindahkan ke paling bawah, SETELAH konten --}}
-  {{-- Pindahkan semua skrip ke paling bawah, SEBELUM </body> --}}
-  
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+    {{-- Quick Actions --}}
+    <h3 class="so-section-title"><i class="fas fa-bolt"></i> Aksi Cepat</h3>
+    <div class="so-actions">
+        <a href="{{ route('dosen.risk-assessment.index') }}" class="so-action act-cyan" style="--ac:#0891b2;">
+            <div class="so-action-icon"><i class="fas fa-clipboard-check"></i></div>
+            <h4>Review Risk Assessment</h4>
+            <p>Tinjau RA mahasiswa bimbingan Anda</p>
+        </a>
+        <a href="{{ route('dosen.lab') }}" class="so-action act-blue" style="--ac:#2563eb;">
+            <div class="so-action-icon"><i class="fas fa-flask"></i></div>
+            <h4>Daftar Laboratorium</h4>
+            <p>Lihat dan pinjam ruangan atau alat lab</p>
+        </a>
+        <a href="{{ route('dosen.pengumuman.index') }}" class="so-action act-amber" style="--ac:#d97706;">
+            <div class="so-action-icon"><i class="fas fa-bullhorn"></i></div>
+            <h4>Kelola Pengumuman</h4>
+            <p>Buat dan kelola pengumuman</p>
+        </a>
+    </div>
 
-</body>
-</html>
+    {{-- Risk Assessment Terbaru --}}
+    <div class="so-card">
+        <div class="so-card-head">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>Risk Assessment Terbaru</h3>
+        </div>
+        <div class="so-card-body">
+            @if($riskAssessments->count())
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Judul</th>
+                            <th>Mahasiswa</th>
+                            <th>Lab</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($riskAssessments as $ra)
+                        <tr>
+                            <td>{{ $ra->topik_judul }}</td>
+                            <td>{{ $ra->nama }}</td>
+                            <td>{{ $ra->daftarLab->Nama_Laboratorium ?? '-' }}</td>
+                            <td>
+                                @php
+                                    $badgeClass = match($ra->status) {
+                                        'disetujui' => 'badge-success',
+                                        'ditolak' => 'badge-danger',
+                                        default => 'badge-warning'
+                                    };
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">
+                                    {{ $ra->getStatusLabel() }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ route('dosen.risk-assessment.show', $ra->id) }}" class="btn btn-primary btn-sm">
+                                    Lihat
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+                <div class="so-empty">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>Belum ada Risk Assessment</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Peminjaman Ruangan --}}
+    <div class="so-card">
+        <div class="so-card-head">
+            <i class="fas fa-door-open"></i>
+            <h3>Peminjaman Ruangan</h3>
+        </div>
+        <div class="so-card-body">
+            @if($peminjamanRuangan->count())
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Waktu</th>
+                            <th>Keperluan</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($peminjamanRuangan as $item)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</td>
+                            <td>{{ $item->jam_mulai }} - {{ $item->jam_selesai }}</td>
+                            <td>{{ $item->keperluan }}</td>
+                            <td>
+                                @php
+                                    $roomBadgeClass = match($item->status) {
+                                        'disetujui' => 'badge-success',
+                                        'disetujui_laboran', 'menunggu_kepala_lab' => 'badge-info',
+                                        'ditolak' => 'badge-danger',
+                                        'dikembalikan' => 'badge-secondary',
+                                        default => 'badge-warning'
+                                    };
+
+                                    $roomStatusLabel = match($item->status) {
+                                        'menunggu' => '⏳ Menunggu Laboran',
+                                        'disetujui_laboran', 'menunggu_kepala_lab' => '📋 Menunggu Kepala Lab',
+                                        'disetujui' => '✅ Disetujui',
+                                        'dikembalikan' => '📥 Dikembalikan',
+                                        'ditolak' => '❌ Ditolak',
+                                        default => ucfirst($item->status)
+                                    };
+                                @endphp
+                                <span class="badge {{ $roomBadgeClass }}">
+                                    {{ $roomStatusLabel }}
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+                <div class="so-empty">
+                    <i class="fas fa-door-open"></i>
+                    <p>Belum ada peminjaman ruangan</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Peminjaman Alat --}}
+    <div class="so-card">
+        <div class="so-card-head">
+            <i class="fas fa-tools"></i>
+            <h3>Peminjaman Alat</h3>
+        </div>
+        <div class="so-card-body">
+            @if($peminjamanAlat->count())
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nama Alat</th>
+                            <th>Tanggal Pinjam</th>
+                            <th>Tanggal Kembali</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($peminjamanAlat as $item)
+                        <tr>
+                            <td>{{ $item->alatLab->nama_alat ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</td>
+                            <td>
+                                {{ $item->tanggal_kembali
+                                    ? \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y')
+                                    : '-' }}
+                            </td>
+                            <td>
+                                @php
+                                    $alatBadgeClass = match($item->status) {
+                                        'disetujui' => 'badge-success',
+                                        'ditolak' => 'badge-danger',
+                                        'dikembalikan' => 'badge-secondary',
+                                        default => 'badge-warning'
+                                    };
+
+                                    $alatStatusLabel = match($item->status) {
+                                        'menunggu' => '⏳ Menunggu Laboran',
+                                        'disetujui' => '✅ Disetujui',
+                                        'dikembalikan' => '📥 Dikembalikan',
+                                        'ditolak' => '❌ Ditolak',
+                                        default => ucfirst($item->status)
+                                    };
+                                @endphp
+                                <span class="badge {{ $alatBadgeClass }}">
+                                    {{ $alatStatusLabel }}
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+                <div class="so-empty">
+                    <i class="fas fa-tools"></i>
+                    <p>Belum ada peminjaman alat</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+</div>
+@endsection

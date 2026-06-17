@@ -1,10 +1,11 @@
 <?php
+
 // app/Models/PendingRegistration.php
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class PendingRegistration extends Model
 {
@@ -13,14 +14,21 @@ class PendingRegistration extends Model
         'phone',
         'email',
         'password',
+        'role',
+        'nomor_identitas',
         'verification_token',
         'token_expires_at',
-        'is_verified'
+        'is_verified',
+        'parent_user_id',
+        'is_primary',
     ];
 
     protected $casts = [
         'token_expires_at' => 'datetime',
         'is_verified' => 'boolean',
+        'is_primary' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
@@ -36,6 +44,14 @@ class PendingRegistration extends Model
      */
     public function isTokenValid($token)
     {
-        return $this->verification_token === $token && !$this->isTokenExpired();
+        return $this->verification_token === $token && ! $this->isTokenExpired();
+    }
+
+    /**
+     * Check if token masih valid (tidak kadaluarsa dan belum diverifikasi)
+     */
+    public function isTokenValidAndNotVerified()
+    {
+        return ! $this->is_verified && $this->token_expires_at > now();
     }
 }

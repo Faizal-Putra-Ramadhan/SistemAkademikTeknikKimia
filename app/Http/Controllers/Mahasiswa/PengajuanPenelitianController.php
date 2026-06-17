@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
-use App\Models\PengajuanPenelitian;
 use App\Models\DaftarLab;
-use App\Models\DaftarUser; // atau User, tergantung model dosen kamu
+use App\Models\DaftarUser;
+use App\Models\PengajuanPenelitian; // atau User, tergantung model dosen kamu
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // INI YANG BENAR!
 
@@ -14,18 +14,18 @@ class PengajuanPenelitianController extends Controller
     public function create($id)
     {
         $lab = DaftarLab::findOrFail($id);
-        $labs = DaftarLab::all();
+        $labs = DaftarLab::penelitian()->get();
         $user = Auth::user();
 
-        // Ambil dosen dari tabel yang bener
-        $dosens = DaftarUser::where('Role_User', 'Dosen')
-                            ->orderBy('Nama')
-                            ->get();
-        
-                            $penelitians = PengajuanPenelitian::with('daftarLab')
-    ->where('user_nama', $user->Nama)
-    ->latest()
-    ->get();
+        // Ambil dosen (termasuk user yang punya role Dosen + role lain)
+        $dosens = DaftarUser::withDosenRole()
+            ->orderBy('Nama')
+            ->get();
+
+        $penelitians = PengajuanPenelitian::with('daftarLab')
+            ->where('user_nama', $user->Nama)
+            ->latest()
+            ->get();
 
         return view('mahasiswa.pengajuan-penelitian', compact('lab', 'dosens', 'user', 'labs', 'penelitians'));
     }
@@ -33,28 +33,27 @@ class PengajuanPenelitianController extends Controller
     public function store(Request $request, $id)
     {
         $request->validate([
-            'judul_penelitian'  => 'required|string|max:255',
-            'deskripsi'         => 'required|string',
-            'tanggal_mulai'     => 'required|date|after_or_equal:today',
-            'tanggal_selesai'   => 'required|date|after:tanggal_mulai',
-            'dosen_id'          => 'required|exists:daftar_users,id', // atau users, tergantung tabel
+            'judul_penelitian' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'tanggal_mulai' => 'required|date|after_or_equal:today',
+            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+            'dosen_id' => 'required|exists:daftar_users,id', // atau users, tergantung tabel
         ]);
 
-        $dosen = DaftarUser::where('id', $request->dosen_id)
-                           ->where('Role_User', 'Dosen')
-                           ->firstOrFail();
+        $dosen = DaftarUser::withDosenRole()
+            ->findOrFail($request->dosen_id);
 
         PengajuanPenelitian::create([
-            'user_id'          => Auth::id(),
-            'user_nama'        => Auth::user()->Nama ?? 'Mahasiswa',
-            'daftar_lab_id'    => $id,
+            'user_id' => Auth::id(),
+            'user_nama' => Auth::user()->Nama ?? 'Mahasiswa',
+            'daftar_lab_id' => $id,
             'judul_penelitian' => $request->judul_penelitian,
-            'deskripsi'        => $request->deskripsi,
-            'tanggal_mulai'    => $request->tanggal_mulai,
-            'tanggal_selesai'  => $request->tanggal_selesai,
+            'deskripsi' => $request->deskripsi,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
             'dosen_pembimbing' => $dosen->Nama,
-            'dosen_id'         => $request->dosen_id,
-            'status'           => 'menunggu',
+            'dosen_id' => $request->dosen_id,
+            'status' => 'menunggu',
         ]);
 
         return redirect()->route('mahasiswa.aktivitas', $id)

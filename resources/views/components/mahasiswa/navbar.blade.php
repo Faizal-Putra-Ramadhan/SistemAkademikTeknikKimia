@@ -1,17 +1,28 @@
+{{-- 
+    File: resources/views/components/mahasiswa/navbar.blade.php
+    FIX: Menambahkan null safety untuk $user dan $currentLab
+--}}
+
 @props(['labs', 'user'])
 
 @php
-    // Pastikan $labs adalah Collection
-    $labsCollection = collect($labs);
-
-    // Ambil lab pertama
+    use Illuminate\Support\Facades\Auth;
+    
+    // FIX: Pastikan $user tidak null
+    $currentUser = $user ?? Auth::user();
+    
+    // FIX: Handle $labs dengan aman
+    $labsCollection = collect($labs ?? []);
     $currentLab = $labsCollection->first();
 
-    // Jika ada parameter id di route, ambil lab sesuai id
     if (request()->route('id')) {
         $currentLab = $labsCollection->firstWhere('id', request()->route('id')) ?? $currentLab;
     }
+
+    // FIX: NULL SAFE untuk labId
+    $labId = $currentLab?->id ?? ($labsCollection->first()?->id ?? 1);
 @endphp
+
 
 <nav class="bg-gray-800/100">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -23,19 +34,23 @@
           <div class="hidden md:block">
             <div class="ml-10 flex items-baseline space-x-4">
               
-              <x-mahasiswa.nav-link href="{{ route('mahasiswa.dashboard', $currentLab->id) }}" 
+              {{-- FIX: Pastikan $labId tidak null --}}
+              <x-mahasiswa.nav-link href="{{ route('mahasiswa.dashboard', $labId) }}" 
               :active="request()->routeIs('mahasiswa.dashboard')">Dashboard</x-mahasiswa.nav-link>
 
-              <x-mahasiswa.nav-link href="{{ route('mahasiswa.pinjam-ruangan', $currentLab->id) }}"
+              <x-mahasiswa.nav-link href="{{ route('mahasiswa.pinjam-ruangan', $labId) }}"
               :active="request()->routeIs('mahasiswa.pinjam-ruangan')">Pinjam Ruangan</x-mahasiswa.nav-link>
 
-              <x-mahasiswa.nav-link href="{{ route('mahasiswa.pinjam-alat', $currentLab->id) }}"
+              <x-mahasiswa.nav-link href="{{ route('mahasiswa.pinjam-alat', $labId) }}"
               :active="request()->routeIs('mahasiswa.pinjam-alat')">Pinjam Alat</x-mahasiswa.nav-link>          
 
               <x-mahasiswa.nav-link href="{{ route('mahasiswa.risk-assessment.index') }}"
               :active="request()->routeIs('mahasiswa.risk-assessment.*')">Risk Assessment</x-mahasiswa.nav-link>
 
-              <x-mahasiswa.nav-link href="{{ route('mahasiswa.aktivitas', $currentLab->id) }}"
+              <x-mahasiswa.nav-link href="{{ route('mahasiswa.bebas-lab.index') }}"
+              :active="request()->routeIs('mahasiswa.bebas-lab.*')">Bebas Lab</x-mahasiswa.nav-link>
+
+              <x-mahasiswa.nav-link href="{{ route('mahasiswa.aktivitas', $labId) }}"
               :active="request()->routeIs('mahasiswa.aktivitas')">Lihat Aktivitas</x-mahasiswa.nav-link>
 
             </div>
@@ -43,15 +58,16 @@
         </div>
         <div class="hidden md:block">
           <div class="ml-4 flex items-center md:ml-6">
+            <!-- Role Switcher Component - HIDDEN untuk Mahasiswa -->
+            {{-- <x-role-switcher :user="$user" /> --}}
+
             <button type="button" class="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
-              <!-- <span class="absolute -inset-1.5"></span> -->
-              <!-- <span class="sr-only">View notifications</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6">
-                <path d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" stroke-linecap="round" stroke-linejoin="round" />
-              </svg> -->
+              <!-- Notifications placeholder -->
             </button>
 
-            <a href="{{ route('mahasiswa.profil', $currentLab->id) }}"
+            {{-- FIX: Tambahkan null check untuk $currentUser --}}
+            @if($currentUser)
+            <a href="{{ route('mahasiswa.profil', $labId) }}"
                class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/10 text-gray-200 hover:bg-white/20 transition">
 
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
@@ -72,11 +88,19 @@
               <button class="relative flex max-w-xs items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                 <span class="absolute -inset-1.5"></span>
                 <span class="sr-only">Open user menu</span>
-                <img src="{{ asset('uploads/profile/' . $user->foto) }}" alt="" class="size-8 rounded-full outline -outline-offset-1 outline-white/10" />
+                
+                {{-- FIX: Handle foto yang mungkin null --}}
+                @if($currentUser->foto && file_exists(public_path('uploads/profile/' . $currentUser->foto)))
+                    <img src="{{ asset('uploads/profile/' . $currentUser->foto) }}" alt="" class="size-8 rounded-full outline -outline-offset-1 outline-white/10" />
+                @else
+                    <div class="size-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold outline -outline-offset-1 outline-white/10">
+                        {{ substr($currentUser->Nama, 0, 1) }}
+                    </div>
+                @endif
               </button>
 
               <el-menu anchor="bottom end" popover class="w-48 origin-top-right rounded-md bg-gray-800 py-1 outline-1 -outline-offset-1 outline-white/10 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
-                <a href="{{ route('mahasiswa.profil', $currentLab->id) }}" class="block px-4 py-2 text-sm text-gray-300 focus:bg-white/5 focus:outline-hidden">Your profile</a>
+                <a href="{{ route('mahasiswa.profil', $labId) }}" class="block px-4 py-2 text-sm text-gray-300 focus:bg-white/5 focus:outline-hidden">Your profile</a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit"
@@ -86,6 +110,10 @@
                 </form>
               </el-menu>
             </el-dropdown>
+            @else
+            {{-- Fallback jika user null --}}
+            <a href="{{ route('login') }}" class="text-gray-300 hover:text-white px-3 py-2">Login</a>
+            @endif
           </div>
         </div>
         <div class="-mr-2 flex md:hidden">
@@ -107,43 +135,52 @@
     <el-disclosure id="mobile-menu" hidden class="block md:hidden">
       <div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
         
-        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.dashboard', $currentLab->id) }}" 
+        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.dashboard', $labId) }}" 
         :active="request()->routeIs('mahasiswa.dashboard')">Dashboard</x-mahasiswa.nav-link-mob>
 
-        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.pinjam-ruangan', $currentLab->id) }}" 
+        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.pinjam-ruangan', $labId) }}" 
         :active="request()->routeIs('mahasiswa.pinjam-ruangan')">Pinjam Ruangan</x-mahasiswa.nav-link-mob>
 
-        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.pinjam-alat', $currentLab->id) }}"
+        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.pinjam-alat', $labId) }}"
         :active="request()->routeIs('mahasiswa.pinjam-alat')">Pinjam Alat</x-mahasiswa.nav-link-mob>
-
-       
 
         <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.risk-assessment.index') }}" 
         :active="request()->routeIs('mahasiswa.risk-assessment.*')">Risk Assessment</x-mahasiswa.nav-link-mob>
 
-        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.aktivitas', $currentLab->id) }}" 
+        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.bebas-lab.index') }}" 
+        :active="request()->routeIs('mahasiswa.bebas-lab.*')">Bebas Lab</x-mahasiswa.nav-link-mob>
+
+        <x-mahasiswa.nav-link-mob href="{{ route('mahasiswa.aktivitas', $labId) }}" 
         :active="request()->routeIs('mahasiswa.aktivitas')">Lihat Aktivitas</x-mahasiswa.nav-link-mob>
           
       </div>
+      
+      {{-- FIX: Tambahkan null check untuk mobile menu --}}
+      @if($currentUser)
       <div class="border-t border-white/10 pt-4 pb-3">
         <div class="flex items-center px-5">
           <div class="shrink-0">
-            <img src="{{ asset('uploads/profile/' . $user->foto) }}" alt="" class="size-10 rounded-full outline -outline-offset-1 outline-white/10" />
+            {{-- FIX: Handle foto yang mungkin null --}}
+            @if($currentUser->foto && file_exists(public_path('uploads/profile/' . $currentUser->foto)))
+                <img src="{{ asset('uploads/profile/' . $currentUser->foto) }}" alt="" class="size-10 rounded-full outline -outline-offset-1 outline-white/10" />
+            @else
+                <div class="size-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold outline -outline-offset-1 outline-white/10">
+                    {{ substr($currentUser->Nama, 0, 1) }}
+                </div>
+            @endif
           </div>
           <div class="ml-3">
-            <div class="text-base/5 font-medium text-white">{{ $user->Nama }}</div>
-            <div class="text-sm font-medium text-gray-400">{{ $user->Email }}</div>
+            <div class="text-base/5 font-medium text-white">{{ $currentUser->Nama }}</div>
+            <div class="text-sm font-medium text-gray-400">{{ $currentUser->Email }}</div>
           </div>
           <button type="button" class="relative ml-auto shrink-0 rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
-            <!-- <span class="absolute -inset-1.5"></span> -->
-            <!-- <span class="sr-only">View notifications</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6">
-              <path d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" stroke-linecap="round" stroke-linejoin="round" />
-            </svg> -->
+            <!-- Notifications placeholder -->
           </button>
         </div>
         <div class="mt-3 space-y-1 px-2">
-          <a href="{{ route('mahasiswa.profil', $currentLab->id) }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-white/5 hover:text-white">Your profile</a>
+          {{-- Role Switcher Component - HIDDEN untuk Mahasiswa --}}
+          {{-- <x-role-switcher :user="$currentUser" /> --}}
+          <a href="{{ route('mahasiswa.profil', $labId) }}" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-white/5 hover:text-white">Your profile</a>
           <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit"
@@ -153,5 +190,6 @@
           </form>
         </div>
       </div>
+      @endif
     </el-disclosure>
   </nav>

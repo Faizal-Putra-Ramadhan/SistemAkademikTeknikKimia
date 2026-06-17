@@ -41,7 +41,7 @@ class PengumumanController extends Controller
             'ip_address'  => request()->ip(),
         ]);
 
-        return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil dibuat!');
+        return redirect()->route('admin.pengumuman.index')->with('success', 'Pengumuman berhasil dibuat!');
     }
 
     public function edit(Pengumuman $pengumuman)
@@ -66,7 +66,7 @@ class PengumumanController extends Controller
             'ip_address'  => request()->ip(),
         ]);
 
-        return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil diperbarui!');
+        return redirect()->route('admin.pengumuman.index')->with('success', 'Pengumuman berhasil diperbarui!');
     }
 
     public function destroy(Pengumuman $pengumuman)

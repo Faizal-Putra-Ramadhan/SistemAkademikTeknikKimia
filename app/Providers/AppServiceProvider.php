@@ -3,8 +3,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,8 +21,17 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(Schedule $schedule): void
     {
+        if (config('app.env') !== 'local' || str_contains(request()->getHost(), 'ngrok-free.app')) {
+            URL::forceScheme('https');
+        }
+        // Schedule the deadline reminder command to run daily at 08:00
+        $schedule->command('deadline:send-reminders')
+            ->dailyAt('08:00')
+            ->name('Send Deadline Reminders')
+            ->description('Send email reminders 7 days before deadline');
+
         // Blade directive untuk check role
         Blade::if('role', function ($role) {
             return auth()->check() && auth()->user()->Role_User === $role;
@@ -28,16 +39,16 @@ class AppServiceProvider extends ServiceProvider
 
         // Blade directive untuk check multiple roles
         Blade::if('hasAnyRole', function (...$roles) {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return false;
             }
-            
+
             foreach ($roles as $role) {
                 if (auth()->user()->Role_User === $role) {
                     return true;
                 }
             }
-            
+
             return false;
         });
 
@@ -53,8 +64,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Blade directive untuk Mahasiswa
         Blade::if('mahasiswa', function () {
-            return auth()->check() && 
-                   (auth()->user()->Role_User === 'Mahasiswa' || 
+            return auth()->check() &&
+                   (auth()->user()->Role_User === 'Mahasiswa' ||
                     auth()->user()->Role_User === 'mahasiswa');
         });
 
@@ -170,38 +181,44 @@ Tambahkan di app/helpers.php (jangan lupa autoload di composer.json)
 ==============================================================
 */
 
-if (!function_exists('current_user_role')) {
-    function current_user_role() {
+if (! function_exists('current_user_role')) {
+    function current_user_role()
+    {
         return auth()->check() ? auth()->user()->Role_User : null;
     }
 }
 
-if (!function_exists('is_role')) {
-    function is_role($role) {
+if (! function_exists('is_role')) {
+    function is_role($role)
+    {
         return auth()->check() && auth()->user()->Role_User === $role;
     }
 }
 
-if (!function_exists('is_laboran')) {
-    function is_laboran() {
+if (! function_exists('is_laboran')) {
+    function is_laboran()
+    {
         return is_role('Laboran');
     }
 }
 
-if (!function_exists('is_admin')) {
-    function is_admin() {
+if (! function_exists('is_admin')) {
+    function is_admin()
+    {
         return is_role('Admin');
     }
 }
 
-if (!function_exists('is_dosen')) {
-    function is_dosen() {
+if (! function_exists('is_dosen')) {
+    function is_dosen()
+    {
         return is_role('Dosen');
     }
 }
 
-if (!function_exists('is_mahasiswa')) {
-    function is_mahasiswa() {
+if (! function_exists('is_mahasiswa')) {
+    function is_mahasiswa()
+    {
         return is_role('Mahasiswa') || is_role('mahasiswa');
     }
 }

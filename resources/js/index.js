@@ -47,7 +47,7 @@ window.toggleRoleDropdown = function (event, dropdownId) {
 window.updateRole = function (userId, newRole, tableName) {
     if(confirm(`Apakah Anda yakin ingin mengubah role menjadi ${newRole}?`)) {
         // Kirim request AJAX untuk update role
-        fetch('/update-role', {
+        fetch('/admin/update-role', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

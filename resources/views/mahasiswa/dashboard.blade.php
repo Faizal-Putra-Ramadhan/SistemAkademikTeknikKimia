@@ -1,116 +1,216 @@
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-100">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-     @vite('resources/css/app.css')
-     @vite('resources/js/app.js')
+﻿@extends('layouts.app')
+@section('title', 'Dashboard Mahasiswa')
+@section('page-title', 'Dashboard')
 
-     <style>
-      .back-btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #6c757d;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-bottom: 1rem;
-        }
-      .pengumuman-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #667eea;
-        }
-        .pengumuman-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-        .pengumuman-header h2 {
-            color: #333;
-            margin: 0;
-        }
-        .pengumuman-date {
-            color: #999;
-            font-size: 0.85rem;
-        }
-        .pengumuman-author {
-            color: #667eea;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        .pengumuman-content {
-            color: #666;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
-        .empty-state {
-            background: white;
-            padding: 3rem;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        .empty-state p {
-            color: #666;
-            font-size: 1.1rem;
-        }
-     </style>
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .so-page { max-width: 1200px; margin: 0 auto; }
 
-</head>
-<body class="h-full">
+    .so-welcome {
+        background: linear-gradient(135deg, #4338ca 0%, #6366f1 60%, #818cf8 100%);
+        border-radius: 14px;
+        padding: 28px 32px;
+        color: #fff;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .so-welcome::after {
+        content: '';
+        position: absolute;
+        top: -50px; right: -30px;
+        width: 180px; height: 180px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 50%;
+    }
+    .so-welcome::before {
+        content: '';
+        position: absolute;
+        bottom: -30px; right: 60px;
+        width: 100px; height: 100px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    .so-welcome h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; position: relative; }
+    .so-welcome p  { font-size: 14px; opacity: 0.85; position: relative; }
 
+    .so-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .so-section-title i { color: #6366f1; font-size: 15px; }
 
-    <!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
-<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-<!--
-  This example requires updating your template:
+    .so-actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    @media (max-width: 768px) { .so-actions { grid-template-columns: 1fr; } }
 
-  ```
-  <html class="h-full bg-gray-900">
-  <body class="h-full">
-  ```
--->
-<div class="min-h-full">
-  <x-mahasiswa.navbar :labs="$labs" :user="$user"></x-mahasiswa.navbar>
+    .so-action {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px 20px;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .so-action:hover {
+        border-color: var(--ac, #6366f1);
+        box-shadow: 0 0 0 1px var(--ac, #6366f1), 0 4px 16px rgba(0,0,0,0.05);
+        transform: translateY(-2px);
+    }
 
-  <x-mahasiswa.header>Dashboard</x-mahasiswa.header>
-  <main>
-    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-       
+    .so-action-icon {
+        width: 50px; height: 50px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        margin-bottom: 14px;
+        transition: all 0.2s;
+    }
+    .so-action:hover .so-action-icon { color: #fff !important; }
 
-        @if($pengumuman->count() > 0)
-            @foreach($pengumuman as $item)
-            <div class="pengumuman-card">
-                <div class="pengumuman-header">
-                    <h2>{{ $item->judul }}</h2>
-                    <div class="pengumuman-date">
-                        {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}
-                    </div>
-                </div>
-                <div class="pengumuman-author">
-                    👤 {{ $item->author }}
-                </div>
-                <div class="pengumuman-content">
-                    {{ $item->isi }}
-                </div>
-            </div>
-            @endforeach
-        @else
-        <div class="empty-state">
-            <p>Belum ada pengumuman.</p>
-        </div>
-        @endif
+    .so-action.act-indigo .so-action-icon  { background: #eef2ff; color: #4f46e5; }
+    .so-action.act-indigo:hover .so-action-icon { background: #4f46e5; }
+    .so-action.act-blue .so-action-icon    { background: #eff6ff; color: #2563eb; }
+    .so-action.act-blue:hover .so-action-icon { background: #2563eb; }
+    .so-action.act-emerald .so-action-icon { background: #ecfdf5; color: #059669; }
+    .so-action.act-emerald:hover .so-action-icon { background: #059669; }
+    .so-action.act-amber .so-action-icon   { background: #fffbeb; color: #d97706; }
+    .so-action.act-amber:hover .so-action-icon { background: #d97706; }
+    .so-action.act-rose .so-action-icon    { background: #fff1f2; color: #e11d48; }
+    .so-action.act-rose:hover .so-action-icon { background: #e11d48; }
+    .so-action.act-teal .so-action-icon    { background: #f0fdfa; color: #0d9488; }
+    .so-action.act-teal:hover .so-action-icon { background: #0d9488; }
+
+    .so-action h4 { font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
+    .so-action p  { font-size: 12.5px; color: #6b7280; line-height: 1.5; }
+
+    .so-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+    .so-card-head {
+        padding: 18px 24px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .so-card-head i { color: #6b7280; font-size: 15px; }
+    .so-card-head h3 { font-size: 15px; font-weight: 700; color: #1f2937; }
+    .so-card-body { padding: 20px 24px; }
+
+    .pn-item {
+        padding: 16px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .pn-item:last-child { border-bottom: none; }
+    .pn-item-title { font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 6px; }
+    .pn-item-meta {
+        display: flex; align-items: center; gap: 14px;
+        font-size: 12.5px; color: #6b7280; margin-bottom: 8px;
+    }
+    .pn-item-meta i { font-size: 11px; color: #9ca3af; }
+    .pn-item-content {
+        font-size: 13.5px; color: #4b5563; line-height: 1.6;
+        display: -webkit-box; -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    .so-empty {
+        text-align: center;
+        padding: 32px 20px;
+        color: #9ca3af;
+    }
+    .so-empty i { font-size: 36px; margin-bottom: 10px; display: block; opacity: 0.4; }
+    .so-empty p { font-size: 13px; }
+
+    .so-alert {
+        display: flex; align-items: center; gap: 10px;
+        padding: 12px 16px; border-radius: 10px;
+        margin-bottom: 20px; font-size: 13.5px; font-weight: 500;
+    }
+    .so-alert.success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+    .so-alert i { font-size: 16px; flex-shrink: 0; }
+</style>
+@endpush
+
+@section('content')
+<div class="so-page">
+
+    {{-- Alert --}}
+    @if(session('success'))
+    <div class="so-alert success">
+        <i class="fas fa-check-circle"></i>
+        {{ session('success') }}
     </div>
-  </main>
+    @endif
+
+    {{-- Welcome Banner --}}
+    <div class="so-welcome">
+        <h2><i class="fas fa-graduation-cap" style="margin-right:8px;opacity:0.7;"></i> Dashboard Mahasiswa</h2>
+        <p>Selamat datang! Kelola kegiatan laboratorium Anda dari sini</p>
+    </div>
+
+    {{-- Quick Actions --}}
+    <h3 class="so-section-title"><i class="fas fa-bolt"></i> Aksi Cepat</h3>
+    <div class="so-actions">
+        <a href="{{ route('mahasiswa.dashboard') }}" class="so-action act-indigo" style="--ac:#4f46e5;">
+            <div class="so-action-icon"><i class="fas fa-flask"></i></div>
+            <h4>Daftar Laboratorium</h4>
+            <p>Lihat laboratorium yang tersedia</p>
+        </a>
+        <a href="{{ route('mahasiswa.risk-assessment.index') }}" class="so-action act-emerald" style="--ac:#059669;">
+            <div class="so-action-icon"><i class="fas fa-clipboard-check"></i></div>
+            <h4>Risk Assessment</h4>
+            <p>Buat dan kelola Risk Assessment Anda</p>
+        </a>
+        <a href="{{ route('mahasiswa.bebas-lab.index') }}" class="so-action act-rose" style="--ac:#e11d48;">
+            <div class="so-action-icon"><i class="fas fa-file-circle-check"></i></div>
+            <h4>Bebas Lab</h4>
+            <p>Ajukan surat bebas laboratorium</p>
+        </a>
+    </div>
+
+    {{-- Pengumuman --}}
+    <div class="so-card">
+        <div class="so-card-head">
+            <i class="fas fa-bullhorn"></i>
+            <h3>Pengumuman Terbaru</h3>
+        </div>
+        <div class="so-card-body">
+            @forelse($pengumuman as $item)
+            <div class="pn-item">
+                <div class="pn-item-title">{{ $item->judul }}</div>
+                <div class="pn-item-meta">
+                    <span><i class="fas fa-user"></i> {{ $item->author }}</span>
+                    <span><i class="fas fa-calendar"></i> {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</span>
+                </div>
+                <div class="pn-item-content">{{ $item->isi }}</div>
+            </div>
+            @empty
+            <div class="so-empty">
+                <i class="fas fa-bullhorn"></i>
+                <p>Belum ada pengumuman</p>
+            </div>
+            @endforelse
+        </div>
+    </div>
+
 </div>
-
-
-
-</body>
-</html>
+@endsection

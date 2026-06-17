@@ -1,211 +1,198 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Registrasi - Teknik UAD</title>
-    @vite('resources/css/style.css')
-    @vite('resources/js/index.js')
-</head>
-<body>
-    
-    <x-header></x-header>
-    <div class="container">
-        <x-sidebar></x-sidebar>
-        <div class="main-content" id="mainContent">
-            
-            <div class="page-header">
-                <h1 class="page-title">Registrasi User Baru</h1>
-                <p class="page-subtitle">Daftarkan user baru untuk sistem laboratorium. User ID akan di-generate otomatis.</p>
-            </div>
+@extends('layouts.app')
 
-            <!-- Alert Success/Error -->
-            @if(session('success'))
-            <div class="alert alert-success">
-                <svg class="alert-icon" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                {{ session('success') }}
-            </div>
-            @endif
+@section('title', 'Registrasi User')
+@section('page-title', 'Registrasi User Baru')
 
-            @if(session('error'))
-            <div class="alert alert-error">
-                <svg class="alert-icon" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                </svg>
-                {{ session('error') }}
-            </div>
-            @endif
+@push('styles')
+<style>
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .form-group .required { color: #dc2626; }
+    .form-group .error-msg { color: #dc2626; font-size: 12px; margin-top: 4px; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+    .password-wrapper { position: relative; }
+    .password-wrapper .form-control { padding-right: 40px; }
+    .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px; }
+    .toggle-password:hover { color: #374151; }
+    .info-list { margin: 6px 0 0 18px; font-size: 13px; color: #374151; }
+    .info-list li { margin-bottom: 3px; }
+    .link-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+    .link-hint { font-size: 12px; color: #6b7280; margin-top: 4px; }
+</style>
+@endpush
 
-            <!-- Info Box -->
-            <div class="info-box">
-                <svg class="info-icon" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                <div>
-                    <strong>Informasi:</strong>
-                    <p>User ID akan di-generate otomatis oleh sistem berdasarkan role yang dipilih.</p>
-                    <ul>
-                        <li><strong>Admin:</strong> ADM-XXXXXXXXXX</li>
-                        <li><strong>Dosen:</strong> DSN-XXXXXXXXXX</li>
-                        <li><strong>Tendik:</strong> TDK-XXXXXXXXXX</li>
-                        <li><strong>Mahasiswa:</strong> MHS-XXXXXXXXXX</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Form Registrasi -->
-            <div class="section">
-                <form action="{{ route('admin.tambah-user.store') }}" method="POST" class="registration-form">
-                    @csrf
-                    
-                    <div class="form-grid">
-                        <!-- Nama Lengkap -->
-                        <div class="form-group">
-                            <label for="nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
-                            <input 
-                                type="text" 
-                                id="nama" 
-                                name="nama" 
-                                class="form-input @error('nama') error @enderror" 
-                                value="{{ old('nama') }}"
-                                placeholder="Masukkan nama lengkap"
-                                required
-                            >
-                            @error('nama')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Email -->
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email <span class="required">*</span></label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                class="form-input @error('email') error @enderror" 
-                                value="{{ old('email') }}"
-                                placeholder="contoh@email.com"
-                                required
-                            >
-                            @error('email')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="form-group">
-                            <label for="Phone" class="form-label">Nomor Telepon <span class="required">*</span></label>
-                            <input 
-                                type="tel" 
-                                id="Phone" 
-                                name="Phone" 
-                                class="form-input @error('Phone') error @enderror" 
-                                value="{{ old('Phone') }}"
-                                placeholder="08123456789"
-                                required
-                            >
-                            @error('Phone')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Role -->
-                        <div class="form-group">
-                            <label for="role" class="form-label">Role User <span class="required">*</span></label>
-                            <select 
-                                id="role" 
-                                name="role" 
-                                class="form-input @error('role') error @enderror"
-                                required
-                            >
-                                <option value="">Pilih Role</option>
-                                <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>⚙️ Admin</option>
-                                <option value="Dosen" {{ old('role') == 'Dosen' ? 'selected' : '' }}>👨‍🏫 Dosen</option>
-                                <option value="Safety Officer" {{ old('role') == 'Safety Officer' ? 'selected' : '' }}>👤 Safety Officer</option>
-                                <option value="Kepala Laboratorium" {{ old('role') == 'Kepala Laboratorium' ? 'selected' : '' }}>👤 Kepala Laboratorium</option>
-                                <option value="Mahasiswa" {{ old('role') == 'Mahasiswa' ? 'selected' : '' }}>🎓 Mahasiswa</option>
-                                <option value="Laboran" {{ old('role') == 'Laboran' ? 'selected' : '' }}>🎓 Laboran</option>
-                            </select>
-                            @error('role')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Password -->
-                        <div class="form-group">
-                            <label for="password" class="form-label">Password <span class="required">*</span></label>
-                            <div class="password-wrapper">
-                                <input 
-                                    type="password" 
-                                    id="password" 
-                                    name="password" 
-                                    class="form-input @error('password') error @enderror" 
-                                    placeholder="Minimal 6 karakter"
-                                    required
-                                >
-                                <button type="button" class="toggle-password" onclick="togglePassword('password')">
-                                    👁️
-                                </button>
-                            </div>
-                            @error('password')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Konfirmasi Password -->
-                        <div class="form-group">
-                            <label for="password_confirmation" class="form-label">Konfirmasi Password <span class="required">*</span></label>
-                            <div class="password-wrapper">
-                                <input 
-                                    type="password" 
-                                    id="password_confirmation" 
-                                    name="password_confirmation" 
-                                    class="form-input" 
-                                    placeholder="Ulangi password"
-                                    required
-                                >
-                                <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation')">
-                                    👁️
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="form-actions">
-                        <button type="reset" class="btn btn-secondary">
-                            <svg class="btn-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
-                            </svg>
-                            Reset
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <svg class="btn-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
-                            </svg>
-                            Daftarkan User
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-        </div>
+@section('content')
+    <!-- Info Box -->
+    <div class="alert-box info">
+        <strong>Informasi:</strong> User ID akan di-generate otomatis berdasarkan role yang dipilih.
+        <ul class="info-list">
+            <li><strong>Admin:</strong> ADM-XXXXXXXXXX</li>
+            <li><strong>Dosen:</strong> DSN-XXXXXXXXXX</li>
+            <li><strong>Tendik:</strong> TDK-XXXXXXXXXX</li>
+            <li><strong>Mahasiswa:</strong> MHS-XXXXXXXXXX</li>
+            <li><strong>Peneliti Eksternal:</strong> PEX-XXXXXXXXXX</li>
+        </ul>
     </div>
 
-    <script>
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
-            } else {
-                input.type = 'password';
+    <div class="card">
+        <div class="card-header">
+            <h3>Registrasi User Baru</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.tambah-user.store') }}" method="POST">
+                @csrf
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
+                        <input type="text" id="nama" name="nama" class="form-control" value="{{ old('nama') }}" placeholder="Masukkan nama lengkap" required>
+                        @error('nama') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="contoh@email.com" required>
+                        @error('email') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Phone" class="form-label">Nomor Telepon <span class="required">*</span></label>
+                        <input type="tel" id="Phone" name="Phone" class="form-control" value="{{ old('Phone') }}" placeholder="08123456789" required>
+                        @error('Phone') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Roles <span class="required">*</span></label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 8px;">
+                            @foreach($roles as $role)
+                                @php
+                                    $oldRoles = old('roles', []);
+                                    $isChecked = in_array($role->name, $oldRoles);
+                                    $isPrimary = old('primary_role', $oldRoles[0] ?? '') == $role->name;
+                                @endphp
+                                <label style="display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; background: {{ $isChecked ? '#f0f9ff' : '#fff' }};">
+                                    <input type="checkbox" name="roles[]" value="{{ $role->name }}" {{ $isChecked ? 'checked' : '' }} style="width: 18px; height: 18px; cursor: pointer;" onchange="updatePrimaryRoleOptions()">
+                                    <span style="flex: 1; font-weight: {{ $isPrimary ? '600' : '400' }};">{{ $role->display_name ?? $role->name }}</span>
+                                    @if($isChecked)
+                                        <input type="radio" name="primary_role" value="{{ $role->name }}" {{ $isPrimary ? 'checked' : '' }} style="width: 16px; height: 16px; cursor: pointer;" title="Set as primary role">
+                                    @endif
+                                </label>
+                            @endforeach
+                        </div>
+                        <small style="display: block; margin-top: 8px; color: #6b7280;">Pilih satu atau lebih role. Centang radio button untuk set primary role.</small>
+                        @error('roles') <span class="error-msg">{{ $message }}</span> @enderror
+                        @error('roles.*') <span class="error-msg">{{ $message }}</span> @enderror
+                        @error('primary_role') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <!-- Account Linking -->
+                <!-- <div class="link-section">
+                    <div class="form-group">
+                        <label for="link_to_parent" class="form-label">Account Linking (Opsional)</label>
+                        <select name="link_to_parent" id="link_to_parent" class="form-control">
+                            <option value="">-- Tidak di-link (Buat sebagai Primary Account) --</option>
+                            @foreach($potentialParents as $parent)
+                                <option value="{{ $parent->id }}" {{ old('link_to_parent') == $parent->id ? 'selected' : '' }}>
+                                    {{ $parent->Nama }} ({{ $parent->Role_User }}) - {{ $parent->Email }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="link-hint">Jika di-link, user ini akan bisa switch antar role dengan parent account</p>
+                    </div>
+                </div> -->
+
+                <div class="form-grid" style="margin-top: 16px;">
+                    <div class="form-group" id="nomor-identitas-group">
+                        <label for="nomor_identitas" class="form-label"><span id="label-identitas">Nomor Identitas</span> <span class="required">*</span></label>
+                        <input type="text" id="nomor_identitas" name="nomor_identitas" class="form-control" value="{{ old('nomor_identitas') }}" placeholder="Masukkan nomor identitas">
+                        @error('nomor_identitas') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Minimal 6 karakter" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </button>
+                        </div>
+                        @error('password') <span class="error-msg">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password_confirmation" class="form-label">Konfirmasi Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Ulangi password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation')">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-outline btn-sm">Reset</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Daftarkan User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+<script>
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function updatePrimaryRoleOptions() {
+        // Get all checked checkboxes
+        const checkedBoxes = document.querySelectorAll('input[name="roles[]"]:checked');
+        const labels = document.querySelectorAll('label[for*="role"]');
+        
+        // Hide/show radio buttons based on checkbox state
+        checkedBoxes.forEach((checkbox) => {
+            const label = checkbox.closest('label');
+            const radio = label.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.style.display = 'block';
+            }
+        });
+        
+        // Hide radio buttons for unchecked roles
+        document.querySelectorAll('input[name="roles[]"]').forEach((checkbox) => {
+            if (!checkbox.checked) {
+                const label = checkbox.closest('label');
+                const radio = label.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.style.display = 'none';
+                    radio.checked = false;
+                }
+            }
+        });
+        
+        // If no primary role is selected and there are checked roles, select first one
+        const checkedRoles = Array.from(checkedBoxes);
+        const primaryRadios = document.querySelectorAll('input[name="primary_role"]:checked');
+        if (checkedRoles.length > 0 && primaryRadios.length === 0) {
+            const firstChecked = checkedRoles[0];
+            const firstLabel = firstChecked.closest('label');
+            const firstRadio = firstLabel.querySelector('input[type="radio"]');
+            if (firstRadio) {
+                firstRadio.checked = true;
             }
         }
-    </script>
+    }
     
-</body>
-</html>
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePrimaryRoleOptions();
+        
+        // Add event listeners to all checkboxes
+        document.querySelectorAll('input[name="roles[]"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', updatePrimaryRoleOptions);
+        });
+    });
+</script>
+@endpush

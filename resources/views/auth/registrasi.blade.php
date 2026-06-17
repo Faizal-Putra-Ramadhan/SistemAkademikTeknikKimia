@@ -96,6 +96,25 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            padding: 4px;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: #4b5563;
+        }
+
         .error {
             color: #ef4444;
             font-size: 12px;
@@ -452,7 +471,14 @@
                             name="password" 
                             placeholder="Minimal 8 karakter"
                             required
+                            style="padding-right: 40px;"
                         >
+                        <button type="button" class="toggle-password" data-target="password" title="Lihat/Sembunyi Password">
+                            <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
                     @error('password')
                         <div class="error">{{ $message }}</div>
@@ -468,7 +494,14 @@
                             name="password_confirmation" 
                             placeholder="Ulangi password"
                             required
+                            style="padding-right: 40px;"
                         >
+                        <button type="button" class="toggle-password" data-target="password_confirmation" title="Lihat/Sembunyi Password">
+                            <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
@@ -571,15 +604,15 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number">150+</div>
+                    <div class="stat-number">{{ $stats['mahasiswa'] }}{{ $stats['mahasiswa'] >= 100 ? '+' : '' }}</div>
                     <div class="stat-label">Mahasiswa Aktif</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">12</div>
-                    <div class="stat-label">Praktikum</div>
+                    <div class="stat-number">{{ $stats['alat_lab'] }}</div>
+                    <div class="stat-label">Alat Lab</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">5</div>
+                    <div class="stat-number">{{ $stats['lab_aktif'] }}</div>
                     <div class="stat-label">Lab Aktif</div>
                 </div>
                 <div class="stat-card">
@@ -589,5 +622,31 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButtons = document.querySelectorAll('.toggle-password');
+            
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    const icon = this.querySelector('.eye-icon');
+                    
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.innerHTML = `
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.04m5.882-5.882A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.059 10.059 0 01-4.012 4.904m-4.904-4.904a3 3 0 11-4.243-4.243M3 3l18 18" />
+                        `;
+                    } else {
+                        input.type = 'password';
+                        icon.innerHTML = `
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        `;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

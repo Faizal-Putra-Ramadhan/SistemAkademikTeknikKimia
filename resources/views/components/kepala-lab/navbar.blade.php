@@ -30,6 +30,11 @@
               <x-dosen.nav-link href="{{ route('kepala-lab.risk-assessment.report', $currentLab->id) }}" 
               :active="request()->routeIs('kepala-lab.risk-assessment.report')">Laporan RA</x-dosen.nav-link>  
 
+              @if($labs && $labs->count() > 0)
+              <x-dosen.nav-link href="{{ route('kepala-lab.peminjaman-ruangan.index') }}" 
+              :active="request()->routeIs('kepala-lab.peminjaman-ruangan.*')">Peminjaman Ruangan</x-dosen.nav-link>
+              @endif
+
               <x-dosen.nav-link href="{{ route('kepala-lab.pengumuman.index', $currentLab->id) }}" 
               :active="request()->routeIs('kepala-lab.pengumuman.index')">Kelola Pengumuman</x-dosen.nav-link>              
            
@@ -38,6 +43,7 @@
         </div>
         <div class="hidden md:block">
           <div class="ml-4 flex items-center md:ml-6">
+            <x-role-switcher :user="$user" />
             <button type="button" class="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
               <span class="absolute -inset-1.5"></span>
               <span class="sr-only">View notifications</span>
@@ -55,7 +61,7 @@
               </button>
 
               <el-menu anchor="bottom end" popover class="w-48 origin-top-right rounded-md bg-gray-800 py-1 outline-1 -outline-offset-1 outline-white/10 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
-                <a href="{{ route('dosen.profil', $currentLab->id) }}" class="block px-4 py-2 text-sm text-gray-300 focus:bg-white/5 focus:outline-hidden">Your profile</a>
+                <a href="{{ route('kepala-lab.profil') }}" class="block px-4 py-2 text-sm text-gray-300 focus:bg-white/5 focus:outline-hidden">Your profile</a>
                 <a href="#" class="block px-4 py-2 text-sm text-gray-300 focus:bg-white/5 focus:outline-hidden">Settings</a>
                 <form action="{{ route('logout') }}" method="POST">
     @csrf
@@ -103,6 +109,11 @@
 
         <x-dosen.nav-link-mob href="{{ route('kepala-lab.risk-assessment.report', $currentLab->id) }}" 
         :active="request()->routeIs('kepala-lab.risk-assessment.report')">Laporan RA</x-dosen.nav-link-mob>
+
+        @if($labs && $labs->count() > 0)
+        <x-dosen.nav-link-mob href="{{ route('kepala-lab.peminjaman-ruangan.index') }}" 
+        :active="request()->routeIs('kepala-lab.peminjaman-ruangan.*')">Peminjaman Ruangan</x-dosen.nav-link-mob>
+        @endif
 
         <x-dosen.nav-link-mob href="{{ route('kepala-lab.pengumuman.index', $currentLab->id) }}" 
         :active="request()->routeIs('kepala-lab.pengumuman.index')">Kelola Pengumuman</x-dosen.nav-link-mob>

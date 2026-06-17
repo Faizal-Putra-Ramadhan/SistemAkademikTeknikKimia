@@ -3,450 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LAB TEKIM UAD</title>
+    <title>Login - Lab Tekkim UAD</title>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #a8d8ea 0%,  #F5F7FC 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-        .main-container {
+        .login-container {
             display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 30px;
-            max-width: 1200px;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+            max-width: 1100px;
             width: 100%;
         }
 
-        .login-section {
-            background: white;
-            padding: 40px;
+        /* Login Card */
+        .login-card {
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 40px 36px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
         }
 
-        .logo-container {
+        .brand {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
 
-        .logo-container img {
+        .brand img {
             width: 80px;
             height: 80px;
-            margin-bottom: 15px;
+            object-fit: contain;
+            margin-bottom: 12px;
         }
 
-        .logo-container h3 {
-            color: #333;
+        .brand h2 {
             font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-weight: 700;
+            color: #1a1d29;
+            margin-bottom: 4px;
         }
 
-        .logo-container p {
-            color: #0066cc;
-            font-size: 14px;
+        .brand p {
+            font-size: 13px;
+            color: #0d6efd;
             font-weight: 500;
         }
 
-        .logo-container .subtitle {
-            color: #666;
+        .brand .sub {
+            color: #6b7280;
             font-size: 12px;
-            margin-top: 5px;
+            margin-top: 4px;
+            font-weight: 400;
         }
 
+        /* Form */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 6px;
+            font-size: 13px;
             font-weight: 500;
-            font-size: 14px;
+            color: #374151;
         }
 
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper input {
+        .input-field {
             width: 100%;
-            padding: 12px 40px 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            color: #1f2937;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fff;
         }
 
-        .input-wrapper input:focus {
+        .input-field:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13,110,253,0.1);
         }
 
-        .input-wrapper .icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
+        .input-field::placeholder {
+            color: #9ca3af;
         }
 
-        .forgot-password {
+        .form-link {
             text-align: right;
             margin-bottom: 20px;
         }
 
-        .forgot-password a {
-            color: #667eea;
+        .form-link a {
+            color: #0d6efd;
             text-decoration: none;
             font-size: 13px;
+            font-weight: 500;
+        }
+
+        .form-link a:hover {
+            text-decoration: underline;
         }
 
         .btn-login {
             width: 100%;
-            padding: 14px;
-            background: #667eea;
-            color: white;
+            padding: 12px;
+            background: #0d6efd;
+            color: #fff;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s;
         }
 
         .btn-login:hover {
-            background: #5568d3;
+            background: #0b5ed7;
         }
 
-        .register-link {
+        .register-text {
             text-align: center;
             margin-top: 20px;
-            color: #666;
-            font-size: 14px;
+            font-size: 13px;
+            color: #6b7280;
         }
 
-        .register-link a {
-            color: #667eea;
+        .register-text a {
+            color: #0d6efd;
             text-decoration: none;
             font-weight: 600;
         }
 
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            background: #fee;
-            color: #c33;
-            font-size: 14px;
-            border-left: 4px solid #c33;
+        .register-text a:hover {
+            text-decoration: underline;
         }
 
-        .error {
-            color: #c33;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        /* Announcement Section */
-        .announcement-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .announcement-header {
-            margin-bottom: 25px;
-        }
-
-        .announcement-header h2 {
-            color: #333;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .announcement-header p {
-            color: #666;
-            font-size: 13px;
-        }
-
-        .announcement-card {
-            background: #f8f9fa;
+        .alert-error {
+            padding: 10px 14px;
+            margin-bottom: 18px;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #667eea;
+            background: #fee2e2;
+            color: #991b1b;
+            font-size: 13px;
+            border: 1px solid #fecaca;
         }
 
-        .announcement-card.bahasa {
-            border-left-color: #4299e1;
+        .field-error {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
         }
 
-        .announcement-card.pengumuman {
-            border-left-color: #ed8936;
+        .captcha-box {
+            margin-bottom: 18px;
         }
 
-        .announcement-card.pendaftaran {
-            border-left-color: #48bb78;
+        .captcha-box .g-recaptcha {
+            transform: scale(0.95);
+            transform-origin: left top;
         }
 
-        .announcement-badge {
+        .captcha-note {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+
+        .toggle-password:hover {
+            color: #1f2937;
+        }
+
+        /* Announcement Card */
+        .announcement-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+            max-height: 580px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .announcement-card::-webkit-scrollbar { width: 5px; }
+        .announcement-card::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+        .ann-header {
+            margin-bottom: 20px;
+        }
+
+        .ann-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1d29;
+            margin-bottom: 4px;
+        }
+
+        .ann-header p {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .ann-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #0d6efd;
+        }
+
+        .ann-item .ann-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 12px;
             font-size: 11px;
             font-weight: 600;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .badge-bahasa {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-
-        .badge-pengumuman {
-            background: #fbd38d;
-            color: #7c2d12;
-        }
-
-        .badge-pendaftaran {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-
-        .announcement-card h3 {
-            color: #333;
-            font-size: 16px;
             margin-bottom: 8px;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .ann-item h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 6px;
             line-height: 1.4;
         }
 
-        .announcement-card p {
-            color: #666;
+        .ann-item p {
             font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 12px;
+            color: #6b7280;
+            line-height: 1.5;
+            margin-bottom: 10px;
         }
 
-        .announcement-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .announcement-date {
-            color: #999;
+        .ann-date {
             font-size: 12px;
+            color: #9ca3af;
         }
 
-        .btn-detail {
-            background: none;
-            border: 1px solid #667eea;
-            color: #667eea;
-            padding: 6px 16px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-detail:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Stats Section */
-        .stats-section {
+        /* Stats */
+        .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 16px;
         }
 
-        .stat-card {
-            background: #f8f9fa;
-            padding: 15px;
+        .stat-box {
+            background: #f0f2f5;
             border-radius: 8px;
+            padding: 14px 10px;
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 24px;
+        .stat-box .num {
+            font-size: 22px;
             font-weight: 700;
-            color: #667eea;
-            margin-bottom: 5px;
+            color: #0d6efd;
         }
 
-        .stat-label {
-            color: #666;
-            font-size: 12px;
+        .stat-box .lbl {
+            font-size: 11px;
+            color: #6b7280;
             font-weight: 500;
+            margin-top: 2px;
         }
 
         /* Responsive */
-        @media (max-width: 968px) {
-            .main-container {
+        @media (max-width: 768px) {
+            .login-container {
                 grid-template-columns: 1fr;
             }
 
-            .stats-section {
+            .stats-row {
                 grid-template-columns: repeat(2, 1fr);
             }
-        }
-
-        /* Scrollbar */
-        .announcement-section::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .announcement-section::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .announcement-section::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-
-        .announcement-section::-webkit-scrollbar-thumb:hover {
-            background: #555;
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Login Section -->
-        <div class="login-section">
-            <div class="logo-container">
-                <img src="{{ asset('logo/Logo-UAD-Berwarna.png') }}"
-     alt="Logo UAD"
-     style="
-        width: 110px;
-        height: 110px;
-        object-fit: contain;
-        object-position: center;
-        display: block;
-        margin: 0 auto;
-     ">
-
-                <h3>Teknik Kimia</h3>
-                <p>Selamat Datang di LAB TEKIM UAD</p>
-                <p class="subtitle">Portal informasi laboratorium untuk civitas akademika Teknik Kimia</p>
+    <div class="login-container">
+        <!-- Login Card -->
+        <div class="login-card">
+            <div class="brand">
+                <img src="{{ asset('logo/Logo-UAD-Berwarna.png') }}" alt="Logo UAD">
+                <h2>Teknik Kimia</h2>
+                <p>Selamat Datang di Lab Tekkim UAD</p>
+                <p class="sub">Portal informasi laboratorium untuk civitas akademika</p>
             </div>
 
             @if ($errors->any())
-                <div class="alert">
+                <div class="alert-error">
                     {{ $errors->first() }}
                 </div>
             @endif
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf
-                
+
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <div class="input-wrapper">
-                        <input type="email" id="email" name="email" placeholder="Masukkan Email" value="{{ old('email') }}" required autofocus>
-                        <span class="icon">📧</span>
-                    </div>
+                    <input type="email" id="email" name="email" class="input-field" placeholder="Masukkan email" value="{{ old('email') }}" required autofocus>
                     @error('email')
-                        <div class="error">{{ $message }}</div>
+                        <div class="field-error">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <div class="input-wrapper">
-                        <input type="password" id="password" name="password" placeholder="Masukkan Password" required>
-                        <span class="icon">🔒</span>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" class="input-field" placeholder="Masukkan password" required style="padding-right: 40px;">
+                        <button type="button" id="togglePassword" class="toggle-password" title="Lihat/Sembunyi Password">
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
                     @error('password')
-                        <div class="error">{{ $message }}</div>
+                        <div class="field-error">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="forgot-password">
+                <div class="form-link">
                     <a href="{{ route('password.request') }}">Lupa Password?</a>
                 </div>
+
+               
 
                 <button type="submit" class="btn-login">Masuk</button>
             </form>
 
-            <div class="register-link">
-                Belum Punya Akun? <a href="{{ route('registrasi') }}">Daftar di sini</a>
+            <div class="register-text">
+                Belum punya akun? <a href="{{ route('registrasi') }}">Daftar di sini</a>
             </div>
         </div>
 
-        <!-- Announcement Section -->
-        <div class="announcement-section">
-            <div class="announcement-header">
+        <!-- Announcement Card -->
+        <div class="announcement-card">
+            <div class="ann-header">
                 <h2>Informasi & Pengumuman</h2>
-                <p>Pengumuman resmi dari Laboratorium TEKIM UAD</p>
+                <p>Pengumuman resmi dari Laboratorium Tekkim UAD</p>
             </div>
 
             @forelse($pengumuman ?? [] as $item)
-                <div class="announcement-card {{ strtolower($item->status ?? 'pengumuman') }}">
-                    <span class="announcement-badge badge-{{ strtolower($item->status ?? 'pengumuman') }}">
-                        {{ $item->status ?? 'Pengumuman' }}
-                    </span>
+                <div class="ann-item">
+                    <span class="ann-badge">{{ $item->status ?? 'Pengumuman' }}</span>
                     <h3>{{ $item->judul }}</h3>
                     <p>{{ Str::limit($item->isi, 150) }}</p>
-                    <div class="announcement-meta">
-                        <span class="announcement-date">
-                            {{ \Carbon\Carbon::parse($item->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
-                        </span>
-                        <!-- <button class="btn-detail" onclick="alert('{{ addslashes($item->isi) }}')">Detail →</button> -->
-                    </div>
+                    <span class="ann-date">
+                        {{ \Carbon\Carbon::parse($item->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                    </span>
                 </div>
             @empty
-                <div class="announcement-card">
-                    <span class="announcement-badge badge-pengumuman">Pengumuman</span>
+                <div class="ann-item">
+                    <span class="ann-badge">Pengumuman</span>
                     <h3>Belum ada pengumuman</h3>
                     <p>Saat ini belum ada pengumuman terbaru dari laboratorium.</p>
                 </div>
             @endforelse
 
-            <!-- Stats Section -->
-            <div class="stats-section">
-                <div class="stat-card">
-                    <div class="stat-number">150+</div>
-                    <div class="stat-label">Mahasiswa</div>
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="num">{{ $stats['mahasiswa'] }}{{ $stats['mahasiswa'] >= 100 ? '+' : '' }}</div>
+                    <div class="lbl">Mahasiswa</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">25</div>
-                    <div class="stat-label">Dosen</div>
+                <div class="stat-box">
+                    <div class="num">{{ $stats['dosen'] }}</div>
+                    <div class="lbl">Dosen</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">12</div>
-                    <div class="stat-label">Praktikum</div>
+                <div class="stat-box">
+                    <div class="num">{{ $stats['alat_lab'] }}</div>
+                    <div class="lbl">Alat Lab</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Lab Aktif</div>
+                <div class="stat-box">
+                    <div class="num">{{ $stats['lab_aktif'] }}</div>
+                    <div class="lbl">Lab Aktif</div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+            const eyeIcon = document.querySelector('#eyeIcon');
+
+            togglePassword.addEventListener('click', function (e) {
+                // Toggle the type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // Toggle the icon
+                if (type === 'password') {
+                    eyeIcon.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    `;
+                } else {
+                    eyeIcon.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.04m5.882-5.882A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.059 10.059 0 01-4.012 4.904m-4.904-4.904a3 3 0 11-4.243-4.243M3 3l18 18" />
+                    `;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
