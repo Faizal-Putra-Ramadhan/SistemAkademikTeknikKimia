@@ -1,7 +1,7 @@
 # REGLAB SYSTEM — PANDUAN INSTALASI
 
 **Aplikasi:** Sistem Informasi Regulasi Laboratorium Teknik Kimia UAD
-**Stack:** Laravel 12 · PHP 8.2+ · MySQL / MariaDB · Nginx · Vite + Tailwind CSS 4
+**Stack:** Laravel 12 · PHP 8.2+ · MySQL / MariaDB · Vite + Tailwind CSS 4
 
 ---
 
