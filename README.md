@@ -175,7 +175,7 @@ npm run build
 ```
 
 
-## 11. Optimasi Production
+## 8. Optimasi Production
 
 ```bash
 php artisan config:cache
