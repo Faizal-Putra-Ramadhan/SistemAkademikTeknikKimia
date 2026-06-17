@@ -18,9 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             AdminSeeder::class,
-            DosenLaboranLabSeeder::class,
-            // Jika Anda punya Lab/Laboran testing data yang ingin diload juga, bisa di-uncomment:
-            // LaboranSeeder::class,
         ]);
     }
 }
