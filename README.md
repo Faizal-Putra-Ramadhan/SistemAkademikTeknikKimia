@@ -14,11 +14,6 @@
 5. [Hak Akses Direktori](#5-hak-akses-direktori)
 6. [Migrasi Database](#6-migrasi-database)
 7. [Build Frontend](#7-build-frontend)
-8. [Queue Worker (Supervisor)](#8-queue-worker-supervisor)
-9. [Cron Job untuk Scheduler](#9-cron-job-untuk-scheduler)
-10. [Konfigurasi Web Server (Nginx)](#10-konfigurasi-web-server-nginx)
-11. [Optimasi Production](#11-optimasi-production)
-12. [Verifikasi Instalasi](#12-verifikasi-instalasi)
 
 ---
 
