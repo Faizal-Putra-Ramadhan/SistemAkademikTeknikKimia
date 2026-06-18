@@ -1,7 +1,7 @@
 # REGLAB SYSTEM — PANDUAN INSTALASI
 
 **Aplikasi:** Sistem Informasi Regulasi Laboratorium Teknik Kimia UAD
-**Stack:** Laravel 12 · PHP 8.2+ · MySQL / MariaDB · Nginx · Vite + Tailwind CSS 4
+**Stack:** Laravel 12 · PHP 8.2+ · MySQL / MariaDB · Vite + Tailwind CSS 4
 
 ---
 
@@ -29,8 +29,6 @@ sudo apt install -y php8.2-cli php8.2-fpm php8.2-mbstring php8.2-xml \
   php8.2-readline php8.2-tokenizer
 ```
 
-> **Versi PHP minimal: 8.2** sesuai spesifikasi Laravel 12.
-
 ### Composer
 
 ```bash
@@ -44,8 +42,6 @@ curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt install -y nodejs
 ```
 
-> **Node.js 18+** diperlukan untuk menjalankan Vite.
-
 ### MySQL / MariaDB
 
 ```bash
@@ -53,14 +49,7 @@ sudo apt install -y mysql-server
 sudo mysql_secure_installation
 ```
 
-Buat database dan user untuk aplikasi:
-
-```sql
-CREATE DATABASE reglab_tekkim CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'reglab_user'@'127.0.0.1' IDENTIFIED BY 'password_aman';
-GRANT ALL PRIVILEGES ON reglab_tekkim.* TO 'reglab_user'@'127.0.0.1';
-FLUSH PRIVILEGES;
-```
+Buat database
 
 ---
 
@@ -176,7 +165,7 @@ npm run build
 ```
 
 
-## 11. Optimasi Production
+## 8. Optimasi Production
 
 ```bash
 php artisan config:cache
