@@ -19,38 +19,17 @@ class MahasiswaSeeder extends Seeder
 
         $mahasiswaData = [
             [
-                'Nama' => 'Mahasiswa Dummy 1',
+                'Nama' => 'Faizal Putra Ramadhan',
                 'UserID' => '2000020001',
-                'Nomor_Identitas' => '2000020001',
-                'Email' => 'mahasiswa1@mhs.uad.ac.id',
+                'Nomor_Identitas' => '2300018199',
+                'Email' => '2300018199@webmail.uad.ac.id',
                 'Password' => Hash::make('password'),
                 'Role_User' => 'Mahasiswa',
                 'Phone' => '081234567890',
                 'status' => 'Aktif',
                 'is_primary' => true,
             ],
-            [
-                'Nama' => 'Mahasiswa Dummy 2',
-                'UserID' => '2000020002',
-                'Nomor_Identitas' => '2000020002',
-                'Email' => 'mahasiswa2@mhs.uad.ac.id',
-                'Password' => Hash::make('password'),
-                'Role_User' => 'Mahasiswa',
-                'Phone' => '081234567891',
-                'status' => 'Aktif',
-                'is_primary' => true,
-            ],
-            [
-                'Nama' => 'Mahasiswa Dummy 3',
-                'UserID' => '2000020003',
-                'Nomor_Identitas' => '2000020003',
-                'Email' => 'mahasiswa3@mhs.uad.ac.id',
-                'Password' => Hash::make('password'),
-                'Role_User' => 'Mahasiswa',
-                'Phone' => '081234567892',
-                'status' => 'Aktif',
-                'is_primary' => true,
-            ],
+            
         ];
 
         foreach ($mahasiswaData as $data) {
