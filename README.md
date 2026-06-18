@@ -160,6 +160,7 @@ Atau jalankan seeder secara individual:
 php artisan db:seed --class=RoleSeeder --force
 php artisan db:seed --class=AdminSeeder --force
 php artisan db:seed --class=DosenLaboranLabSeeder --force
+php artisan db:seed --class=MahasiswaSeeder --force
 ```
 
 #### Penjelasan Seeder
