@@ -25,7 +25,7 @@
     <div class="alert-box info">
         <strong>Informasi:</strong> User ID akan di-generate otomatis berdasarkan role yang dipilih.
         <ul class="info-list">
-            <li><strong>Admin:</strong> ADM-XXXXXXXXXX</li>
+            <li><strong>Adminn:</strong> ADM-XXXXXXXXXX</li>
             <li><strong>Dosen:</strong> DSN-XXXXXXXXXX</li>
             <li><strong>Tendik:</strong> TDK-XXXXXXXXXX</li>
             <li><strong>Mahasiswa:</strong> MHS-XXXXXXXXXX</li>
