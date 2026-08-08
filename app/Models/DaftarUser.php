@@ -151,7 +151,7 @@ class DaftarUser extends Authenticatable
         // If setting as primary, unset other primary roles
         if ($isPrimary) {
             $this->roles()->updateExistingPivot(
-                $this->roles()->pluck('id'),
+                $this->roles()->pluck('roles.id'),
                 ['is_primary' => false]
             );
         }
