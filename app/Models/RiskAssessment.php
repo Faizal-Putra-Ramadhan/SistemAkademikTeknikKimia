@@ -178,18 +178,26 @@ class RiskAssessment extends Model
 
         $year = date('y'); // 2 digit tahun terakhir
 
-        // Hitung jumlah risk assessment yang sudah disetujui untuk user ini di tahun ini
-        $count = self::where('user_id', $this->user_id)
-            ->where('status', 'disetujui')
+        // Cari risk assessment terakhir yang sudah memiliki ID untuk user ini di tahun ini
+        $lastRa = self::where('user_id', $this->user_id)
+            ->whereNotNull('id_ra')
             ->whereYear('created_at', date('Y'))
-            ->count();
+            ->orderBy('id', 'desc')
+            ->first();
 
-        $urutan = str_pad($count + 1, 2, '0', STR_PAD_LEFT); // 2 digit urutan
+        $urutan = 1;
+        if ($lastRa && $lastRa->id_ra) {
+            // Format: RA-YYXXNNN (XX adalah urutan di index ke-5 sebanyak 2 karakter)
+            $lastSequence = (int) substr($lastRa->id_ra, 5, 2);
+            $urutan = $lastSequence + 1;
+        }
+
+        $urutanStr = str_pad($urutan, 2, '0', STR_PAD_LEFT); // 2 digit urutan
 
         // 3 digit terakhir NIM
         $nim3digit = substr($this->nim, -3);
 
-        $idRa = "RA-{$year}{$urutan}{$nim3digit}";
+        $idRa = "RA-{$year}{$urutanStr}{$nim3digit}";
 
         $this->id_ra = $idRa;
         $this->save();
