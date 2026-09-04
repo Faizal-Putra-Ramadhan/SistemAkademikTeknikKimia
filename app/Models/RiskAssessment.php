@@ -173,10 +173,10 @@ class RiskAssessment extends Model
         public function generateIdRa()
     {
         if ($this->id_ra) {
-            return $this->id_ra; // Jika sudah ada, return yang lama
+            return $this->id_ra; 
         }
 
-        $year = date('y'); // 2 digit tahun terakhir
+        $year = date('y'); 
 
         // Cari risk assessment terakhir yang sudah memiliki ID untuk user ini di tahun ini
         $lastRa = self::where('user_id', $this->user_id)
@@ -194,7 +194,6 @@ class RiskAssessment extends Model
 
         $urutanStr = str_pad($urutan, 2, '0', STR_PAD_LEFT); // 2 digit urutan
 
-        // 3 digit terakhir NIM
         $nim3digit = substr($this->nim, -3);
 
         $idRa = "RA-{$year}{$urutanStr}{$nim3digit}";
