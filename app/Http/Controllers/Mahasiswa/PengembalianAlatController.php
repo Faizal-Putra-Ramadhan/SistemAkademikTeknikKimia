@@ -23,7 +23,7 @@ class PengembalianAlatController extends Controller
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
         }
 
-        // Ambil peminjaman yang sudah mengajukan pengembalian tapi belum disetujui
+        
         $labNames = $user->laborans()->pluck('Laboratorium');
         if ($labNames->isEmpty()) {
             abort(403, 'Anda tidak memiliki akses laboratorium.');
@@ -38,7 +38,7 @@ class PengembalianAlatController extends Controller
             ->orderBy('tanggal_pengajuan_pengembalian', 'desc')
             ->get();
 
-        // Ambil riwayat pengembalian yang sudah diproses
+        
         $riwayat_pengembalian = PeminjamanAlat::with(['alatLab.daftarLab'])
             ->where('pengajuan_pengembalian', true)
             ->whereNotNull('pengembalian_disetujui')
@@ -89,12 +89,12 @@ class PengembalianAlatController extends Controller
 
         $this->authorizeLaboranLab($user, $peminjaman->alatLab?->daftarLab?->Nama_Laboratorium);
 
-        // Validasi: sudah mengajukan pengembalian
+        
         if (! $peminjaman->pengajuan_pengembalian) {
             return back()->with('error', 'Mahasiswa belum mengajukan pengembalian untuk alat ini.');
         }
 
-        // Validasi: belum pernah disetujui/ditolak
+        
         if ($peminjaman->pengembalian_disetujui !== null) {
             return back()->with('error', 'Pengembalian ini sudah diproses sebelumnya.');
         }
@@ -105,19 +105,19 @@ class PengembalianAlatController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update status pengembalian
+            
             $peminjaman->update([
                 'pengembalian_disetujui' => true,
                 'tanggal_persetujuan_pengembalian' => now(),
                 'laboran_nama' => $user->Nama,
                 'catatan_laboran' => $request->catatan_laboran,
-                'status' => 'dikembalikan', // Update status peminjaman
+                'status' => 'dikembalikan', 
             ]);
 
-            // Kembalikan stok alat sebanyak jumlah yang dipinjam
+            
             $peminjaman->alatLab->increment('jumlah_tersedia', $peminjaman->jumlah);
 
-            // Catat aktivitas mahasiswa
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $peminjaman->user_nama,
                 'daftar_lab_id' => $peminjaman->alatLab->daftar_lab_id,
@@ -167,12 +167,12 @@ class PengembalianAlatController extends Controller
 
         $this->authorizeLaboranLab($user, $peminjaman->alatLab?->daftarLab?->Nama_Laboratorium);
 
-        // Validasi: sudah mengajukan pengembalian
+        
         if (! $peminjaman->pengajuan_pengembalian) {
             return back()->with('error', 'Mahasiswa belum mengajukan pengembalian untuk alat ini.');
         }
 
-        // Validasi: belum pernah disetujui/ditolak
+        
         if ($peminjaman->pengembalian_disetujui !== null) {
             return back()->with('error', 'Pengembalian ini sudah diproses sebelumnya.');
         }
@@ -185,16 +185,16 @@ class PengembalianAlatController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update status pengembalian
+            
             $peminjaman->update([
                 'pengembalian_disetujui' => false,
                 'tanggal_persetujuan_pengembalian' => now(),
                 'laboran_nama' => $user->Nama,
                 'catatan_laboran' => $request->catatan_laboran,
-                'pengajuan_pengembalian' => false, // Reset agar bisa mengajukan lagi
+                'pengajuan_pengembalian' => false, 
             ]);
 
-            // Catat aktivitas mahasiswa
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $peminjaman->user_nama,
                 'daftar_lab_id' => $peminjaman->alatLab->daftar_lab_id,

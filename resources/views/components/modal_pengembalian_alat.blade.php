@@ -2,7 +2,7 @@
 <div id="modalPengembalianAlat" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
-            <h2>📦 Ajukan Pengembalian Alat</h2>
+            <h2> Ajukan Pengembalian Alat</h2>
             <button class="modal-close" onclick="closePengembalianAlatModal()">&times;</button>
         </div>
         <div class="modal-body">
@@ -19,9 +19,9 @@
                     </label>
                     <select id="kondisi_barang" name="kondisi_barang" required>
                         <option value="">-- Pilih Kondisi --</option>
-                        <option value="baik">✅ Baik (Tidak ada kerusakan)</option>
-                        <option value="rusak ringan">⚠️ Rusak Ringan (Ada kerusakan kecil)</option>
-                        <option value="rusak berat">❌ Rusak Berat (Kerusakan parah)</option>
+                        <option value="baik"> Baik (Tidak ada kerusakan)</option>
+                        <option value="rusak ringan"> Rusak Ringan (Ada kerusakan kecil)</option>
+                        <option value="rusak berat"> Rusak Berat (Kerusakan parah)</option>
                     </select>
                 </div>
 
@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="alert alert-warning" style="background: #fff3cd; color: #856404; padding: 1rem; border-radius: 5px; margin-top: 1rem;">
-                    <strong>⚠️ Perhatian:</strong>
+                    <strong> Perhatian:</strong>
                     <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
                         <li>Pastikan alat sudah dibersihkan sebelum dikembalikan</li>
                         <li>Laporkan kondisi yang sebenarnya untuk transparansi</li>
@@ -50,7 +50,7 @@
                         Batal
                     </button>
                     <button type="submit" class="btn" style="background: #dc3545; color: white;">
-                        📦 Ajukan Pengembalian
+                         Ajukan Pengembalian
                     </button>
                 </div>
             </form>

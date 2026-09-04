@@ -25,6 +25,7 @@ class ProfileController extends Controller
             'Email' => 'required|email|unique:daftar_users,Email,'.$user->id,
             'Phone' => 'required|string|max:20',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'ttd' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -35,22 +36,33 @@ class ProfileController extends Controller
                 'Phone' => $request->Phone,
             ];
 
-            // Upload foto jika ada
+            
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $filename = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile'), $filename);
                 $data['foto'] = $filename;
 
-                // Hapus foto lama jika ada
+                
                 if ($user->foto && file_exists(public_path('uploads/profile/'.$user->foto))) {
                     unlink(public_path('uploads/profile/'.$user->foto));
                 }
             }
 
+            if ($request->hasFile('ttd')) {
+                $fileTtd = $request->file('ttd');
+                $filenameTtd = 'ttd_' . time() . '.' . $fileTtd->getClientOriginalExtension();
+                $fileTtd->move(public_path('uploads/ttd'), $filenameTtd);
+                $data['ttd'] = $filenameTtd;
+
+                if ($user->ttd && file_exists(public_path('uploads/ttd/'.$user->ttd))) {
+                    unlink(public_path('uploads/ttd/'.$user->ttd));
+                }
+            }
+
             $user->update($data);
 
-            // Log aktivitas
+            
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Update Profil',

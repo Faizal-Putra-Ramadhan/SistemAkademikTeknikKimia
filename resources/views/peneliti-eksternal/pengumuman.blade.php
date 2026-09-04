@@ -86,7 +86,7 @@
 
 @section('content')
 <div class="navbar">
-        <h1>📢 Pengumuman</h1>
+        <h1> Pengumuman</h1>
     </div>
 
     <div class="container">
@@ -102,7 +102,7 @@
                     </div>
                 </div>
                 <div class="pengumuman-author">
-                    👤 {{ $item->author }}
+                     {{ $item->author }}
                 </div>
                 <div class="pengumuman-content">
                     {{ $item->isi }}

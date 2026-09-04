@@ -186,7 +186,7 @@
 
                 {{-- Risk Assessment Info --}}
                 <div class="info-panel blue">
-                    <h4>📄 Risk Assessment Terkait</h4>
+                    <h4> Risk Assessment Terkait</h4>
                     <p>
                         <strong>{{ $bebasLabRequest->riskAssessment?->id_ra ?? '-' }}</strong> 
                         — {{ $bebasLabRequest->riskAssessment?->topik_judul ?? '-' }}
@@ -209,9 +209,9 @@
                 {{-- Status Badge --}}
                 <div style="margin-bottom: 16px;">
                     @if($isApproved && $isActive)
-                        <span class="badge badge-success" style="padding: 6px 14px; font-size: 13px;">✅ Disetujui & Aktif</span>
+                        <span class="badge badge-success" style="padding: 6px 14px; font-size: 13px;"> Disetujui & Aktif</span>
                     @elseif($isApproved && !$isActive)
-                        <span class="badge badge-danger" style="padding: 6px 14px; font-size: 13px;">❌ Tidak Aktif</span>
+                        <span class="badge badge-danger" style="padding: 6px 14px; font-size: 13px;"> Tidak Aktif</span>
                     @else
                         <span class="badge badge-warning" style="padding: 6px 14px; font-size: 13px;">⏳ Menunggu Persetujuan</span>
                     @endif
@@ -220,7 +220,7 @@
                 {{-- Action Section --}}
                 @if($canDownload)
                     <div class="info-panel green" style="text-align: center;">
-                        <h4 style="font-size: 16px; margin-bottom: 8px;">🎉 Pengajuan Disetujui!</h4>
+                        <h4 style="font-size: 16px; margin-bottom: 8px;"> Pengajuan Disetujui!</h4>
                         <p style="margin-bottom: 16px;">Semua laboran telah menyetujui pengajuan Anda. Laporan siap diunduh.</p>
                         <a href="{{ route('mahasiswa.bebas-lab.download', $bebasLabRequest->id) }}" class="btn btn-success" style="padding: 10px 24px;">
                             Download Laporan Bebas Lab
@@ -228,12 +228,12 @@
                     </div>
                 @elseif($isApproved && !$isActive)
                     <div class="info-panel red">
-                        <h4>⚠️ Status Tidak Aktif</h4>
+                        <h4> Status Tidak Aktif</h4>
                         <p>Bebas Lab Anda sudah tidak aktif karena ada peminjaman baru atau sudah melewati masa berlaku.</p>
                     </div>
                 @else
                     <div class="info-panel blue">
-                        <h4>ℹ️ Menunggu Persetujuan</h4>
+                        <h4>ℹ Menunggu Persetujuan</h4>
                         <p>Pengajuan Anda sedang dalam proses review oleh laboran. Laporan akan dapat diunduh setelah <strong>SEMUA laboran</strong> menyetujui.</p>
                         <p style="margin-top: 8px;"><strong>Progress:</strong> {{ $approvedCount }} dari {{ $totalApprovals }} laboran telah menyetujui.</p>
                     </div>
@@ -254,11 +254,11 @@
                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
                             @if($bebasLabRequest->isMasihBerlaku())
                                 <span class="badge badge-success" style="padding: 5px 12px;">
-                                    ✅ Berlaku sampai {{ $bebasLabRequest->tanggal_berlaku_sampai->format('d M Y') }}
+                                     Berlaku sampai {{ $bebasLabRequest->tanggal_berlaku_sampai->format('d M Y') }}
                                 </span>
                             @else
                                 <span class="badge badge-danger" style="padding: 5px 12px;">
-                                    ❌ Sudah expired ({{ $bebasLabRequest->tanggal_berlaku_sampai->format('d M Y') }})
+                                     Sudah expired ({{ $bebasLabRequest->tanggal_berlaku_sampai->format('d M Y') }})
                                 </span>
                             @endif
                             @if(!$bebasLabRequest->is_active)
@@ -299,7 +299,7 @@
                                     </div>
                                     <div>
                                         @if($approval->status === 'disetujui')
-                                            <span class="badge badge-success" style="padding: 5px 12px;">✅ Disetujui</span>
+                                            <span class="badge badge-success" style="padding: 5px 12px;"> Disetujui</span>
                                         @else
                                             <span class="badge badge-warning" style="padding: 5px 12px;">⏳ Menunggu</span>
                                         @endif

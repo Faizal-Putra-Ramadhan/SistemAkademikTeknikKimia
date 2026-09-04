@@ -72,10 +72,10 @@
                                     </label>
                                     <select name="status" class="form-control rounded-lg @error('status') is-invalid @enderror" required>
                                         <option value="publish" {{ old('status') == 'publish' ? 'selected' : '' }}>
-                                            📢 Publish (Langsung tampilkan ke publik)
+                                             Publish (Langsung tampilkan ke publik)
                                         </option>
                                         <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>
-                                            📝 Draft (Simpan untuk diedit nanti)
+                                             Draft (Simpan untuk diedit nanti)
                                         </option>
                                     </select>
                                     @error('status')

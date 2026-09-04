@@ -194,7 +194,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔧 Peminjaman Alat Laboratorium</h1>
+        <h1> Peminjaman Alat Laboratorium</h1>
         <p class="subtitle">{{ $lab->Nama_Laboratorium }}</p>
 
         @if(session('error'))
@@ -217,18 +217,18 @@
             @csrf
             
             <div class="form-section">
-                <h3>📦 Pilih Alat yang Akan Dipinjam</h3>
+                <h3> Pilih Alat yang Akan Dipinjam</h3>
                 <p style="color: #666; margin-bottom: 1.5rem;">Klik pada card alat untuk memilih</p>
                 
                 <div class="alat-grid">
                     @foreach($lab->alatLabs as $alat)
                     <div class="alat-card" onclick="selectAlat({{ $alat->id }}, '{{ $alat->nama_alat }}', {{ $alat->jumlah_tersedia }})" data-alat-id="{{ $alat->id }}">
-                        <div class="select-indicator">✓ Dipilih</div>
+                        <div class="select-indicator"> Dipilih</div>
                         <div class="alat-image">
                             @if($alat->foto)
                                 <img src="{{ asset('storage/' . $alat->foto) }}" alt="{{ $alat->nama_alat }}">
                             @else
-                                🔧
+                                
                             @endif
                         </div>
                         <div class="alat-body">
@@ -236,11 +236,11 @@
                             <p>{{ Str::limit($alat->deskripsi ?? 'Tidak ada deskripsi', 80) }}</p>
                             
                             @if($alat->jumlah_tersedia > 5)
-                                <span class="stock-badge stock-available">✓ Tersedia: {{ $alat->jumlah_tersedia }} unit</span>
+                                <span class="stock-badge stock-available"> Tersedia: {{ $alat->jumlah_tersedia }} unit</span>
                             @elseif($alat->jumlah_tersedia > 0)
-                                <span class="stock-badge stock-low">⚠ Stok Terbatas: {{ $alat->jumlah_tersedia }} unit</span>
+                                <span class="stock-badge stock-low"> Stok Terbatas: {{ $alat->jumlah_tersedia }} unit</span>
                             @else
-                                <span class="stock-badge stock-empty">✗ Stok Habis</span>
+                                <span class="stock-badge stock-empty"> Stok Habis</span>
                             @endif
                         </div>
                     </div>
@@ -252,7 +252,7 @@
                 <input type="hidden" id="alat_lab_id" name="alat_lab_id" value="{{ old('alat_lab_id') }}">
                 
                 <div class="form-section">
-                    <h3>📅 Detail Peminjaman</h3>
+                    <h3> Detail Peminjaman</h3>
                     <p style="color: #666; margin-bottom: 1rem;">Alat yang dipilih: <strong id="selected-alat-name">-</strong></p>
                     
                     <div class="form-group">
@@ -266,7 +266,7 @@
                     </div>
 
                     <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px;">
-                        <strong>📝 Catatan:</strong>
+                        <strong> Catatan:</strong>
                         <p style="margin-top: 0.5rem; color: #666;">Pastikan Anda mengembalikan alat tepat waktu dan dalam kondisi baik.</p>
                     </div>
                 </div>

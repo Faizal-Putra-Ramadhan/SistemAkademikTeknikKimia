@@ -15,11 +15,12 @@ class RiskAssessmentDocumentService
     public function generatePdf(RiskAssessment $riskAssessment)
     {
         try {
+            \PhpOffice\PhpWord\Settings::setPdfRendererName(\PhpOffice\PhpWord\Settings::PDF_RENDERER_DOMPDF);
+            \PhpOffice\PhpWord\Settings::setPdfRendererPath(base_path('vendor/dompdf/dompdf'));
+
             $phpWord = $this->generateDocument($riskAssessment);
 
-            // Generate sebagai DOCX dulu, nanti bisa convert ke PDF dengan library lain
-            // Untuk sekarang, generate langsung sebagai Word kemudian user bisa convert
-            $filename = 'RA-'.$riskAssessment->id_ra.'-'.date('YmdHis').'.docx';
+            $filename = 'RA-'.$riskAssessment->id_ra.'-'.date('YmdHis').'.pdf';
             $filePath = storage_path('app/public/'.$filename);
 
             // Create directory if not exists
@@ -27,11 +28,11 @@ class RiskAssessmentDocumentService
                 mkdir(storage_path('app/public'), 0755, true);
             }
 
-            $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+            $objWriter = IOFactory::createWriter($phpWord, 'PDF');
             $objWriter->save($filePath);
 
             return response()->download($filePath, $filename, [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Content-Type' => 'application/pdf',
             ])->deleteFileAfterSend();
         } catch (\Exception $e) {
             \Log::error('Error generating PDF: '.$e->getMessage());
@@ -231,7 +232,7 @@ class RiskAssessmentDocumentService
             ];
 
             foreach ($checks as $label => $value) {
-                $section->addText('☑ '.$label.': '.($value ? 'Ya' : 'Tidak'));
+                $section->addText(' '.$label.': '.($value ? 'Ya' : 'Tidak'));
             }
 
             $section->addText('Penilaian Keterampilan: '.ucfirst($pelaku->penilaian_keterampilan));
@@ -272,7 +273,7 @@ class RiskAssessmentDocumentService
         ];
 
         foreach ($approvals as $label => $approval) {
-            $status = $approval['status'] === null ? 'Menunggu' : ($approval['status'] ? '✓ Disetujui' : '✗ Ditolak');
+            $status = $approval['status'] === null ? 'Menunggu' : ($approval['status'] ? ' Disetujui' : ' Ditolak');
             $statusColor = $approval['status'] === true ? '00AA00' : ($approval['status'] === false ? 'AA0000' : '0000AA');
 
             $section->addText($label.': '.$status, ['color' => $statusColor, 'bold' => true]);

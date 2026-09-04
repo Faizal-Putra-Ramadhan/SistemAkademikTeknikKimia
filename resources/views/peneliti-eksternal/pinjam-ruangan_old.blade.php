@@ -95,7 +95,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>📅 Peminjaman Ruangan</h1>
+        <h1> Peminjaman Ruangan</h1>
         <p class="subtitle">{{ $lab->Nama_Laboratorium }}</p>
 
         @if($errors->any())

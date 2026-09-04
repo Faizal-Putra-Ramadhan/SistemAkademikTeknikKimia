@@ -8,7 +8,7 @@
 <body style="font-family: Arial, sans-serif; background-color: #f7fafc; color: #2d3748; padding: 24px;">
     <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 24px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
         <div style="text-align: center; margin-bottom: 24px;">
-            <h2 style="margin: 0; color: #059669;">✓ Bebas Lab Disetujui</h2>
+            <h2 style="margin: 0; color: #059669;"> Bebas Lab Disetujui</h2>
         </div>
         
         <p>Halo <strong>{{ $bebasLabRequest->user_nama }}</strong>,</p>

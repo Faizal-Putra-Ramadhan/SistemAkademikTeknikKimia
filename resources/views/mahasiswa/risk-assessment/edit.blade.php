@@ -265,7 +265,7 @@
 @section('content')
     <!-- BREADCRUMB -->
                 <div class="breadcrumb">
-                    <span>🏠</span>
+                    <span></span>
                     <a href="{{ route('mahasiswa.risk-assessment.index') }}">Risk Assessment</a>
                     <span>/</span>
                     <span>Edit</span>
@@ -273,7 +273,7 @@
     
                 @if ($errors->any())
                 <div class="alert alert-danger">
-                    <strong>⚠️ Terdapat kesalahan:</strong>
+                    <strong> Terdapat kesalahan:</strong>
                     <ul>
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -284,7 +284,7 @@
     
                 @if($riskAssessment->status !== 'draft')
                 <div class="alert alert-warning">
-                    ⚠️ <strong>Perhatian:</strong> Risk Assessment ini sudah diajukan dan tidak dapat diedit. Anda hanya bisa melihat detailnya.
+                     <strong>Perhatian:</strong> Risk Assessment ini sudah diajukan dan tidak dapat diedit. Anda hanya bisa melihat detailnya.
                 </div>
                 @endif
     
@@ -294,7 +294,7 @@
     
                     <!-- SECTION 1: Data Mahasiswa -->
                     <div class="form-section">
-                        <h3>📋 Data Mahasiswa</h3>
+                        <h3> Data Mahasiswa</h3>
                         
                         <div class="form-group">
                             <label class="required">Nama Lengkap</label>
@@ -350,13 +350,13 @@
     
                     <!-- SECTION 2: Bahan Kimia -->
                     <div class="form-section">
-                        <h3>⚗️ Identifikasi Bahan Kimia</h3>
+                        <h3> Identifikasi Bahan Kimia</h3>
                         
                         <div id="bahan-kimia-container">
                             @foreach($riskAssessment->bahanKimias as $index => $bahan)
                             <div class="bahan-kimia-item" data-index="{{ $index }}">
                                 @if($index > 0)
-                                <button type="button" class="btn-remove" onclick="removeBahanKimia(this)">✕ Hapus</button>
+                                <button type="button" class="btn-remove" onclick="removeBahanKimia(this)"> Hapus</button>
                                 @endif
                                 <h4 style="color: #667eea; margin-bottom: 1rem;">Bahan Kimia #{{ $index + 1 }}</h4>
                                 
@@ -372,27 +372,27 @@
                                     <div class="checkbox-group">
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="explosive" id="exp_{{ $index }}" {{ $bahan->explosive ? 'checked' : '' }}>
-                                            <label for="exp_{{ $index }}">☢️ Explosive</label>
+                                            <label for="exp_{{ $index }}"> Explosive</label>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="flammable" id="flam_{{ $index }}" {{ $bahan->flammable ? 'checked' : '' }}>
-                                            <label for="flam_{{ $index }}">🔥 Flammable</label>
+                                            <label for="flam_{{ $index }}"> Flammable</label>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="toxic" id="tox_{{ $index }}" {{ $bahan->toxic ? 'checked' : '' }}>
-                                            <label for="tox_{{ $index }}">☠️ Toxic</label>
+                                            <label for="tox_{{ $index }}"> Toxic</label>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="corrosive" id="cor_{{ $index }}" {{ $bahan->corrosive ? 'checked' : '' }}>
-                                            <label for="cor_{{ $index }}">⚗️ Corrosive</label>
+                                            <label for="cor_{{ $index }}"> Corrosive</label>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="irritant" id="irr_{{ $index }}" {{ $bahan->irritant ? 'checked' : '' }}>
-                                            <label for="irr_{{ $index }}">⚠️ Irritant</label>
+                                            <label for="irr_{{ $index }}"> Irritant</label>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="oxidizing" id="oxi_{{ $index }}" {{ $bahan->oxidizing ? 'checked' : '' }}>
-                                            <label for="oxi_{{ $index }}">💨 Oxidizing</label>
+                                            <label for="oxi_{{ $index }}"> Oxidizing</label>
                                         </div>
                                     </div>
                                 </div>
@@ -423,19 +423,19 @@
                             <div class="radio-group">
                                 <label class="radio-item">
                                     <input type="radio" name="kategori_hazard_bahan" value="sangat_hazardous" {{ old('kategori_hazard_bahan', $riskAssessment->kategoriHazardBahan->kategori ?? '') == 'sangat_hazardous' ? 'checked' : '' }} required>
-                                    <span>🔴 Sangat Hazardous</span>
+                                    <span> Sangat Hazardous</span>
                                 </label>
                                 <label class="radio-item">
                                     <input type="radio" name="kategori_hazard_bahan" value="hazardous" {{ old('kategori_hazard_bahan', $riskAssessment->kategoriHazardBahan->kategori ?? '') == 'hazardous' ? 'checked' : '' }} required>
-                                    <span>🟠 Hazardous</span>
+                                    <span> Hazardous</span>
                                 </label>
                                 <label class="radio-item">
                                     <input type="radio" name="kategori_hazard_bahan" value="moderat" {{ old('kategori_hazard_bahan', $riskAssessment->kategoriHazardBahan->kategori ?? '') == 'moderat' ? 'checked' : '' }} required>
-                                    <span>🟡 Moderat</span>
+                                    <span> Moderat</span>
                                 </label>
                                 <label class="radio-item">
                                     <input type="radio" name="kategori_hazard_bahan" value="tidak_hazardous" {{ old('kategori_hazard_bahan', $riskAssessment->kategoriHazardBahan->kategori ?? '') == 'tidak_hazardous' ? 'checked' : '' }} required>
-                                    <span>🟢 Tidak Hazardous</span>
+                                    <span> Tidak Hazardous</span>
                                 </label>
                             </div>
                         </div>
@@ -443,7 +443,7 @@
     
                     <!-- SECTION 3: Peralatan & Kondisi Operasi -->
                     <div class="form-section">
-                        <h3>🔧 Peralatan & Kondisi Operasi</h3>
+                        <h3> Peralatan & Kondisi Operasi</h3>
                         
                         <div class="form-group">
                             <label>Kondisi Percobaan (Centang yang sesuai)</label>
@@ -484,19 +484,19 @@
                             <div class="radio-group">
                                 <label class="radio-item">
                                     <input type="radio" name="peralatan[kategori_hazard]" value="sangat_hazardous" {{ old('peralatan.kategori_hazard', $riskAssessment->peralatanOperasi->kategori_hazard) == 'sangat_hazardous' ? 'checked' : '' }} required>
-                                    <span>🔴 Sangat Hazardous</span>
+                                    <span> Sangat Hazardous</span>
                                 </label>
                                 <label class="radio-item">
                                     <input type="radio" name="peralatan[kategori_hazard]" value="hazardous" {{ old('peralatan.kategori_hazard', $riskAssessment->peralatanOperasi->kategori_hazard) == 'hazardous' ? 'checked' : '' }} required>
-                                    <span>🟠 Hazardous</span>
+                                    <span> Hazardous</span>
                                 </label>
                                 <label class="radio-item">
                                     <input type="radio" name="peralatan[kategori_hazard]" value="moderat" {{ old('peralatan.kategori_hazard', $riskAssessment->peralatanOperasi->kategori_hazard) == 'moderat' ? 'checked' : '' }} required>
-                                    <span>🟡 Moderat</span>
+                                    <span> Moderat</span>
                                 </label>
                                 <label class="radio-item">
                                     <input type="radio" name="peralatan[kategori_hazard]" value="tidak_hazardous" {{ old('peralatan.kategori_hazard', $riskAssessment->peralatanOperasi->kategori_hazard) == 'tidak_hazardous' ? 'checked' : '' }} required>
-                                    <span>🟢 Tidak Hazardous</span>
+                                    <span> Tidak Hazardous</span>
                                 </label>
                             </div>
                         </div>
@@ -504,7 +504,7 @@
     
                     <!-- SECTION 4: Pelaku Kerja -->
                     <div class="form-section">
-                        <h3>👤 Pelaku Kerja Laboratorium</h3>
+                        <h3> Pelaku Kerja Laboratorium</h3>
                         
                         <div class="form-group">
                             <label class="required">Pemahaman Keselamatan (Centang semua yang benar)</label>
@@ -561,7 +561,7 @@
     
                     <!-- SECTION 5: Pernyataan -->
                     <div class="form-section">
-                        <h3>✍️ Pernyataan Mahasiswa</h3>
+                        <h3> Pernyataan Mahasiswa</h3>
                         
                         <div class="form-group">
                             <div class="checkbox-item" style="background: #f8f9ff; padding: 1.5rem; border-radius: 6px; border: 2px solid #667eea;">
@@ -576,8 +576,8 @@
     
                     <!-- Submit Buttons -->
                     <div class="btn-group">
-                        <button type="submit" class="btn-primary">💾 Update Risk Assessment</button>
-                        <a href="{{ route('mahasiswa.risk-assessment.show', $riskAssessment->id) }}" class="btn-secondary">❌ Batal</a>
+                        <button type="submit" class="btn-primary"> Update Risk Assessment</button>
+                        <a href="{{ route('mahasiswa.risk-assessment.show', $riskAssessment->id) }}" class="btn-secondary"> Batal</a>
                     </div>
     
                 </form>
@@ -591,7 +591,7 @@
         const container = document.getElementById('bahan-kimia-container');
         const newItem = `
             <div class="bahan-kimia-item" data-index="${bahanKimiaIndex}">
-                <button type="button" class="btn-remove" onclick="removeBahanKimia(this)">✕ Hapus</button>
+                <button type="button" class="btn-remove" onclick="removeBahanKimia(this)"> Hapus</button>
                 <h4 style="color: #667eea; margin-bottom: 1rem;">Bahan Kimia #${bahanKimiaIndex + 1}</h4>
                 
                 <div class="form-group">
@@ -604,27 +604,27 @@
                     <div class="checkbox-group">
                         <div class="checkbox-item">
                             <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="explosive" id="exp_${bahanKimiaIndex}">
-                            <label for="exp_${bahanKimiaIndex}">☢️ Explosive</label>
+                            <label for="exp_${bahanKimiaIndex}"> Explosive</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="flammable" id="flam_${bahanKimiaIndex}">
-                            <label for="flam_${bahanKimiaIndex}">🔥 Flammable</label>
+                            <label for="flam_${bahanKimiaIndex}"> Flammable</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="toxic" id="tox_${bahanKimiaIndex}">
-                            <label for="tox_${bahanKimiaIndex}">☠️ Toxic</label>
+                            <label for="tox_${bahanKimiaIndex}"> Toxic</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="corrosive" id="cor_${bahanKimiaIndex}">
-                            <label for="cor_${bahanKimiaIndex}">⚗️ Corrosive</label>
+                            <label for="cor_${bahanKimiaIndex}"> Corrosive</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="irritant" id="irr_${bahanKimiaIndex}">
-                            <label for="irr_${bahanKimiaIndex}">⚠️ Irritant</label>
+                            <label for="irr_${bahanKimiaIndex}"> Irritant</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="oxidizing" id="oxi_${bahanKimiaIndex}">
-                            <label for="oxi_${bahanKimiaIndex}">💨 Oxidizing</label>
+                            <label for="oxi_${bahanKimiaIndex}"> Oxidizing</label>
                         </div>
                     </div>
                 </div>

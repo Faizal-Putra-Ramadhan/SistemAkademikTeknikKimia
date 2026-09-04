@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Models\DaftarLab;
 use App\Models\DaftarUser;
-use App\Models\PengajuanPenelitian; // atau User, tergantung model dosen kamu
+use App\Models\PengajuanPenelitian; 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // INI YANG BENAR!
+use Illuminate\Support\Facades\Auth; 
 
 class PengajuanPenelitianController extends Controller
 {
@@ -17,7 +17,7 @@ class PengajuanPenelitianController extends Controller
         $labs = DaftarLab::penelitian()->get();
         $user = Auth::user();
 
-        // Ambil dosen (termasuk user yang punya role Dosen + role lain)
+        
         $dosens = DaftarUser::withDosenRole()
             ->orderBy('Nama')
             ->get();
@@ -37,7 +37,7 @@ class PengajuanPenelitianController extends Controller
             'deskripsi' => 'required|string',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after:tanggal_mulai',
-            'dosen_id' => 'required|exists:daftar_users,id', // atau users, tergantung tabel
+            'dosen_id' => 'required|exists:daftar_users,id', 
         ]);
 
         $dosen = DaftarUser::withDosenRole()

@@ -78,7 +78,7 @@
             <div>
                 <div class="card" style="margin-bottom: 1.5rem;">
                     <div class="card-header">
-                        <h3>🔬 Pilih Laboratorium</h3>
+                        <h3> Pilih Laboratorium</h3>
                     </div>
                     <div class="card-body">
                         <p style="color: #666; margin-bottom: 1.5rem;">Pilih laboratorium untuk melihat daftar alat yang tersedia</p>
@@ -97,7 +97,7 @@
                 <div id="alat-container">
                     <div class="card">
                         <div class="card-header">
-                            <h3>🔧 Pilih Alat yang Akan Dipinjam</h3>
+                            <h3> Pilih Alat yang Akan Dipinjam</h3>
                         </div>
                         <div class="card-body">
                             <p style="color: #666; margin-bottom: 1.5rem;">
@@ -116,7 +116,7 @@
                 <div class="card history-card">
                     <div class="card-body">
                         <div class="history-header">
-                            <div class="history-icon">🔧</div>
+                            
                             <h3>Riwayat Peminjaman Alat</h3>
                         </div>
 
@@ -127,26 +127,26 @@
                                         {{ $peminjaman->alatLab->nama_alat ?? 'Alat Tidak Diketahui' }}
                                     </div>
                                     <div class="history-meta">
-                                        <span>🏷️ Lab: {{ $peminjaman->daftarLab->Nama_Laboratorium ?? '-' }}</span>
-                                        <span>📦 Jumlah: {{ $peminjaman->jumlah ?? 1 }} unit</span>
-                                        <span>📅 Pinjam: {{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d M Y') }}</span>
-                                        <span>📅 Kembali: {{ $peminjaman->tanggal_kembali ? \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d M Y') : 'Belum dikembalikan' }}</span>
+                                        <span> Lab: {{ $peminjaman->daftarLab->Nama_Laboratorium ?? '-' }}</span>
+                                        <span> Jumlah: {{ $peminjaman->jumlah ?? 1 }} unit</span>
+                                        <span> Pinjam: {{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d M Y') }}</span>
+                                        <span> Kembali: {{ $peminjaman->tanggal_kembali ? \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d M Y') : 'Belum dikembalikan' }}</span>
                                     </div>
                                     <span class="history-status status-{{ $peminjaman->status }}">
                                         @if($peminjaman->status === 'menunggu')
                                             ⏳ Menunggu Persetujuan
                                         @elseif($peminjaman->status === 'disetujui')
-                                            ✅ Disetujui
+                                             Disetujui
                                         @elseif($peminjaman->status === 'dikembalikan')
-                                            ✅ Dikembalikan
+                                             Dikembalikan
                                         @else
-                                            ❌ Ditolak
+                                             Ditolak
                                         @endif
                                     </span>
                                 </div>
                             @empty
                                 <div class="empty-history">
-                                    <div class="empty-history-icon">🔧</div>
+                                    
                                     <p>Belum ada riwayat peminjaman alat</p>
                                 </div>
                             @endforelse
@@ -161,7 +161,7 @@
     <div id="modal-peminjaman" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2>📋 Form Peminjaman Alat</h2>
+                <h2> Form Peminjaman Alat</h2>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -196,7 +196,7 @@
                         </div>
 
                         <div class="info-box">
-                            <strong>📝 Catatan Penting:</strong>
+                            <strong> Catatan Penting:</strong>
                             <p>• Pastikan Anda mengembalikan alat tepat waktu dan dalam kondisi baik</p>
                             <p>• Kerusakan atau keterlambatan akan dikenakan sanksi sesuai peraturan</p>
                             <p>• Hubungi admin lab jika ada kendala</p>
@@ -260,7 +260,7 @@
         if (alats.length === 0) {
             alatList.innerHTML = `
                 <div class="empty-state" style="grid-column: 1 / -1;">
-                    <p>❌ Tidak ada alat tersedia di laboratorium ini</p>
+                    <p> Tidak ada alat tersedia di laboratorium ini</p>
                 </div>
             `;
             return;
@@ -271,16 +271,16 @@
             let isDisabled = alat.jumlah_tersedia <= 0;
 
             if (alat.jumlah_tersedia > 5) {
-                stockBadge = `<span class="stock-badge stock-available">✓ Tersedia: ${alat.jumlah_tersedia} unit</span>`;
+                stockBadge = `<span class="stock-badge stock-available"> Tersedia: ${alat.jumlah_tersedia} unit</span>`;
             } else if (alat.jumlah_tersedia > 0) {
-                stockBadge = `<span class="stock-badge stock-low">⚠ Stok Terbatas: ${alat.jumlah_tersedia} unit</span>`;
+                stockBadge = `<span class="stock-badge stock-low"> Stok Terbatas: ${alat.jumlah_tersedia} unit</span>`;
             } else {
-                stockBadge = `<span class="stock-badge stock-empty">✗ Stok Habis</span>`;
+                stockBadge = `<span class="stock-badge stock-empty"> Stok Habis</span>`;
             }
 
             const imageContent = alat.foto
                 ? `<img src="/uploads/${alat.foto}" alt="${alat.nama_alat}">`
-                : '🔧';
+                : '';
 
             const description = alat.deskripsi
                 ? (alat.deskripsi.length > 80 ? alat.deskripsi.substring(0, 80) + '...' : alat.deskripsi)
@@ -306,7 +306,7 @@
 
     function openModal(alatId, alatNama, stok) {
         if (stok <= 0) {
-            alert('❌ Maaf, alat ini tidak tersedia (stok habis)');
+            alert(' Maaf, alat ini tidak tersedia (stok habis)');
             return;
         }
 

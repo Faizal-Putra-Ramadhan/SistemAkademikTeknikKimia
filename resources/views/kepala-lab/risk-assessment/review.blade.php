@@ -105,7 +105,7 @@
 @section('content')
     @if($riskAssessment->status !== 'menunggu_kepala_lab')
     <div class="alert-box warning">
-        ⚠️ <strong>Perhatian:</strong> Risk Assessment ini sudah diproses sebelumnya.
+         <strong>Perhatian:</strong> Risk Assessment ini sudah diproses sebelumnya.
     </div>
     @endif
 
@@ -117,19 +117,19 @@
             </h2>
             <div class="detail-grid">
                 <div class="detail-item">
-                    <span class="detail-label">👤 Mahasiswa</span>
+                    <span class="detail-label"> Mahasiswa</span>
                     <span class="detail-value">{{ $riskAssessment->nama }} ({{ $riskAssessment->nim }})</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">🏫 Laboratorium</span>
-                    <span class="detail-value">{{ $riskAssessment->daftarLab->nama_lab }}</span>
+                    <span class="detail-label"> Laboratorium</span>
+                    <span class="detail-value">{{ $riskAssessment->daftarLab->Nama_Laboratorium }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">📋 Jenis</span>
+                    <span class="detail-label"> Jenis</span>
                     <span class="detail-value">{{ $riskAssessment->jenis_ra }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">📅 Tanggal Diajukan</span>
+                    <span class="detail-label"> Tanggal Diajukan</span>
                     <span class="detail-value">{{ $riskAssessment->created_at->format('d M Y') }}</span>
                 </div>
             </div>
@@ -139,7 +139,7 @@
     <!-- Approval Timeline -->
     <div class="card detail-section">
         <div class="card-body">
-            <h3>📊 Riwayat Persetujuan</h3>
+            <h3> Riwayat Persetujuan</h3>
             
             <div class="approval-timeline">
                 <!-- Dosen Pembimbing -->
@@ -147,11 +147,11 @@
                     <div class="timeline-dot active"></div>
                     <div>
                         <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
-                            👨‍🏫 Dosen Pembimbing
+                            ‍ Dosen Pembimbing
                         </h4>
                         <p style="color: #6b7280; font-size: 0.9rem;">{{ $riskAssessment->dosen_pembimbing_nama }}</p>
                         <p style="margin-top: 0.5rem;">
-                            Status: <strong style="color: #10b981;">Disetujui ✅</strong>
+                            Status: <strong style="color: #10b981;">Disetujui </strong>
                         </p>
                         <p style="margin-top: 0.25rem;">
                             Kategori Resiko: 
@@ -166,7 +166,7 @@
                         </div>
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">
-                            {{ $riskAssessment->tanggal_persetujuan_dosen->format('d M Y, H:i') }}
+                            {{ $riskAssessment->tanggal_persetujuan_dosen?->format('d M Y, H:i') ?? '-' }}
                         </p>
                     </div>
                 </div>
@@ -176,19 +176,19 @@
                     <div class="timeline-dot active"></div>
                     <div>
                         <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
-                            🛡️ Safety Officer
+                             Safety Officer
                         </h4>
                         <p style="color: #6b7280; font-size: 0.9rem;">{{ $riskAssessment->safety_officer_nama }}</p>
                         
                         @if($riskAssessment->jadwal_wawancara)
                         <div style="margin-top: 0.75rem; padding: 0.75rem; background: #dbeafe; border-left: 3px solid #3b82f6; border-radius: 4px;">
-                            <strong>📅 Jadwal Wawancara:</strong><br>
+                            <strong> Jadwal Wawancara:</strong><br>
                             {{ \Carbon\Carbon::parse($riskAssessment->jadwal_wawancara)->format('d M Y, H:i') }} WIB
                         </div>
                         @endif
 
                         <p style="margin-top: 0.5rem;">
-                            Status: <strong style="color: #10b981;">Disetujui ✅</strong>
+                            Status: <strong style="color: #10b981;">Disetujui </strong>
                         </p>
                         @if($riskAssessment->catatan_safety_officer)
                         <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #0d6efd; border-radius: 4px;">
@@ -197,7 +197,7 @@
                         </div>
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">
-                            {{ $riskAssessment->tanggal_persetujuan_safety_officer->format('d M Y, H:i') }}
+                            {{ $riskAssessment->tanggal_persetujuan_safety_officer?->format('d M Y, H:i') ?? '-' }}
                         </p>
                     </div>
                 </div>
@@ -207,7 +207,7 @@
                     <div class="timeline-dot pending"></div>
                     <div>
                         <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
-                            🏛️ Kepala Laboratorium (Anda)
+                             Kepala Laboratorium (Anda)
                         </h4>
                         <p style="margin-top: 0.5rem; color: #fbbf24;">
                             ⏳ Menunggu keputusan Anda
@@ -221,25 +221,25 @@
     <!-- Detail Lengkap Risk Assessment -->
     <div class="card detail-section">
         <div class="card-body">
-            <h3>⚗️ Bahan Kimia yang Digunakan</h3>
+            <h3> Bahan Kimia yang Digunakan</h3>
             @foreach($riskAssessment->bahanKimias as $index => $bahan)
             <div style="border: 2px solid #e5e7eb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
                 <h4 style="color: #0d6efd; margin-bottom: 1rem; font-weight: 600;">
                     Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}
                 </h4>
                 <div>
-                    @if($bahan->explosive) <span class="badge badge-danger">☢️ Explosive</span> @endif
-                    @if($bahan->flammable) <span class="badge badge-warning">🔥 Flammable</span> @endif
-                    @if($bahan->toxic) <span class="badge badge-danger">☠️ Toxic</span> @endif
-                    @if($bahan->corrosive) <span class="badge badge-warning">⚗️ Corrosive</span> @endif
-                    @if($bahan->irritant) <span class="badge badge-info">⚠️ Irritant</span> @endif
-                    @if($bahan->oxidizing) <span class="badge badge-info">💨 Oxidizing</span> @endif
+                    @if($bahan->explosive) <span class="badge badge-danger"> Explosive</span> @endif
+                    @if($bahan->flammable) <span class="badge badge-warning"> Flammable</span> @endif
+                    @if($bahan->toxic) <span class="badge badge-danger"> Toxic</span> @endif
+                    @if($bahan->corrosive) <span class="badge badge-warning"> Corrosive</span> @endif
+                    @if($bahan->irritant) <span class="badge badge-info"> Irritant</span> @endif
+                    @if($bahan->oxidizing) <span class="badge badge-info"> Oxidizing</span> @endif
                     @if($bahan->lain_lain) <span class="badge badge-info">{{ $bahan->lain_lain }}</span> @endif
                 </div>
                 @if($bahan->msds_file)
                 <div style="margin-top: 1rem;">
                     <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
-                        📄 Lihat/Download MSDS
+                         Lihat/Download MSDS
                     </a>
                 </div>
                 @endif
@@ -257,19 +257,19 @@
 
     <div class="card detail-section">
         <div class="card-body">
-            <h3>🔧 Peralatan & Kondisi Operasi</h3>
+            <h3> Peralatan & Kondisi Operasi</h3>
             <div>
                 @if($riskAssessment->peralatanOperasi->tekanan_tinggi)
-                    <span class="badge badge-warning">⚡ Tekanan Tinggi</span>
+                    <span class="badge badge-warning"> Tekanan Tinggi</span>
                 @endif
                 @if($riskAssessment->peralatanOperasi->suhu_tinggi)
-                    <span class="badge badge-danger">🌡️ Suhu Tinggi</span>
+                    <span class="badge badge-danger"> Suhu Tinggi</span>
                 @endif
                 @if($riskAssessment->peralatanOperasi->nyala_api)
-                    <span class="badge badge-danger">🔥 Nyala Api</span>
+                    <span class="badge badge-danger"> Nyala Api</span>
                 @endif
                 @if($riskAssessment->peralatanOperasi->peralatan_berputar)
-                    <span class="badge badge-info">⚙️ Peralatan Berputar</span>
+                    <span class="badge badge-info"> Peralatan Berputar</span>
                 @endif
             </div>
 
@@ -296,7 +296,7 @@
     <div class="card approval-form">
         <div class="card-body">
             <h3 style="color: #333; font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center;">
-                🔐 Final Approval - Kepala Laboratorium
+                 Final Approval - Kepala Laboratorium
             </h3>
 
             <form action="{{ route('kepala-lab.risk-assessment.approve', $riskAssessment->id) }}" method="POST" id="approvalForm">
@@ -307,11 +307,11 @@
                     <div class="radio-group">
                         <label class="radio-item success">
                             <input type="radio" name="persetujuan" value="setuju" required>
-                            <span style="font-size: 1.1rem; font-weight: 600;">✅ Setuju / Disetujui</span>
+                            <span style="font-size: 1.1rem; font-weight: 600;"> Setuju / Disetujui</span>
                         </label>
                         <label class="radio-item danger">
                             <input type="radio" name="persetujuan" value="tolak" required>
-                            <span style="font-size: 1.1rem; font-weight: 600;">❌ Tolak / Ditolak</span>
+                            <span style="font-size: 1.1rem; font-weight: 600;"> Tolak / Ditolak</span>
                         </label>
                     </div>
                 </div>
@@ -323,10 +323,10 @@
 
                 <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
                     <button type="submit" class="btn btn-success">
-                        ✅ Submit Keputusan
+                         Submit Keputusan
                     </button>
                     <a href="{{ route('kepala-lab.risk-assessment.index') }}" class="btn btn-secondary">
-                        ❌ Batal
+                         Batal
                     </a>
                 </div>
             </form>

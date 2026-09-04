@@ -17,7 +17,7 @@
         <!-- Content -->
         <tr>
             <td style="padding: 30px; background-color: #f8f9fa;">
-                <h2 style="color: #333; margin-top: 0;">⚠️ Deadline Segera Berakhir!</h2>
+                <h2 style="color: #333; margin-top: 0;"> Deadline Segera Berakhir!</h2>
                 <p>Halo <strong>{{ $riskAssessment->user->Nama ?? 'Peneliti' }}</strong>,</p>
                 
                 <p>Ini adalah pengingat bahwa <strong>Risk Assessment Anda akan segera mencapai batas waktu</strong>. Mohon segera selesaikan proses review dan persetujuan.</p>
@@ -26,7 +26,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #f59e0b;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin-top: 0; color: #f59e0b;">📋 Informasi Risk Assessment</h3>
+                            <h3 style="margin-top: 0; color: #f59e0b;"> Informasi Risk Assessment</h3>
                             
                             <table width="100%" cellpadding="8" cellspacing="0">
                                 <tr style="border-bottom: 1px solid #eee;">
@@ -52,7 +52,7 @@
                                                 ⏳ Menunggu Kepala Lab
                                                 @break
                                             @case('disetujui')
-                                                ✅ Disetujui
+                                                 Disetujui
                                                 @break
                                             @default
                                                 {{ $riskAssessment->status }}
@@ -68,7 +68,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: #fef3c7; margin: 20px 0; border-radius: 8px; border-left: 4px solid #fbbf24;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin: 0 0 10px 0; color: #92400e; font-size: 16px;">🔴 DEADLINE</h3>
+                            <h3 style="margin: 0 0 10px 0; color: #92400e; font-size: 16px;"> DEADLINE</h3>
                             <p style="margin: 0; color: #92400e; font-size: 18px; font-weight: bold;">
                                 {{ \Carbon\Carbon::parse($riskAssessment->batas_waktu_peminjaman)->format('d F Y') }}
                             </p>
@@ -80,7 +80,7 @@
                 </table>
 
                 <!-- What's Pending -->
-                <h3 style="color: #f59e0b; margin-bottom: 15px;">📝 Status Review</h3>
+                <h3 style="color: #f59e0b; margin-bottom: 15px;"> Status Review</h3>
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: #f9fafb; margin: 0; border-radius: 8px; padding: 0;">
                     <tr>
@@ -89,25 +89,25 @@
                                 <tr style="border-bottom: 1px solid #e5e7eb;">
                                     <td style="width: 40%; color: #6b7280; font-weight: 600;">Dosen Pembimbing:</td>
                                     <td style="color: {{ $riskAssessment->persetujuan_dosen ? '#10b981' : '#ef4444' }}; font-weight: 600;">
-                                        {{ $riskAssessment->persetujuan_dosen ? '✅ Disetujui' : '❌ Belum Disetujui' }}
+                                        {{ $riskAssessment->persetujuan_dosen ? ' Disetujui' : ' Belum Disetujui' }}
                                     </td>
                                 </tr>
                                 <tr style="border-bottom: 1px solid #e5e7eb;">
                                     <td style="color: #6b7280; font-weight: 600;">Safety Officer:</td>
                                     <td style="color: {{ $riskAssessment->persetujuan_safety_officer ? '#10b981' : '#ef4444' }}; font-weight: 600;">
-                                        {{ $riskAssessment->persetujuan_safety_officer ? '✅ Disetujui' : '❌ Belum Disetujui' }}
+                                        {{ $riskAssessment->persetujuan_safety_officer ? ' Disetujui' : ' Belum Disetujui' }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="color: #6b7280; font-weight: 600;">Kepala Lab:</td>
                                     <td style="color: {{ $riskAssessment->persetujuan_kepala_lab ? '#10b981' : '#ef4444' }}; font-weight: 600;">
-                                        {{ $riskAssessment->persetujuan_kepala_lab ? '✅ Disetujui' : '❌ Belum Disetujui' }}
+                                        {{ $riskAssessment->persetujuan_kepala_lab ? ' Disetujui' : ' Belum Disetujui' }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="color: #6b7280; font-weight: 600;">Kaprodi:</td>
                                     <td style="color: {{ $riskAssessment->persetujuan_kaprodi ? '#10b981' : '#ef4444' }}; font-weight: 600;">
-                                        {{ $riskAssessment->persetujuan_kaprodi ? '✅ Disetujui' : '❌ Belum Disetujui' }}
+                                        {{ $riskAssessment->persetujuan_kaprodi ? ' Disetujui' : ' Belum Disetujui' }}
                                     </td>
                                 </tr>
                             </table>
@@ -116,7 +116,7 @@
                 </table>
 
                 <!-- Actions -->
-                <h3 style="color: #f59e0b; margin-bottom: 15px; margin-top: 30px;">✅ Tindakan yang Diperlukan</h3>
+                <h3 style="color: #f59e0b; margin-bottom: 15px; margin-top: 30px;"> Tindakan yang Diperlukan</h3>
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: #fff7ed; margin: 0; border-radius: 8px;">
                     <tr>
@@ -137,7 +137,7 @@
                         <td>
                             <a href="{{ route('mahasiswa.risk-assessment.show', $riskAssessment->id) }}" 
                                style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
-                                📋 Lihat Risk Assessment Saya
+                                 Lihat Risk Assessment Saya
                             </a>
                         </td>
                     </tr>
@@ -147,7 +147,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: #e0e7ff; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
                     <tr>
                         <td style="padding: 15px;">
-                            <h4 style="margin: 0 0 8px 0; color: #3730a3;">❓ Butuh Perpanjangan Deadline?</h4>
+                            <h4 style="margin: 0 0 8px 0; color: #3730a3;"> Butuh Perpanjangan Deadline?</h4>
                             <p style="margin: 0; color: #3730a3;">Jika Anda membutuhkan waktu lebih lama, silakan hubungi Kepala Lab atau Kaprodi untuk meminta perpanjangan deadline.</p>
                         </td>
                     </tr>

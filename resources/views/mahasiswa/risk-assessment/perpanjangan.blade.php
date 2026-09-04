@@ -47,7 +47,7 @@
     <div style="max-width: 900px; margin: 0 auto;">
         {{-- Info Risk Assessment --}}
         <div class="form-section">
-            <h3>📋 Informasi Risk Assessment</h3>
+            <h3> Informasi Risk Assessment</h3>
             
             <div class="info-box">
                 <p><strong>Judul:</strong> {{ $riskAssessment->topik_judul }}</p>
@@ -65,7 +65,7 @@
             </div>
 
             <div class="info-box info-box-warning">
-                <strong>⚠️ Perhatian:</strong>
+                <strong> Perhatian:</strong>
                 <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
                     <li>Pengajuan perpanjangan akan direview oleh Kaprodi</li>
                     <li>Berikan alasan yang jelas dan lengkap (minimal 50 karakter)</li>
@@ -80,7 +80,7 @@
             @csrf
             
             <div class="form-section">
-                <h3>📝 Form Pengajuan Perpanjangan</h3>
+                <h3> Form Pengajuan Perpanjangan</h3>
 
                 <div class="form-group">
                     <label for="durasi_perpanjangan_diminta" class="form-label">
@@ -119,7 +119,7 @@
                 </div>
 
                 <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                    <button type="submit" class="btn btn-primary">📤 Ajukan Perpanjangan</button>
+                    <button type="submit" class="btn btn-primary"> Ajukan Perpanjangan</button>
                     <a href="{{ route('mahasiswa.risk-assessment.show', $riskAssessment->id) }}" class="btn btn-secondary">← Kembali</a>
                 </div>
             </div>

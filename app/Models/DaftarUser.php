@@ -36,6 +36,7 @@ class DaftarUser extends Authenticatable
         'parent_user_id', // BARU
         'is_primary', // BARU
         'foto',
+        'ttd',
         'Nomor_Identitas',
         'status',
     ];

@@ -58,7 +58,7 @@
                     </p>
                 @elseif($riskAssessment->status === 'disetujui')
                     <p style="color: #10b981; margin-top: 0.5rem; font-weight: 600; font-size: 0.95rem;">
-                        ✅ ID Risk Assessment akan ditampilkan setelah kepala lab menyetujui
+                         ID Risk Assessment akan ditampilkan setelah kepala lab menyetujui
                     </p>
                 @else
                     <p style="color: #f59e0b; margin-top: 0.5rem; font-weight: 600; font-size: 0.95rem;">
@@ -77,7 +77,7 @@
 
     <!-- Data Mahasiswa -->
     <div class="detail-section">
-        <h3>📋 Data Mahasiswa</h3>
+        <h3> Data Mahasiswa</h3>
         <div class="detail-grid">
             <div class="detail-item">
                 <span class="detail-label">Nama</span>
@@ -112,26 +112,26 @@
 
     <!-- Bahan Kimia -->
     <div class="detail-section">
-        <h3>⚗️ Bahan Kimia yang Digunakan</h3>
+        <h3> Bahan Kimia yang Digunakan</h3>
         @foreach($riskAssessment->bahanKimias as $index => $bahan)
         <div style="border: 2px solid #e5e7eb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
             <h4 style="color: #667eea; margin-bottom: 1rem;">Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}</h4>
             <div class="detail-item" style="margin-bottom: 1rem;">
                 <span class="detail-label">Sifat Bahan</span>
                 <div>
-                    @if($bahan->explosive) <span class="badge badge-danger">☢️ Explosive</span> @endif
-                    @if($bahan->flammable) <span class="badge badge-warning">🔥 Flammable</span> @endif
-                    @if($bahan->toxic) <span class="badge badge-danger">☠️ Toxic</span> @endif
-                    @if($bahan->corrosive) <span class="badge badge-warning">⚗️ Corrosive</span> @endif
-                    @if($bahan->irritant) <span class="badge badge-info">⚠️ Irritant</span> @endif
-                    @if($bahan->oxidizing) <span class="badge badge-info">💨 Oxidizing</span> @endif
+                    @if($bahan->explosive) <span class="badge badge-danger"> Explosive</span> @endif
+                    @if($bahan->flammable) <span class="badge badge-warning"> Flammable</span> @endif
+                    @if($bahan->toxic) <span class="badge badge-danger"> Toxic</span> @endif
+                    @if($bahan->corrosive) <span class="badge badge-warning"> Corrosive</span> @endif
+                    @if($bahan->irritant) <span class="badge badge-info"> Irritant</span> @endif
+                    @if($bahan->oxidizing) <span class="badge badge-info"> Oxidizing</span> @endif
                     @if($bahan->lain_lain) <span class="badge badge-info">{{ $bahan->lain_lain }}</span> @endif
                 </div>
             </div>
             @if($bahan->msds_file)
             <div class="detail-item">
                 <span class="detail-label">MSDS</span>
-                <a href="{{ route('msds.show', $bahan->id) }}" class="btn btn-secondary btn-sm" download>📄 Download MSDS</a>
+                <a href="{{ route('msds.show', $bahan->id) }}" class="btn btn-secondary btn-sm" download> Download MSDS</a>
             </div>
             @endif
         </div>
@@ -151,15 +151,15 @@
 
     <!-- Peralatan & Kondisi Operasi -->
     <div class="detail-section">
-        <h3>🔧 Peralatan & Kondisi Operasi</h3>
+        <h3> Peralatan & Kondisi Operasi</h3>
         <div class="detail-grid">
             <div class="detail-item">
                 <span class="detail-label">Kondisi Operasi</span>
                 <div>
-                    @if($riskAssessment->peralatanOperasi->tekanan_tinggi) <span class="badge badge-warning">⚡ Tekanan Tinggi</span> @endif
-                    @if($riskAssessment->peralatanOperasi->suhu_tinggi) <span class="badge badge-danger">🌡️ Suhu Tinggi</span> @endif
-                    @if($riskAssessment->peralatanOperasi->nyala_api) <span class="badge badge-danger">🔥 Nyala Api</span> @endif
-                    @if($riskAssessment->peralatanOperasi->peralatan_berputar) <span class="badge badge-info">⚙️ Peralatan Berputar</span> @endif
+                    @if($riskAssessment->peralatanOperasi->tekanan_tinggi) <span class="badge badge-warning"> Tekanan Tinggi</span> @endif
+                    @if($riskAssessment->peralatanOperasi->suhu_tinggi) <span class="badge badge-danger"> Suhu Tinggi</span> @endif
+                    @if($riskAssessment->peralatanOperasi->nyala_api) <span class="badge badge-danger"> Nyala Api</span> @endif
+                    @if($riskAssessment->peralatanOperasi->peralatan_berputar) <span class="badge badge-info"> Peralatan Berputar</span> @endif
                 </div>
             </div>
         </div>
@@ -191,16 +191,16 @@
 
     <!-- Pelaku Kerja -->
     <div class="detail-section">
-        <h3>👤 Pelaku Kerja Laboratorium</h3>
+        <h3> Pelaku Kerja Laboratorium</h3>
         <div class="detail-item" style="margin-bottom: 1.5rem;">
             <span class="detail-label">Pemahaman Keselamatan</span>
             <div style="margin-top: 0.5rem;">
-                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->menyadari_faktor_manusia ? '✅' : '❌' !!} Menyadari faktor manusia dalam kecelakaan kerja</div>
-                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_diri ? '✅' : '❌' !!} Memahami bahaya terhadap diri sendiri</div>
-                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_orang_lain ? '✅' : '❌' !!} Memahami bahaya terhadap orang lain</div>
-                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_lingkungan ? '✅' : '❌' !!} Memahami bahaya terhadap lingkungan</div>
-                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_peralatan ? '✅' : '❌' !!} Memahami bahaya peralatan</div>
-                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->paham_tindakan_kecelakaan ? '✅' : '❌' !!} Paham tindakan jika terjadi kecelakaan</div>
+                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->menyadari_faktor_manusia ? '' : '' !!} Menyadari faktor manusia dalam kecelakaan kerja</div>
+                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_diri ? '' : '' !!} Memahami bahaya terhadap diri sendiri</div>
+                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_orang_lain ? '' : '' !!} Memahami bahaya terhadap orang lain</div>
+                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_lingkungan ? '' : '' !!} Memahami bahaya terhadap lingkungan</div>
+                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->memahami_bahaya_peralatan ? '' : '' !!} Memahami bahaya peralatan</div>
+                <div style="margin-bottom: 0.5rem;">{!! $riskAssessment->pelakuKerja->paham_tindakan_kecelakaan ? '' : '' !!} Paham tindakan jika terjadi kecelakaan</div>
             </div>
         </div>
         <div class="detail-item">
@@ -212,10 +212,10 @@
     <!-- Pernyataan Mahasiswa -->
     @if($riskAssessment->pernyataanMahasiswa)
     <div class="detail-section">
-        <h3>✍️ Pernyataan Mahasiswa</h3>
+        <h3> Pernyataan Mahasiswa</h3>
         <div class="detail-item" style="margin-bottom: 1rem;">
             <p style="color: #374151; line-height: 1.6;">
-                {!! $riskAssessment->pernyataanMahasiswa->setuju_bertanggung_jawab ? '✅' : '❌' !!}
+                {!! $riskAssessment->pernyataanMahasiswa->setuju_bertanggung_jawab ? '' : '' !!}
                 Saya memahami tentang apa yang akan saya lakukan dalam percobaan tersebut dan bertanggung jawab terhadap keselamatan jalannya percobaan.
             </p>
         </div>
@@ -228,13 +228,13 @@
 
     <!-- Timeline Approval -->
     <div class="detail-section">
-        <h3>📊 Status Persetujuan</h3>
+        <h3> Status Persetujuan</h3>
         <div class="approval-timeline">
             <!-- Dosen Pembimbing -->
             <div class="timeline-item">
                 <div class="timeline-dot {{ $riskAssessment->persetujuan_dosen === true ? 'active' : ($riskAssessment->persetujuan_dosen === false ? 'rejected' : 'pending') }}"></div>
                 <div>
-                    <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">👨‍🏫 Dosen Pembimbing</h4>
+                    <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">‍ Dosen Pembimbing</h4>
                     <p style="color: #6b7280; font-size: 0.9rem;">{{ $riskAssessment->dosen_pembimbing_nama }}</p>
                     @if($riskAssessment->persetujuan_dosen !== null)
                         <p style="margin-top: 0.5rem;">Status: <strong style="color: {{ $riskAssessment->persetujuan_dosen ? '#10b981' : '#ef4444' }}">{{ $riskAssessment->persetujuan_dosen ? 'Disetujui' : 'Ditolak' }}</strong></p>
@@ -255,7 +255,7 @@
             <div class="timeline-item">
                 <div class="timeline-dot {{ $riskAssessment->persetujuan_safety_officer === true ? 'active' : ($riskAssessment->persetujuan_safety_officer === false ? 'rejected' : 'pending') }}"></div>
                 <div>
-                    <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">🛡️ Safety Officer</h4>
+                    <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;"> Safety Officer</h4>
                     @if($riskAssessment->safety_officer_nama)
                         <p style="color: #6b7280; font-size: 0.9rem;">{{ $riskAssessment->safety_officer_nama }}</p>
                     @endif
@@ -263,7 +263,7 @@
                         <p style="color: #6b7280; font-size: 0.9rem;">No Telp: {{ $riskAssessment->safetyOfficer->Phone }}</p>
                     @endif
                     @if($riskAssessment->jadwal_wawancara)
-                        <div style="margin-top: 0.75rem; padding: 0.75rem; background: #dbeafe; border-left: 3px solid #3b82f6; border-radius: 4px;"><strong>📅 Jadwal Wawancara:</strong><br>{{ \Carbon\Carbon::parse($riskAssessment->jadwal_wawancara)->format('d M Y, H:i') }} WIB</div>
+                        <div style="margin-top: 0.75rem; padding: 0.75rem; background: #dbeafe; border-left: 3px solid #3b82f6; border-radius: 4px;"><strong> Jadwal Wawancara:</strong><br>{{ \Carbon\Carbon::parse($riskAssessment->jadwal_wawancara)->format('d M Y, H:i') }} WIB</div>
                     @endif
                     @if($riskAssessment->persetujuan_safety_officer !== null)
                         <p style="margin-top: 0.5rem;">Status: <strong style="color: {{ $riskAssessment->persetujuan_safety_officer ? '#10b981' : '#ef4444' }}">{{ $riskAssessment->persetujuan_safety_officer ? 'Disetujui' : 'Ditolak' }}</strong></p>
@@ -281,12 +281,12 @@
             <div class="timeline-item">
                 <div class="timeline-dot {{ $riskAssessment->persetujuan_kepala_lab === true ? 'active' : ($riskAssessment->persetujuan_kepala_lab === false ? 'rejected' : 'pending') }}"></div>
                 <div>
-                    <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">🏛️ Kepala Laboratorium</h4>
+                    <h4 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;"> Kepala Laboratorium</h4>
                     @if($riskAssessment->kepalaLab)
                         <p style="color: #6b7280; font-size: 0.9rem;">{{ $riskAssessment->kepalaLab->Nama }}</p>
                     @endif
                     @if($riskAssessment->persetujuan_kepala_lab !== null)
-                        <p style="margin-top: 0.5rem;">Status: <strong style="color: {{ $riskAssessment->persetujuan_kepala_lab ? '#10b981' : '#ef4444' }}">{{ $riskAssessment->persetujuan_kepala_lab ? 'Disetujui ✅' : 'Ditolak ❌' }}</strong></p>
+                        <p style="margin-top: 0.5rem;">Status: <strong style="color: {{ $riskAssessment->persetujuan_kepala_lab ? '#10b981' : '#ef4444' }}">{{ $riskAssessment->persetujuan_kepala_lab ? 'Disetujui ' : 'Ditolak ' }}</strong></p>
                         @if($riskAssessment->catatan_kepala_lab)
                             <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #667eea; border-radius: 4px;"><strong>Catatan:</strong><br>{{ $riskAssessment->catatan_kepala_lab }}</div>
                         @endif
@@ -303,10 +303,10 @@
     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
         <a href="{{ route('mahasiswa.risk-assessment.index') }}" class="btn btn-secondary">← Kembali</a>
         @if($riskAssessment->status === 'draft')
-        <a href="{{ route('mahasiswa.risk-assessment.edit', $riskAssessment->id) }}" class="btn btn-primary">✏️ Edit</a>
+        <a href="{{ route('mahasiswa.risk-assessment.edit', $riskAssessment->id) }}" class="btn btn-primary"> Edit</a>
         @endif
         @if($riskAssessment->status === 'disetujui')
-        <a href="{{ route('mahasiswa.risk-assessment.download-pdf', $riskAssessment->id) }}" class="btn btn-success">📄 Download PDF</a>
+        <a href="{{ route('mahasiswa.risk-assessment.download-pdf', $riskAssessment->id) }}" class="btn btn-success"> Download PDF</a>
         @endif
     </div>
 @endsection

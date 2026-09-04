@@ -66,19 +66,9 @@
 
 @section('content')
     <div class="profile-container">
-        @if(session('success'))
-            <div class="alert-box success" style="margin-bottom: 20px;">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                {{ session('success') }}
-            </div>
-        @endif
+        
 
-        @if(session('error'))
-            <div class="alert-box danger" style="margin-bottom: 20px;">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                {{ session('error') }}
-            </div>
-        @endif
+        
 
         <div class="card">
             <div class="card-header">
@@ -90,30 +80,62 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Photo Section -->
-                    <div class="profile-photo-section">
-                        @if($user->foto && file_exists(public_path('uploads/profile/' . $user->foto)))
-                            <img src="{{ asset('uploads/profile/' . $user->foto) }}" alt="Foto Profil" class="photo-preview" id="photoPreview">
-                        @else
-                            <div class="photo-initials" id="photoInitials">
-                                {{ strtoupper(substr($user->Nama ?? '?', 0, 2)) }}
-                            </div>
-                            <img src="" alt="Foto Profil" class="photo-preview" id="photoPreview" style="display: none;">
-                        @endif
+                    <!-- Photo and TTD Section -->
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; padding: 30px 20px; border-bottom: 1px solid #e5e7eb;">
+                        <!-- Photo Section -->
+                        <div class="profile-photo-section" style="border-bottom: none; padding: 0;">
+                            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #4b5563;">Foto Profil</h4>
+                            @if($user->foto && file_exists(public_path('uploads/profile/' . $user->foto)))
+                                <img src="{{ asset('uploads/profile/' . $user->foto) }}" alt="Foto Profil" class="photo-preview" id="photoPreview">
+                            @else
+                                <div class="photo-initials" id="photoInitials">
+                                    {{ strtoupper(substr($user->Nama ?? '?', 0, 2)) }}
+                                </div>
+                                <img src="" alt="Foto Profil" class="photo-preview" id="photoPreview" style="display: none;">
+                            @endif
 
-                        <div style="text-align: center;">
-                            <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
-                            <label for="fotoInput" class="photo-upload-btn">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                    <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                Upload Foto
-                            </label>
-                            <div class="photo-hint">Format: JPG, JPEG, PNG (Maks: 2MB)</div>
-                            <div class="photo-filename" id="photoFilename"></div>
-                            @error('foto') <small style="color: #dc2626; font-size: 12px;">{{ $message }}</small> @enderror
+                            <div style="text-align: center;">
+                                <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+                                <label for="fotoInput" class="photo-upload-btn">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                        <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    Upload Foto
+                                </label>
+                                <div class="photo-hint">Format: JPG, JPEG, PNG (Maks: 2MB)</div>
+                                <div class="photo-filename" id="photoFilename"></div>
+                                @error('foto') <small style="color: #dc2626; font-size: 12px;">{{ $message }}</small> @enderror
+                            </div>
                         </div>
+
+                        @if($user->hasAnyRole(['Dosen', 'Kepala Laboratorium', 'Laboran', 'Kaprodi', 'Safety Officer']))
+                        <!-- TTD Section -->
+                        <div class="profile-photo-section" style="border-bottom: none; padding: 0;">
+                            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #4b5563;">Tanda Tangan (TTD)</h4>
+                            @if($user->ttd && file_exists(public_path('uploads/ttd/' . $user->ttd)))
+                                <img src="{{ asset('uploads/ttd/' . $user->ttd) }}" alt="Tanda Tangan" class="photo-preview" id="ttdPreview" style="border-radius: 8px; object-fit: contain; background: white;">
+                            @else
+                                <div class="photo-initials" id="ttdInitials" style="border-radius: 8px; background: #f3f4f6; color: #9ca3af; font-size: 24px;">
+                                    TTD
+                                </div>
+                                <img src="" alt="Tanda Tangan" class="photo-preview" id="ttdPreview" style="display: none; border-radius: 8px; object-fit: contain; background: white;">
+                            @endif
+
+                            <div style="text-align: center;">
+                                <input type="file" name="ttd" id="ttdInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+                                <label for="ttdInput" class="photo-upload-btn" style="background: #4b5563;">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                    </svg>
+                                    Upload TTD
+                                </label>
+                                <div class="photo-hint">Format: JPG, JPEG, PNG (Maks: 2MB)</div>
+                                <div class="photo-filename" id="ttdFilename"></div>
+                                @error('ttd') <small style="color: #dc2626; font-size: 12px;">{{ $message }}</small> @enderror
+                            </div>
+                        </div>
+                        @endif
                     </div>
 
                     <!-- Form Fields -->
@@ -179,5 +201,30 @@
             reader.readAsDataURL(file);
         }
     });
+
+    const ttdInput = document.getElementById('ttdInput');
+    if (ttdInput) {
+        ttdInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Show filename
+                const filenameEl = document.getElementById('ttdFilename');
+                filenameEl.textContent = file.name;
+                filenameEl.style.display = 'block';
+
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const preview = document.getElementById('ttdPreview');
+                    preview.src = ev.target.result;
+                    preview.style.display = 'block';
+                    // Hide initials if present
+                    const initials = document.getElementById('ttdInitials');
+                    if (initials) initials.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 </script>
 @endpush

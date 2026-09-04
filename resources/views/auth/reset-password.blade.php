@@ -176,7 +176,7 @@
         @endif
 
         <div class="info-box">
-            <p><strong>⚠️ Perhatian:</strong><br>
+            <p><strong> Perhatian:</strong><br>
             Password harus minimal 6 karakter dan kombinasi huruf serta angka untuk keamanan akun Anda.</p>
         </div>
 
@@ -189,7 +189,7 @@
                 <label for="email">Email</label>
                 <div class="input-wrapper">
                     <input type="email" id="email" name="email" placeholder="Masukkan email Anda" value="{{ request()->email ?? old('email') }}" required autofocus>
-                    <span class="icon">📧</span>
+                    <span class="icon"></span>
                 </div>
                 @error('email')
                     <div style="color: #c33; font-size: 13px; margin-top: 5px;">{{ $message }}</div>
@@ -200,7 +200,7 @@
                 <label for="password">Password Baru</label>
                 <div class="input-wrapper">
                     <input type="password" id="password" name="password" placeholder="Minimal 6 karakter" required oninput="checkPasswordStrength()">
-                    <span class="icon">🔒</span>
+                    <span class="icon"></span>
                 </div>
                 <div id="passwordStrength" class="password-strength"></div>
                 @error('password')
@@ -212,7 +212,7 @@
                 <label for="password_confirmation">Konfirmasi Password</label>
                 <div class="input-wrapper">
                     <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Ketik ulang password" required>
-                    <span class="icon">🔒</span>
+                    <span class="icon"></span>
                 </div>
                 @error('password_confirmation')
                     <div style="color: #c33; font-size: 13px; margin-top: 5px;">{{ $message }}</div>
@@ -245,11 +245,11 @@
             if (/[^a-zA-Z\d]/.test(password)) strength++;
             
             if (strength <= 2) {
-                strengthDiv.innerHTML = '<span class="strength-weak">⚠️ Password lemah</span>';
+                strengthDiv.innerHTML = '<span class="strength-weak"> Password lemah</span>';
             } else if (strength <= 3) {
-                strengthDiv.innerHTML = '<span class="strength-medium">⚡ Password sedang</span>';
+                strengthDiv.innerHTML = '<span class="strength-medium"> Password sedang</span>';
             } else {
-                strengthDiv.innerHTML = '<span class="strength-strong">✅ Password kuat</span>';
+                strengthDiv.innerHTML = '<span class="strength-strong"> Password kuat</span>';
             }
         }
 

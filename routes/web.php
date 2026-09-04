@@ -108,7 +108,7 @@ Route::get('/', function () {
             'Laboran' => redirect()->route('laboran.dashboard'),
             'Kepala Laboratorium' => redirect()->route('kepala-lab.dashboard'),
             'Safety Officer' => redirect()->route('safety-officer.dashboard'),
-            'Kaprodi' => redirect()->route('kaprodi.dashboard'), // ✅ BARU
+            'Kaprodi' => redirect()->route('kaprodi.dashboard'), //  BARU
             default => redirect()->route('login'),
         };
     }
@@ -344,7 +344,7 @@ Route::middleware(['auth', 'role:Mahasiswa'])->prefix('mahasiswa')->name('mahasi
             // Buat RA baru dari lab tertentu
             Route::get('/lab/{labId}/create', [RiskAssessmentController::class , 'create'])->name('create');
             Route::post('/lab/{labId}/store', [RiskAssessmentController::class , 'store'])->name('store');
-            // 👇 Route baru untuk ajukan ke Kaprodi
+            //  Route baru untuk ajukan ke Kaprodi
             Route::post('/{id}/ajukan-kaprodi', [RiskAssessmentController::class , 'ajukanKeKaprodi'])->name('ajukan-kaprodi');
 
             // Lihat detail RA
@@ -674,33 +674,33 @@ Route::middleware(['auth', 'role:Safety Officer'])
 
         Route::prefix('risk-assessment')->name('risk-assessment.')->group(function () {
 
-            // ✅ LIST RA
+            //  LIST RA
             Route::get('/', [SafetyOfficerController::class , 'index'])
                 ->name('index');
 
-            // ✅ Jadwal wawancara list (put specific routes before {id})
+            //  Jadwal wawancara list (put specific routes before {id})
             Route::get('/schedules/list', [SafetyOfficerController::class , 'schedules'])
                 ->name('schedules');
 
-            // ✅ NEW: Create schedule options (multiple jadwal)
+            //  NEW: Create schedule options (multiple jadwal)
             Route::get('/{id}/create-schedule-options', [SafetyOfficerController::class , 'showCreateScheduleOptions'])
                 ->name('create-schedule-options');
             Route::post('/{id}/store-schedule-options', [SafetyOfficerController::class , 'storeScheduleOptions'])
                 ->name('store-schedule-options');
 
-            // ✅ DETAIL RA (PAKAI ID)
+            //  DETAIL RA (PAKAI ID)
             Route::get('/{id}', [SafetyOfficerController::class , 'show'])
                 ->name('show');
 
-            // ✅ Jadwalkan wawancara (with ID parameter)
+            //  Jadwalkan wawancara (with ID parameter)
             Route::post('/{id}/schedule-interview', [SafetyOfficerController::class , 'scheduleInterview'])
                 ->name('schedule-interview');
 
-            // ✅ Approve / Reject (with ID parameter)
+            //  Approve / Reject (with ID parameter)
             Route::post('/{id}/approve', [SafetyOfficerController::class , 'approve'])
                 ->name('approve');
 
-            // ✅ Minta revisi (with ID parameter)
+            //  Minta revisi (with ID parameter)
             Route::post('/{id}/request-revision', [SafetyOfficerController::class , 'requestRevision'])
                 ->name('request-revision');
         }

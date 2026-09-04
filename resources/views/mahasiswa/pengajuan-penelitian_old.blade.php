@@ -10,11 +10,7 @@
         {{ $lab->Nama_Laboratorium }}
     </h2>
 
-    @if(session('success'))
-        <div style="background:#d4edda; color:#155724; padding:18px; border-radius:16px; text-align:center; margin-bottom:30px; font-weight:600;">
-            {{ session('success') }}
-        </div>
-    @endif
+    
 
     <div class="card" style="background:white; border-radius:24px; padding:40px; box-shadow:0 15px 50px rgba(0,0,0,0.12);">
         <form action="{{ route('mahasiswa.pengajuan-penelitian.store', $lab->id) }}" method="POST">

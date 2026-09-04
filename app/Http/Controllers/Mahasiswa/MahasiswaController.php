@@ -294,7 +294,7 @@ class MahasiswaController extends Controller
 
                 // Warning jika hampir expired (kurang dari 30 hari)
                 if ($riskAssessment->isHampirExpired()) {
-                    $pesanBatasWaktu = '⚠️ Batas waktu untuk mengajukan peminjaman akan berakhir dalam '
+                    $pesanBatasWaktu = ' Batas waktu untuk mengajukan peminjaman akan berakhir dalam '
                         . $sisaWaktu . '. Segera ajukan peminjaman jika diperlukan!';
                 }
             }
@@ -494,7 +494,7 @@ class MahasiswaController extends Controller
                 'waktu' => now(),
             ]);
 
-            // ✅ KIRIM EMAIL KE LABORAN
+            //  KIRIM EMAIL KE LABORAN
             // Cari laboran untuk lab ini (mendukung multi-role)
             $laborans = DaftarUser::withLaboranRole()
                 ->whereHas('laborans', function ($q) use ($lab) {
@@ -676,25 +676,15 @@ class MahasiswaController extends Controller
         $peminjamanAlat = PeminjamanAlat::where('user_nama', $user->Nama)
             ->with('alatLab', 'daftarLab')
             ->whereHas('alatLab', function ($query) use ($lab) {
-            $query->where('stock_group_id', $lab->stock_group_id)
-                ->where(function ($q) use ($lab) {
-                $q->whereNull('daftar_lab_id')
-                    ->orWhere('daftar_lab_id', $lab->id);
-            }
-            );
-        })
+                $query->where('stock_group_id', $lab->stock_group_id);
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
         $riskAssessments = RiskAssessment::where('user_id', $user->id)
             ->whereHas('daftarLab', function ($query) use ($lab) {
-            $query->where('stock_group_id', $lab->stock_group_id)
-                ->where(function ($q) use ($lab) {
-                $q->whereNull('daftar_lab_id')
-                    ->orWhere('daftar_lab_id', $lab->id);
-            }
-            );
-        })
+                $query->where('stock_group_id', $lab->stock_group_id);
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 

@@ -119,8 +119,7 @@ CARA PENGGUNAAN DI BLADE VIEWS:
 CONTOH IMPLEMENTASI NAVBAR:
 ==============================================================
 */
-?>
-
+/*
 
 <!-- <nav class="bg-white shadow-lg">
     <div class="max-w-7xl mx-auto px-4">
@@ -173,7 +172,7 @@ CONTOH IMPLEMENTASI NAVBAR:
     </div>
 </nav> -->
 
-<?php
+*/
 /*
 ==============================================================
 HELPER FUNCTIONS (OPTIONAL)

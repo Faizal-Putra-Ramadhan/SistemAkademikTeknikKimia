@@ -348,9 +348,7 @@
     </a>
 
     {{-- Alerts --}}
-    @if(session('success'))
-    <div class="det-alert success"><i class="fas fa-check-circle"></i> {{ session('success') }}</div>
-    @endif
+    
     @if($errors->any())
     <div class="det-alert danger">
         <i class="fas fa-exclamation-circle"></i>
@@ -512,7 +510,7 @@
                 @if($bahan->msds_file)
                 <div style="margin-top:0.75rem;">
                     <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;text-decoration:none;font-size:0.875rem;background:#0d6efd;color:#fff;border:none;">
-                        📄 Lihat/Download MSDS
+                         Lihat/Download MSDS
                     </a>
                 </div>
                 @endif

@@ -108,12 +108,7 @@
 <div class="so-page">
 
     {{-- Alert --}}
-    @if(session('success'))
-    <div class="so-alert success">
-        <i class="fas fa-check-circle"></i>
-        {{ session('success') }}
-    </div>
-    @endif
+    
 
     {{-- Welcome Banner --}}
     <div class="so-welcome">

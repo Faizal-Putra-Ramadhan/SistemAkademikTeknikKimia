@@ -17,7 +17,6 @@ class TambahUserController extends Controller
 {
     public function index()
     {
-        // Ambil semua user yang bisa dijadikan parent (primary accounts)
         $potentialParents = DaftarUser::where('is_primary', true)
             ->orWhereNull('parent_user_id')
             ->orderBy('Nama')
@@ -30,34 +29,33 @@ class TambahUserController extends Controller
 
     public function store(Request $request)
     {
-        // DEFENSIVE: Validasi dengan aturan ketat
         $request->validate([
             'nama' => [
                 'required',
                 'string',
                 'min:3',
                 'max:255',
-                'regex:/^[a-zA-Z\s\.\,\-\']+$/u', // Hanya huruf, spasi, dan karakter nama umum
+                'regex:/^[a-zA-Z\s\.\,\-\']+$/u', 
             ],
             'email' => [
                 'required',
-                'email:rfc,dns', // Validate DNS record
+                'email:rfc,dns', 
                 'unique:daftar_users,Email',
                 'max:255',
             ],
             'Phone' => [
                 'required',
                 'string',
-                'regex:/^[0-9\+\-\(\)\s]{8,20}$/', // Format nomor telepon
+                'regex:/^[0-9\+\-\(\)\s]{8,20}$/', 
                 'min:8',
                 'max:20',
             ],
             'password' => [
                 'required',
                 'string',
-                'min:8', // Minimal 8 karakter
+                'min:8', 
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*\d).+$/', // Harus ada huruf kecil dan angka
+                'regex:/^(?=.*[a-z])(?=.*\d).+$/', 
             ],
             'roles' => [
                 'required',
@@ -76,7 +74,7 @@ class TambahUserController extends Controller
                 'nullable',
                 'string',
                 'max:50',
-                'regex:/^[a-zA-Z0-9\-]+$/', // Hanya alphanumeric dan dash
+                'regex:/^[a-zA-Z0-9\-]+$/', 
             ],
             'link_to_parent' => 'nullable|exists:daftar_users,id',
         ], [
@@ -102,45 +100,37 @@ class TambahUserController extends Controller
             'link_to_parent.exists' => 'Parent account tidak valid',
         ]);
 
-        // DEFENSIVE: Gunakan database transaction
         DB::beginTransaction();
 
         try {
-            // DEFENSIVE: Sanitize input
             $sanitizedNama = strip_tags(trim($request->nama));
             $sanitizedEmail = strtolower(trim($request->email));
             $sanitizedPhone = preg_replace('/[^0-9\+\-\(\)\s]/', '', $request->Phone);
             $sanitizedNomorIdentitas = $request->nomor_identitas ? strip_tags(trim($request->nomor_identitas)) : null;
             $plainPassword = $request->password; // Simpan password plain untuk email (hanya untuk email)
 
-            // Tentukan apakah ini primary account atau child account
             $isPrimary = ! $request->filled('link_to_parent');
             $parentUserId = $request->link_to_parent;
 
-            // Get primary role (first role if not specified)
             $primaryRole = $request->primary_role ?? $request->roles[0];
 
-            // Generate User ID based on primary role
             $userId = $this->generateUserId($primaryRole);
 
-            // Langsung buat user di daftar_users
             $newUser = DaftarUser::create([
                 'UserID' => $userId,
                 'Nama' => $sanitizedNama,
                 'Email' => $sanitizedEmail,
                 'Phone' => $sanitizedPhone,
-                'Password' => Hash::make($plainPassword), // Hash password
-                'Role_User' => $primaryRole, // Set primary role for backward compatibility
+                'Password' => Hash::make($plainPassword), 
+                'Role_User' => $primaryRole, 
                 'Nomor_Identitas' => $sanitizedNomorIdentitas,
                 'is_primary' => $isPrimary,
                 'parent_user_id' => $parentUserId,
-                'status' => 'aktif', // Status langsung aktif
+                'status' => 'aktif', 
             ]);
 
-            // Sync roles to user_roles table
             $newUser->syncRoles($request->roles, $primaryRole);
 
-            // Jika salah satu role adalah Laboran, otomatis buat entry di daftar_laboran_laboratoriums
             $laboranRoles = ['Laboran', 'Koordinator Laboran', 'Asisten Laboran'];
             $selectedLaboranRole = collect($request->roles)->first(fn ($r) => in_array($r, $laboranRoles));
             if ($selectedLaboranRole) {
@@ -154,10 +144,8 @@ class TambahUserController extends Controller
                 ]);
             }
 
-            // Kirim email dengan informasi akun
             Mail::send(new AccountCredentialsMail($sanitizedNama, $sanitizedEmail, $plainPassword, $userId));
 
-            // Log aktivitas
             $rolesStr = implode(', ', $request->roles);
             ActivityLog::create([
                 'user_name' => auth()->user()->Nama ?? 'Admin',
@@ -228,12 +216,10 @@ class TambahUserController extends Controller
                 $prefix = 'USR';
         }
 
-        // Generate unique ID dengan timestamp + random
-        $timestamp = now()->format('ymd'); // Format: YYMMDD
+        $timestamp = now()->format('ymd'); 
         $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
         $userId = "{$prefix}-{$timestamp}{$random}";
 
-        // Cek apakah UserID sudah ada, jika ya generate ulang
         while (DaftarUser::where('UserID', $userId)->exists()) {
             $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
             $userId = "{$prefix}-{$timestamp}{$random}";

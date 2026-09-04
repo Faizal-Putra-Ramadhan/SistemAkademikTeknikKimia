@@ -96,7 +96,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>✏️ Edit Pengumuman</h1>
+        <h1> Edit Pengumuman</h1>
         <p class="subtitle">Update pengumuman yang sudah dibuat</p>
 
         @if($errors->any())

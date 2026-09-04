@@ -140,7 +140,7 @@
 @section('content')
 {{-- Informasi Risk Assessment --}}
             <div class="detail-section">
-                <h3>📋 Informasi Risk Assessment</h3>
+                <h3> Informasi Risk Assessment</h3>
                 
                 <div class="detail-grid">
                     <div class="detail-item">
@@ -207,7 +207,7 @@
 
             {{-- Pengajuan Perpanjangan --}}
             <div class="detail-section">
-                <h3>🔄 Pengajuan Perpanjangan</h3>
+                <h3> Pengajuan Perpanjangan</h3>
                 
                 <div class="detail-grid" style="margin-bottom: 1.5rem;">
                     <div class="detail-item">
@@ -225,7 +225,7 @@
                 </div>
 
                 <div class="alasan-box">
-                    <strong style="color: #1e40af; font-size: 1.1rem;">📝 Alasan Perpanjangan:</strong>
+                    <strong style="color: #1e40af; font-size: 1.1rem;"> Alasan Perpanjangan:</strong>
                     <p style="margin-top: 1rem; color: #374151; line-height: 1.8; font-size: 1rem;">
                         {{ $riskAssessment->alasan_perpanjangan }}
                     </p>
@@ -237,7 +237,7 @@
                 @csrf
                 
                 <div class="detail-section">
-                    <h3>✅ Keputusan Perpanjangan</h3>
+                    <h3> Keputusan Perpanjangan</h3>
 
                     {{-- Keputusan --}}
                     <div class="form-group">
@@ -253,7 +253,7 @@
                                     required
                                     onchange="toggleDurasiField(true)"
                                 >
-                                <span style="font-weight: 500;">✅ Setujui Perpanjangan</span>
+                                <span style="font-weight: 500;"> Setujui Perpanjangan</span>
                             </label>
                             <label class="radio-option">
                                 <input 
@@ -262,7 +262,7 @@
                                     value="tolak"
                                     onchange="toggleDurasiField(false)"
                                 >
-                                <span style="font-weight: 500;">❌ Tolak Perpanjangan</span>
+                                <span style="font-weight: 500;"> Tolak Perpanjangan</span>
                             </label>
                         </div>
                         @error('persetujuan')
@@ -291,7 +291,7 @@
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                         <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.5rem;">
-                            💡 Mahasiswa meminta {{ $riskAssessment->durasi_perpanjangan_diminta }} bulan. Anda dapat menyetujui durasi yang sama atau mengubahnya sesuai pertimbangan.
+                             Mahasiswa meminta {{ $riskAssessment->durasi_perpanjangan_diminta }} bulan. Anda dapat menyetujui durasi yang sama atau mengubahnya sesuai pertimbangan.
                         </p>
                     </div>
 
@@ -314,7 +314,7 @@
                     {{-- Buttons --}}
                     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                         <button type="submit" class="btn btn-success" onclick="return confirmSubmit()">
-                            📤 Submit Keputusan
+                             Submit Keputusan
                         </button>
                         <a href="{{ route('kaprodi.perpanjangan.index') }}" class="btn btn-secondary">
                             ← Kembali

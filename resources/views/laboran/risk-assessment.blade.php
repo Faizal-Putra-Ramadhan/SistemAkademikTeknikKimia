@@ -182,7 +182,7 @@
 
         @if($hampirExpiredCount > 0 || $expiredCount > 0)
         <div style="background: linear-gradient(to right, #fef3c7, #fef9c3); border: 1px solid #f59e0b; border-left: 5px solid #f59e0b; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 12px;">
-            <span style="font-size: 1.5rem; flex-shrink: 0;">⚠️</span>
+            <span style="font-size: 1.5rem; flex-shrink: 0;"></span>
             <div>
                 <strong style="color: #92400e; font-size: 0.95rem;">Perhatian: Ada Risk Assessment yang perlu ditindaklanjuti</strong>
                 <p style="margin: 4px 0 0; font-size: 0.875rem; color: #78350f;">
@@ -198,13 +198,9 @@
         </div>
         @endif
 
-        @if(session('success'))
-            <div class="alert alert-success" style="margin-bottom:1rem;">{{ session('success') }}</div>
-        @endif
+        
 
-        @if(session('error'))
-            <div class="alert alert-error" style="margin-bottom:1rem;">{{ session('error') }}</div>
-        @endif
+        
 
         <div class="ra-card">
             <div class="ra-tabs">
@@ -304,13 +300,13 @@
                                         <td>
                                             @if($ra->status === 'disetujui' && $ra->batas_waktu_peminjaman)
                                                 @if(!$ra->isMasihBerlaku())
-                                                    <span class="deadline-badge expired">⚠️ Expired</span>
+                                                    <span class="deadline-badge expired"> Expired</span>
                                                     <span class="deadline-sisa" style="color: #991b1b;">{{ $ra->getBatasWaktuPeminjamanFormatted() }}</span>
                                                 @elseif($ra->isHampirExpired())
                                                     <span class="deadline-badge hampir-expired">⏰ Hampir Habis</span>
                                                     <span class="deadline-sisa" style="color: #92400e;">{{ $ra->getBatasWaktuPeminjamanFormatted() }} ({{ $ra->getSisaWaktuPeminjaman() }})</span>
                                                 @else
-                                                    <span class="deadline-badge active">✅ Berlaku</span>
+                                                    <span class="deadline-badge active"> Berlaku</span>
                                                     <span class="deadline-sisa" style="color: #065f46;">s.d. {{ $ra->getBatasWaktuPeminjamanFormatted() }} ({{ $ra->getSisaWaktuPeminjaman() }})</span>
                                                 @endif
                                             @else

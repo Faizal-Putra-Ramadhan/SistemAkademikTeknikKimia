@@ -27,7 +27,7 @@ class PeminjamanRuanganController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // Kalau tidak ada lab sama sekali
+        
         if ($labs->isEmpty()) {
             return view('peneliti-eksternal.pinjam-ruangan', [
                 'lab' => null,
@@ -38,13 +38,13 @@ class PeminjamanRuanganController extends Controller
             ]);
         }
 
-        // Ambil riwayat peminjaman ruangan peneliti eksternal ini
+        
         $peminjaman_ruangans = PeminjamanRuangan::with('daftarLab')
             ->where('user_id', $user->id)
             ->latest()
             ->get();
 
-        // Ambil peminjaman aktif untuk setiap lab (untuk warning box)
+        
         $peminjaman_aktif_per_lab = [];
         foreach ($labs as $labItem) {
             $peminjaman_aktif_per_lab[$labItem->id] = PeminjamanRuangan::where('daftar_lab_id', $labItem->id)
@@ -63,7 +63,7 @@ class PeminjamanRuanganController extends Controller
      */
     public function store(Request $request, $labId)
     {
-        // Validasi input
+        
         $validator = Validator::make($request->all(), [
             'tanggal' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal',
@@ -109,7 +109,7 @@ class PeminjamanRuanganController extends Controller
 
         DB::beginTransaction();
         try {
-            // Cek ketersediaan ruangan di dalam transaksi untuk mencegah race condition
+            
             $konflik = $this->cekKetersediaanRuangan(
                 $labId,
                 $validated['tanggal'],
@@ -127,7 +127,7 @@ class PeminjamanRuanganController extends Controller
                     ->with('error', 'Ruangan sedang dipakai pada tanggal dan jam tersebut. Silakan pilih waktu lain atau periksa jadwal yang sudah terpakai.');
             }
 
-            // ✅ DEACTIVATE BEBAS LAB - Jika peneliti eksternal membuat peminjaman ruangan baru, deactivate bebas lab mereka
+            
             $activeBebasLabs = BebasLabRequest::where('user_id', $user->id)
                 ->where('is_active', true)
                 ->get();
@@ -136,7 +136,7 @@ class PeminjamanRuanganController extends Controller
                 $bebasLab->deactivate();
             }
 
-            // Simpan peminjaman ruangan
+            
             $peminjaman = PeminjamanRuangan::create([
                 'user_id' => $user->id,
                 'user_nama' => $user->Nama,
@@ -149,7 +149,7 @@ class PeminjamanRuanganController extends Controller
                 'status' => 'menunggu',
             ]);
 
-            // Catat aktivitas
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $user->Nama,
                 'daftar_lab_id' => $labId,
@@ -157,7 +157,7 @@ class PeminjamanRuanganController extends Controller
                 'keterangan' => "Mengajukan peminjaman ruangan {$lab->Nama_Laboratorium} dari {$validated['tanggal']} sampai {$validated['tanggal_selesai']}",
             ]);
 
-            // ✅ KIRIM EMAIL KE LABORAN (mendukung multi-role & multiple labs scheme)
+            
             $laborans = DaftarUser::laboranForLab($lab)->get();
 
             foreach ($laborans as $laboran) {
@@ -177,7 +177,7 @@ class PeminjamanRuanganController extends Controller
 
             DB::commit();
 
-            return redirect()->route('peneliti-eksternal.pinjam-ruangan', ['labId' => $labId])
+            return redirect()->route('peneliti-eksternal.aktivitas', ['id' => $labId])
                 ->with('success', 'Peminjaman ruangan berhasil diajukan! Email notifikasi telah dikirim ke laboran. Menunggu persetujuan.');
 
         }

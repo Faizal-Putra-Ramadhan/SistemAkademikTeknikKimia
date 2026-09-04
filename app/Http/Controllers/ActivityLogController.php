@@ -11,7 +11,7 @@ class ActivityLogController extends Controller
     {
         $query = ActivityLog::orderBy('created_at', 'desc');
 
-        // Filter tanggal
+        
         if ($request->filled('dari') && $request->filled('sampai')) {
             $query->whereBetween('created_at', [
                 $request->dari . ' 00:00:00',

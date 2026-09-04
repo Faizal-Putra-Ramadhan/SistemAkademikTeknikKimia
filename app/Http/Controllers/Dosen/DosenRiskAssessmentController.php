@@ -51,7 +51,6 @@ class DosenRiskAssessmentController extends Controller
             'pernyataanMahasiswa',
         ])->findOrFail($id);
 
-        // Pastikan ini memang risk assessment untuk dosen yang login
         if ($riskAssessment->dosen_pembimbing_id !== Auth::user()->id) {
             abort(403, 'Anda tidak memiliki akses ke Risk Assessment ini.');
         }
@@ -74,7 +73,6 @@ class DosenRiskAssessmentController extends Controller
 
         $riskAssessment = RiskAssessment::findOrFail($id);
 
-        // Validasi akses
         if ($riskAssessment->dosen_pembimbing_id !== Auth::user()->id) {
             abort(403, 'Anda tidak memiliki akses untuk menyetujui Risk Assessment ini.');
         }
@@ -98,11 +96,8 @@ class DosenRiskAssessmentController extends Controller
             ? 'Risk Assessment berhasil disetujui. Akan dilanjutkan ke Safety Officer.'
             : 'Risk Assessment ditolak. Mahasiswa dapat mengajukan kembali setelah perbaikan.';
 
-        // Di dalam method approve()
-        // 1. Notif ke Mahasiswa
         Mail::to($riskAssessment->user->Email)->send(new RiskAssessmentMail($riskAssessment, 'dosen_setuju'));
 
-        // 2. Notif ke Semua Safety Officer
         $safetyOfficers = DaftarUser::where('Role_User', 'Safety Officer')->get();
         foreach ($safetyOfficers as $so) {
             if ($so->Email) {
@@ -132,7 +127,7 @@ class DosenRiskAssessmentController extends Controller
 
         $riskAssessment->update([
             'catatan_dosen' => $request->catatan_revisi,
-            'status' => 'draft', // Kembalikan ke draft untuk revisi
+            'status' => 'draft', 
         ]);
 
         return redirect()

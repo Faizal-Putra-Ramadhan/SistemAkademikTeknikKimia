@@ -4,12 +4,8 @@
 @section('page-title', 'Bebas Lab')
 
 @section('content')
-    @if(session('success'))
-        <div class="rounded-md bg-green-50 p-4 text-green-700">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="rounded-md bg-red-50 p-4 text-red-700">{{ session('error') }}</div>
-    @endif
+    
+    
 
     <div class="card">
         <div class="card-header">

@@ -10,14 +10,14 @@
         <!-- Header -->
         <tr>
             <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center;">
-                <h1 style="margin: 0; font-size: 24px;">📧 LIMS - Notifikasi Perpanjangan Deadline</h1>
+                <h1 style="margin: 0; font-size: 24px;"> LIMS - Notifikasi Perpanjangan Deadline</h1>
             </td>
         </tr>
 
         <!-- Content -->
         <tr>
             <td style="padding: 30px; background-color: #f8f9fa;">
-                <h2 style="color: #333; margin-top: 0;">📌 Notifikasi Penting dari Laboran</h2>
+                <h2 style="color: #333; margin-top: 0;"> Notifikasi Penting dari Laboran</h2>
                 <p>Halo <strong>{{ $riskAssessment->user->Nama ?? 'Peneliti' }}</strong>,</p>
                 
                 <p>Laboran telah mengirimkan notifikasi terkait Risk Assessment Anda. Silakan baca informasi berikut:</p>
@@ -26,7 +26,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin-top: 0; color: #667eea;">📋 Informasi Risk Assessment</h3>
+                            <h3 style="margin-top: 0; color: #667eea;"> Informasi Risk Assessment</h3>
                             
                             <table width="100%" cellpadding="8" cellspacing="0">
                                 <tr style="border-bottom: 1px solid #eee;">
@@ -69,7 +69,7 @@
                                         @if (\Carbon\Carbon::parse($riskAssessment->batas_waktu_peminjaman)->isFuture())
                                             ⏳ Masih Berlaku
                                         @else
-                                            ❌ Telah Berakhir
+                                             Telah Berakhir
                                         @endif
                                     </td>
                                 </tr>
@@ -79,13 +79,13 @@
                 </table>
 
                 <!-- Notification Message -->
-                <h3 style="color: #667eea; margin-bottom: 15px;">💬 Pesan dari Laboran</h3>
+                <h3 style="color: #667eea; margin-bottom: 15px;"> Pesan dari Laboran</h3>
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: #f9fafb; margin: 12px 0; border-radius: 6px; border: 1px solid #e5e7eb;">
                     <tr>
                         <td style="padding: 20px;">
                             <p style="margin: 0; color: #1f2937; line-height: 1.8; font-size: 15px;">
-                                ℹ️ Laboran telah mengirimkan notifikasi terkait perpanjangan atau perubahan deadline untuk Risk Assessment Anda.
+                                ℹ Laboran telah mengirimkan notifikasi terkait perpanjangan atau perubahan deadline untuk Risk Assessment Anda.
                             </p>
                             <p style="margin: 15px 0 0 0; color: #1f2937; line-height: 1.8; font-size: 15px;">
                                 Silakan cek sistem LIMS atau hubungi Laboran langsung untuk informasi lebih detail.
@@ -95,7 +95,7 @@
                 </table>
 
                 <!-- Action Items -->
-                <h3 style="color: #667eea; margin-bottom: 15px; margin-top: 30px;">✅ Langkah Selanjutnya</h3>
+                <h3 style="color: #667eea; margin-bottom: 15px; margin-top: 30px;"> Langkah Selanjutnya</h3>
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: #f9fafb; margin: 0; border-radius: 8px;">
                     <tr>
@@ -116,7 +116,7 @@
                         <td>
                             <a href="{{ route('mahasiswa.risk-assessment.show', $riskAssessment->id) }}" 
                                style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
-                                📋 Lihat Risk Assessment Saya
+                                 Lihat Risk Assessment Saya
                             </a>
                         </td>
                     </tr>
@@ -126,7 +126,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: #e0e7ff; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
                     <tr>
                         <td style="padding: 15px;">
-                            <h4 style="margin: 0 0 8px 0; color: #3730a3;">ℹ️ Penting</h4>
+                            <h4 style="margin: 0 0 8px 0; color: #3730a3;">ℹ Penting</h4>
                             <p style="margin: 0; color: #3730a3; font-size: 14px;">
                                 Segera lakukan tindakan yang diperlukan. Jika ada kendala atau pertanyaan, jangan ragu untuk menghubungi Laboran atau Kepala Lab.
                             </p>

@@ -43,14 +43,13 @@ class TemplateController extends Controller
     public function uploadRATemplate(Request $request): RedirectResponse
     {
         $request->validate([
-            'template' => 'required|file|mimes:docx|max:5120', // Max 5MB
+            'template' => 'required|file|mimes:docx|max:5120', 
         ]);
 
         if ($request->hasFile('template')) {
             try {
                 $file = $request->file('template');
 
-                // Simpan file ke storage/app/templates/template1.docx menggunakan Storage facade
                 Storage::disk('templates')->putFileAs('', $file, 'template1.docx');
 
                 ActivityLog::create([
@@ -76,14 +75,13 @@ class TemplateController extends Controller
     public function uploadBebasLabTemplate(Request $request): RedirectResponse
     {
         $request->validate([
-            'template' => 'required|file|mimes:docx|max:5120', // Max 5MB
+            'template' => 'required|file|mimes:docx|max:5120',
         ]);
 
         if ($request->hasFile('template')) {
             try {
                 $file = $request->file('template');
 
-                // Simpan file ke storage/app/templates/bebas_lab.docx menggunakan Storage facade
                 Storage::disk('templates')->putFileAs('', $file, 'bebas_lab.docx');
 
                 ActivityLog::create([

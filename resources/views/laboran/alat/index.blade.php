@@ -115,11 +115,7 @@
             </button>
         </div>
 
-        @if(session('success'))
-            <div class="mx-6 mt-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
+        
 
         <div class="overflow-x-auto">
             <table class="data-table">

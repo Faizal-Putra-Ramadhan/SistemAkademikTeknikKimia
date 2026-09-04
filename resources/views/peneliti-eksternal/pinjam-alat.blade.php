@@ -89,7 +89,7 @@
         .empty-history { text-align: center; padding: 3rem 1rem; color: #999; }
         .empty-history-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
 
-        /* ✅ MODAL EXPIRED STYLES */
+        /*  MODAL EXPIRED STYLES */
         .modal-expired { background: white; border-radius: 20px; max-width: 500px; width: 100%; text-align: center; padding: 0; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: slideUp 0.3s ease; }
         .modal-expired-header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 2rem; border-radius: 20px 20px 0 0; }
         .modal-expired-icon { font-size: 5rem; margin-bottom: 1rem; animation: shake 0.5s ease; }
@@ -108,7 +108,7 @@
                     <!-- Kiri: Pilih Lab & Daftar Alat -->
                     <div>
                         <div class="lab-selection">
-                            <h2>🔬 Pilih Laboratorium</h2>
+                            <h2> Pilih Laboratorium</h2>
                             <p>Pilih laboratorium untuk melihat daftar alat yang tersedia</p>
 
                             <div class="form-group mt-6">
@@ -143,7 +143,7 @@
                     <div>
                         <div class="history-card">
                             <div class="history-header">
-                                <div class="history-icon">🔧</div>
+                                
                                 <h3>Riwayat Peminjaman Alat</h3>
                             </div>
 
@@ -154,26 +154,26 @@
                                             {{ $item->alatLab->nama_alat ?? 'Alat Tidak Diketahui' }}
                                         </div>
                                         <div class="history-meta">
-                                            <span>🏷️ Lab: {{ $item->daftarLab->Nama_Laboratorium ?? $item->alatLab->daftarLab->Nama_Laboratorium ?? '-' }}</span>
-                                            <span>📦 Jumlah: {{ $item->jumlah }} unit</span>
-                                            <span>📅 Pinjam: {{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</span>
-                                            <span>📅 Kembali: {{ $item->tanggal_kembali ? \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y') : 'Belum dikembalikan' }}</span>
+                                            <span> Lab: {{ $item->daftarLab->Nama_Laboratorium ?? $item->alatLab->daftarLab->Nama_Laboratorium ?? '-' }}</span>
+                                            <span> Jumlah: {{ $item->jumlah }} unit</span>
+                                            <span> Pinjam: {{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</span>
+                                            <span> Kembali: {{ $item->tanggal_kembali ? \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y') : 'Belum dikembalikan' }}</span>
                                         </div>
                                         <span class="history-status status-{{ $item->status }}">
                                             @if($item->status === 'menunggu')
                                                 ⏳ Menunggu Persetujuan
                                             @elseif($item->status === 'disetujui')
-                                                ✅ Disetujui
+                                                 Disetujui
                                             @elseif($item->status === 'dikembalikan')
-                                                ✅ Dikembalikan
+                                                 Dikembalikan
                                             @else
-                                                ❌ Ditolak
+                                                 Ditolak
                                             @endif
                                         </span>
                                     </div>
                                 @empty
                                     <div class="empty-history">
-                                        <div class="empty-history-icon">🔧</div>
+                                        
                                         <p>Belum ada riwayat peminjaman alat</p>
                                     </div>
                                 @endforelse
@@ -183,11 +183,11 @@
                     </div>
                 </div>
 
-    <!-- ✅ MODAL ERROR (untuk menampilkan error dari backend) -->
+    <!--  MODAL ERROR (untuk menampilkan error dari backend) -->
     <div id="modal-error" class="modal-overlay">
         <div class="modal-expired">
             <div class="modal-expired-header">
-                <div class="modal-expired-icon">⚠️</div>
+                <div class="modal-expired-icon"></div>
                 <h2 class="modal-expired-title" id="error-title">Pengajuan Gagal</h2>
             </div>
             <div class="modal-expired-body">
@@ -195,13 +195,13 @@
                     Terjadi kesalahan. Silakan coba lagi.
                 </p>
                 <button onclick="closeErrorModal()" class="btn-danger">
-                    ✓ Saya Mengerti
+                     Saya Mengerti
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ✅ MODAL EXPIRED -->
+    <!--  MODAL EXPIRED -->
     <div id="modal-expired" class="modal-overlay">
         <div class="modal-expired">
             <div class="modal-expired-header">
@@ -218,17 +218,17 @@
                     -
                 </p>
                 <button onclick="redirectToDashboard()" class="btn-danger">
-                    🏠 Kembali ke Dashboard
+                     Kembali ke Dashboard
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ✅ MODAL PEMINJAMAN -->
+    <!--  MODAL PEMINJAMAN -->
     <div id="modal-peminjaman" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2>📋 Form Peminjaman Alat</h2>
+                <h2> Form Peminjaman Alat</h2>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -254,14 +254,14 @@
 
                     @if((!isset($riskAssessments) || $riskAssessments->count() == 0))
                     <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
-                        <strong>⚠️ Tidak Ada Risk Assessment yang Disetujui</strong>
+                        <strong> Tidak Ada Risk Assessment yang Disetujui</strong>
                         <p style="margin: 8px 0 0 0; color: #856404;">
                             Anda belum memiliki Risk Assessment yang disetujui. Silakan buat dan ajukan Risk Assessment terlebih dahulu sebelum meminjam alat.
                         </p>
                     </div>
                     @else
                     <div style="background: #d1ecf1; border-left: 4px solid #0c5460; padding: 12px; margin-bottom: 15px; border-radius: 5px;">
-                        <strong>ℹ️ Info:</strong>
+                        <strong>ℹ Info:</strong>
                         <p style="margin: 5px 0 0 0; color: #0c5460; font-size: 0.9rem;">
                             Gunakan Risk Assessment yang sudah disetujui untuk laboratorium di lantai yang sama.
                         </p>
@@ -300,7 +300,7 @@
                     </div>
 
                     <div class="info-box">
-                        <strong>📌 Catatan Penting:</strong>
+                        <strong> Catatan Penting:</strong>
                         <p>• Pastikan Anda mengembalikan alat tepat waktu dan dalam kondisi baik</p>
                         <p>• Kerusakan atau keterlambatan akan dikenakan sanksi sesuai peraturan</p>
                         <p>• Hubungi admin lab jika ada kendala</p>
@@ -326,7 +326,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         showErrorModal(
-            '❌ Pengajuan Gagal',
+            ' Pengajuan Gagal',
             `{{ session('error') ?? $errors->first() }}`
         );
     }, 300);
@@ -377,12 +377,12 @@ window.RISK_ASSESSMENT_DATA = @json($riskAssessmentData);
         let selectedLabStockGroupId = null;
         let selectedLabFloor = null;
 
-        // ✅ Redirect ke dashboard
+        //  Redirect ke dashboard
         function redirectToDashboard() {
             window.location.href = "{{ route('peneliti-eksternal.dashboard') }}";
         }
 
-        // ✅ Show error modal (dari backend validation)
+        //  Show error modal (dari backend validation)
         function showErrorModal(title, message) {
             document.getElementById('error-title').textContent = title;
             document.getElementById('error-message').innerHTML = message;
@@ -390,13 +390,13 @@ window.RISK_ASSESSMENT_DATA = @json($riskAssessmentData);
             document.body.style.overflow = 'hidden';
         }
 
-        // ✅ Close error modal
+        //  Close error modal
         function closeErrorModal() {
             document.getElementById('modal-error').classList.remove('show');
             document.body.style.overflow = '';
         }
 
-        // ✅ Prevent interaction jika expired
+        //  Prevent interaction jika expired
         @if(isset($riskAssessment) && $riskAssessment && !$riskAssessment->isMasihBerlaku())
             // Disable semua interaksi dengan halaman
             document.addEventListener('DOMContentLoaded', function() {
@@ -436,7 +436,7 @@ window.RISK_ASSESSMENT_DATA = @json($riskAssessmentData);
             if (alats.length === 0) {
                 alatList.innerHTML = `
                     <div class="empty-state" style="grid-column: 1 / -1;">
-                        <p>❌ Tidak ada alat tersedia di laboratorium ini</p>
+                        <p> Tidak ada alat tersedia di laboratorium ini</p>
                     </div>
                 `;
                 return;
@@ -447,16 +447,16 @@ window.RISK_ASSESSMENT_DATA = @json($riskAssessmentData);
                 let isDisabled = alat.jumlah_tersedia <= 0;
                 
                 if (alat.jumlah_tersedia > 5) {
-                    stockBadge = `<span class="stock-badge stock-available">✓ Tersedia: ${alat.jumlah_tersedia} unit</span>`;
+                    stockBadge = `<span class="stock-badge stock-available"> Tersedia: ${alat.jumlah_tersedia} unit</span>`;
                 } else if (alat.jumlah_tersedia > 0) {
-                    stockBadge = `<span class="stock-badge stock-low">⚠ Stok Terbatas: ${alat.jumlah_tersedia} unit</span>`;
+                    stockBadge = `<span class="stock-badge stock-low"> Stok Terbatas: ${alat.jumlah_tersedia} unit</span>`;
                 } else {
-                    stockBadge = `<span class="stock-badge stock-empty">✗ Stok Habis</span>`;
+                    stockBadge = `<span class="stock-badge stock-empty"> Stok Habis</span>`;
                 }
 
                 const imageContent = alat.foto 
                     ? `<img src="/uploads/${alat.foto}" alt="${alat.nama_alat}">`
-                    : '🔧';
+                    : '';
 
                 const description = alat.deskripsi 
                     ? (alat.deskripsi.length > 80 ? alat.deskripsi.substring(0, 80) + '...' : alat.deskripsi)
@@ -482,7 +482,7 @@ window.RISK_ASSESSMENT_DATA = @json($riskAssessmentData);
 
         function openModal(alatId, alatNama, stok) {
             if (stok <= 0) {
-                alert('❌ Maaf, alat ini tidak tersedia (stok habis)');
+                alert(' Maaf, alat ini tidak tersedia (stok habis)');
                 return;
             }
 
@@ -531,7 +531,7 @@ window.RISK_ASSESSMENT_DATA = @json($riskAssessmentData);
             document.getElementById('modal_tanggal_kembali').min = pinjamDate;
         });
 
-        // ✅ HANDLE FORM SUBMISSION VALIDATION
+        //  HANDLE FORM SUBMISSION VALIDATION
         document.getElementById('form-peminjaman').addEventListener('submit', function(e) {
             const selectedRaId = document.getElementById('modal_risk_assessment_id').value;
             const raInfo = window.ALL_USER_RAS[selectedRaId];
@@ -561,12 +561,12 @@ window.RISK_ASSESSMENT_DATA = @json($riskAssessmentData);
                 if (!labText.includes(raInfo.floor)) {
                     e.preventDefault();
                     
-                    // ✅ Close data entry modal first
+                    //  Close data entry modal first
                     closeModal();
                     
-                    // ✅ Then show error modal
+                    //  Then show error modal
                     showErrorModal(
-                        '⚠️ Risk Assessment Tidak Sesuai',
+                        ' Risk Assessment Tidak Sesuai',
                         `Risk Assessment Anda ditujukan untuk <strong>Lab ${raInfo.floor}</strong>, silahkan memilih Risk Assessment yang sesuai dengan lantai laboratorium yang dipilih.`
                     );
                     return false;

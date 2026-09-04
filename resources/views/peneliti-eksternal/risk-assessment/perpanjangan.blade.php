@@ -97,7 +97,7 @@
             
             {{-- Info Risk Assessment --}}
             <div class="form-section">
-                <h3>📋 Informasi Risk Assessment</h3>
+                <h3> Informasi Risk Assessment</h3>
                 
                 <div class="info-box">
                     <p><strong>Judul:</strong> {{ $riskAssessment->topik_judul }}</p>
@@ -115,7 +115,7 @@
                 </div>
 
                 <div class="info-box info-box-warning">
-                    <strong>⚠️ Perhatian:</strong>
+                    <strong> Perhatian:</strong>
                     <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
                         <li>Pengajuan perpanjangan akan direview oleh Kaprodi</li>
                         <li>Berikan alasan yang jelas dan lengkap (minimal 50 karakter)</li>
@@ -130,7 +130,7 @@
                 @csrf
                 
                 <div class="form-section">
-                    <h3>📝 Form Pengajuan Perpanjangan</h3>
+                    <h3> Form Pengajuan Perpanjangan</h3>
 
                     {{-- Durasi Perpanjangan --}}
                     <div class="form-group">
@@ -154,7 +154,7 @@
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                         <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.5rem;">
-                            💡 Pilih durasi sesuai kebutuhan penelitian/praktikum Anda
+                             Pilih durasi sesuai kebutuhan penelitian/praktikum Anda
                         </p>
                     </div>
 
@@ -179,14 +179,14 @@
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                         <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.5rem;">
-                            💡 Contoh: Penelitian memerlukan waktu tambahan untuk pengumpulan data, ada kendala teknis yang memerlukan pengulangan eksperimen, dll.
+                             Contoh: Penelitian memerlukan waktu tambahan untuk pengumpulan data, ada kendala teknis yang memerlukan pengulangan eksperimen, dll.
                         </p>
                     </div>
 
                     {{-- Buttons --}}
                     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                         <button type="submit" class="btn btn-primary">
-                            📤 Ajukan Perpanjangan
+                             Ajukan Perpanjangan
                         </button>
                         <a href="{{ route('peneliti-eksternal.risk-assessment.show', $riskAssessment->id) }}" class="btn btn-secondary">
                             ← Kembali

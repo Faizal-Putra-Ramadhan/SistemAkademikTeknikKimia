@@ -39,10 +39,10 @@
             @elseif($type == 'jadwal_dipilih_mahasiswa')
                 <p>Mahasiswa <strong>{{ $ra->user->Nama }}</strong> telah memilih jadwal wawancara untuk Risk Assessment mereka. Berikut adalah jadwal yang telah dipilih:</p>
                 <div style="background: #d4edda; padding: 15px; border-radius: 5px; border-left: 5px solid #28a745; margin: 20px 0;">
-                    <strong style="color: #155724;">✅ JADWAL TERPILIH</strong>
+                    <strong style="color: #155724;"> JADWAL TERPILIH</strong>
                     <table style="width: 100%; margin-top: 10px; font-size: 14px;">
                         <tr>
-                            <td style="color: #555; width: 30%; padding: 6px;"><strong>📅 Tanggal:</strong></td>
+                            <td style="color: #555; width: 30%; padding: 6px;"><strong> Tanggal:</strong></td>
                             <td style="color: #333; font-weight: bold; padding: 6px;">{{ \Carbon\Carbon::parse($ra->jadwal_wawancara)->format('l, d F Y') }}</td>
                         </tr>
                         <tr>
@@ -50,7 +50,7 @@
                             <td style="color: #333; font-weight: bold; padding: 6px;">{{ \Carbon\Carbon::parse($ra->jadwal_wawancara)->format('H:i') }} WIB</td>
                         </tr>
                         <tr>
-                            <td style="color: #555; padding: 6px;"><strong>📍 Lokasi:</strong></td>
+                            <td style="color: #555; padding: 6px;"><strong> Lokasi:</strong></td>
                             <td style="color: #333; font-weight: bold; padding: 6px;">{{ $ra->tempat_wawancara }}</td>
                         </tr>
                     </table>
@@ -132,13 +132,13 @@
             <!-- Jadwal Wawancara Options untuk type jadwal_options_so -->
             @if($type == 'jadwal_options_so' && $ra->jadwal_wawancara_options)
                 <div style="margin: 20px 0;">
-                    <h3 style="color: #004a99; margin-bottom: 15px;">📋 Opsi Jadwal Wawancara yang Tersedia:</h3>
+                    <h3 style="color: #004a99; margin-bottom: 15px;"> Opsi Jadwal Wawancara yang Tersedia:</h3>
                     @foreach($ra->jadwal_wawancara_options as $index => $option)
                         <div style="background: #f0f8ff; padding: 15px; margin-bottom: 12px; border-radius: 5px; border-left: 4px solid #004a99;">
-                            <div style="font-weight: bold; color: #004a99; margin-bottom: 8px;">🕐 Opsi {{ $index + 1 }}</div>
+                            <div style="font-weight: bold; color: #004a99; margin-bottom: 8px;"> Opsi {{ $index + 1 }}</div>
                             <table style="width: 100%; font-size: 14px;">
                                 <tr>
-                                    <td style="color: #666; width: 30%; padding: 4px;">📅 Tanggal:</td>
+                                    <td style="color: #666; width: 30%; padding: 4px;"> Tanggal:</td>
                                     <td style="color: #333; font-weight: bold; padding: 4px;">{{ \Carbon\Carbon::parse($option['jadwal'])->format('l, d F Y') }}</td>
                                 </tr>
                                 <tr>
@@ -146,7 +146,7 @@
                                     <td style="color: #333; font-weight: bold; padding: 4px;">{{ $option['waktu'] ?? $option['jadwal'] }}</td>
                                 </tr>
                                 <tr>
-                                    <td style="color: #666; padding: 4px;">📍 Lokasi:</td>
+                                    <td style="color: #666; padding: 4px;"> Lokasi:</td>
                                     <td style="color: #333; font-weight: bold; padding: 4px;">{{ $option['tempat'] }}</td>
                                 </tr>
                             </table>

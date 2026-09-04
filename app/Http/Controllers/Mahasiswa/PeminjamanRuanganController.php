@@ -26,7 +26,7 @@ class PeminjamanRuanganController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // Kalau tidak ada lab sama sekali
+        
         if ($labs->isEmpty()) {
             return view('mahasiswa.pinjam-ruangan', [
                 'lab' => null,
@@ -37,13 +37,13 @@ class PeminjamanRuanganController extends Controller
             ]);
         }
 
-        // Kalau lab ID tidak ditemukan
+        
         if (!$lab) {
             return redirect()->route('dashboard')
                 ->with('error', 'Lab tidak ditemukan.');
         }
 
-        // Ambil riwayat peminjaman
+        
         $peminjaman_ruangans = PeminjamanRuangan::with('daftarLab')
             ->where('user_id', $user->id)
             ->latest()
@@ -73,7 +73,7 @@ class PeminjamanRuanganController extends Controller
      */
     public function store(Request $request, $labId)
     {
-        // Validasi input
+        
         $validator = Validator::make($request->all(), [
             'tanggal' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal',
@@ -119,7 +119,7 @@ class PeminjamanRuanganController extends Controller
 
         DB::beginTransaction();
         try {
-            // Cek ketersediaan ruangan di dalam transaksi untuk mencegah race condition
+            
             $konflik = $this->cekKetersediaanRuangan(
                 $labId,
                 $validated['tanggal'],
@@ -136,7 +136,7 @@ class PeminjamanRuanganController extends Controller
                     ->withInput()
                     ->with('error', 'Ruangan sedang dipakai pada tanggal dan jam tersebut. Silakan pilih waktu lain atau periksa jadwal yang sudah terpakai.');
             }
-            // Nonaktifkan bebas lab yang masih aktif
+            
             $activeBebasLab = \App\Models\BebasLabRequest::where('user_id', $user->id)
                 ->where('status', 'disetujui')
                 ->where('is_active', true)
@@ -146,7 +146,7 @@ class PeminjamanRuanganController extends Controller
                 $activeBebasLab->deactivate();
             }
 
-            // Simpan peminjaman ruangan
+            
             $peminjaman = PeminjamanRuangan::create([
                 'user_id' => $user->id,
                 'user_nama' => $user->Nama,
@@ -163,7 +163,7 @@ class PeminjamanRuanganController extends Controller
                 'peminjaman_id' => $peminjaman->id,
             ]);
 
-            // Catat aktivitas
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $user->Nama,
                 'daftar_lab_id' => $labId,
@@ -171,7 +171,7 @@ class PeminjamanRuanganController extends Controller
                 'keterangan' => "Mengajukan peminjaman ruangan {$lab->Nama_Laboratorium} dari {$validated['tanggal']} sampai {$validated['tanggal_selesai']}",
             ]);
 
-            // ✅ KIRIM EMAIL KE LABORAN (mendukung multi-role & multiple labs scheme)
+            
             $laborans = DaftarUser::laboranForLab($lab)->get();
 
             foreach ($laborans as $laboran) {
@@ -185,14 +185,14 @@ class PeminjamanRuanganController extends Controller
                     }
                     catch (\Exception $e) {
                         Log::error('Gagal mengirim email ke laboran: ' . $e->getMessage());
-                    // Tetap lanjut meskipun email gagal
+                    
                     }
                 }
             }
 
             DB::commit();
 
-            return redirect()->route('mahasiswa.pinjam-ruangan', ['labId' => $labId])
+            return redirect()->route('mahasiswa.aktivitas', ['id' => $labId])
                 ->with('success', 'Peminjaman ruangan berhasil diajukan! Email notifikasi telah dikirim ke laboran. Menunggu persetujuan.');
 
         }
@@ -224,7 +224,7 @@ class PeminjamanRuanganController extends Controller
             'jam_selesai' => $jamSelesai,
         ]);
 
-        // Ambil semua peminjaman aktif untuk lab ini
+        
         $query = PeminjamanRuangan::where('daftar_lab_id', $labId)
             ->whereIn('status', ['menunggu', 'disetujui_laboran', 'menunggu_kaprodi', 'disetujui', 'disetujui_final']);
 
@@ -236,9 +236,9 @@ class PeminjamanRuanganController extends Controller
 
         Log::info('Total peminjaman aktif ditemukan', ['count' => $peminjamanAktif->count()]);
 
-        // Cek setiap peminjaman aktif
+        
         foreach ($peminjamanAktif as $peminjaman) {
-            // Cek apakah ada overlap tanggal
+            
             $tanggalOverlap = $this->checkDateOverlap(
                 $tanggalMulai,
                 $tanggalSelesai,
@@ -247,7 +247,7 @@ class PeminjamanRuanganController extends Controller
             );
 
             if ($tanggalOverlap) {
-                // Jika tanggal overlap, cek apakah jam juga overlap
+                
                 $jamOverlap = $this->checkTimeOverlap(
                     $jamMulai,
                     $jamSelesai,
@@ -263,14 +263,14 @@ class PeminjamanRuanganController extends Controller
                         'jam' => $peminjaman->jam_mulai . ' - ' . $peminjaman->jam_selesai,
                     ]);
 
-                    return true; // Ada konflik
+                    return true; 
                 }
             }
         }
 
         Log::info('Tidak ada konflik, ruangan tersedia');
 
-        return false; // Tidak ada konflik
+        return false; 
     }
 
     /**
@@ -279,7 +279,7 @@ class PeminjamanRuanganController extends Controller
      */
     private function checkDateOverlap($start1, $end1, $start2, $end2)
     {
-        // Overlap terjadi jika TIDAK (selesai sebelum mulai ATAU mulai setelah selesai)
+        
         return !($end1 < $start2 || $start1 > $end2);
     }
 
@@ -291,8 +291,8 @@ class PeminjamanRuanganController extends Controller
      */
     private function checkTimeOverlap($start1, $end1, $start2, $end2)
     {
-        // Overlap terjadi jika TIDAK (selesai SEBELUM mulai ATAU mulai SETELAH selesai)
-        // Menggunakan < dan > berarti back-to-back booking (12:30-14:00 setelah 07:00-12:30) DITOLAK
+        
+        
         return !($end1 < $start2 || $start1 > $end2);
     }
 
@@ -309,17 +309,17 @@ class PeminjamanRuanganController extends Controller
 
         $peminjaman = PeminjamanRuangan::findOrFail($id);
 
-        // Validasi: hanya peminjam yang bisa mengajukan pengembalian
+        
         if ($peminjaman->user_id !== $user->id) {
             return back()->with('error', 'Anda tidak berhak mengajukan pengembalian untuk peminjaman ini.');
         }
 
-        // Validasi: peminjaman harus sudah disetujui
+        
         if ($peminjaman->status !== 'disetujui') {
             return back()->with('error', 'Hanya peminjaman yang sudah disetujui yang bisa dikembalikan.');
         }
 
-        // Validasi: belum pernah mengajukan pengembalian
+        
         if ($peminjaman->pengajuan_pengembalian) {
             return back()->with('error', 'Anda sudah mengajukan pengembalian untuk ruangan ini.');
         }

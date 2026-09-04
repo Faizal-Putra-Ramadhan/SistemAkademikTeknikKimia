@@ -87,7 +87,7 @@
 @section('content')
     <!-- Peminjaman Ruangan -->
     <div class="section">
-        <h2>📅 Peminjaman Ruangan</h2>
+        <h2> Peminjaman Ruangan</h2>
         @if($peminjamanRuangan->count() > 0)
         <table>
             <thead>
@@ -120,7 +120,7 @@
 
     <!-- Peminjaman Alat -->
     <div class="section">
-        <h2>🔧 Peminjaman Alat</h2>
+        <h2> Peminjaman Alat</h2>
         @if($peminjamanAlat->count() > 0)
         <table>
             <thead>
@@ -165,7 +165,7 @@
 
     <!-- Risk Assessment -->
     <div class="section">
-        <h2>⚠️ Risk Assessment</h2>
+        <h2> Risk Assessment</h2>
         @if($riskAssessments->count() > 0)
         <table>
             <thead>
@@ -205,7 +205,7 @@
 
     <!-- Timeline Aktivitas -->
     <div class="section">
-        <h2>📜 Riwayat Aktivitas</h2>
+        <h2> Riwayat Aktivitas</h2>
         @if($aktivitas->count() > 0)
         <div class="timeline">
             @foreach($aktivitas as $item)

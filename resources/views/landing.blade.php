@@ -94,35 +94,35 @@
 <body>
     <div class="container">
         <div class="card">
-            <h1>🔬 Sistem Manajemen Laboratorium</h1>
+            <h1> Sistem Manajemen Laboratorium</h1>
             <p class="subtitle">Fakultas Teknik - Universitas Ahmad Dahlan</p>
             
             <div class="features">
                 <div class="feature">
-                    <div class="feature-icon">📦</div>
+                    <div class="feature-icon"></div>
                     <h3>Peminjaman Alat</h3>
                     <p>Kelola peminjaman alat laboratorium dengan mudah</p>
                 </div>
                 <div class="feature">
-                    <div class="feature-icon">🏢</div>
+                    <div class="feature-icon"></div>
                     <h3>Booking Ruangan</h3>
                     <p>Reservasi ruangan lab untuk kegiatan praktikum</p>
                 </div>
                 <div class="feature">
-                    <div class="feature-icon">🔬</div>
+                    <div class="feature-icon"></div>
                     <h3>Pengajuan Penelitian</h3>
                     <p>Ajukan proposal penelitian di laboratorium</p>
                 </div>
                 <div class="feature">
-                    <div class="feature-icon">📢</div>
+                    <div class="feature-icon"></div>
                     <h3>Pengumuman</h3>
                     <p>Dapatkan update terbaru dari laboratorium</p>
                 </div>
             </div>
 
             <div class="btn-group">
-                <a href="{{ route('login') }}" class="btn btn-primary">🔐 Login</a>
-                <a href="{{ route('registrasi') }}" class="btn btn-secondary">📝 Registrasi</a>
+                <a href="{{ route('login') }}" class="btn btn-primary"> Login</a>
+                <a href="{{ route('registrasi') }}" class="btn btn-secondary"> Registrasi</a>
             </div>
         </div>
     </div>

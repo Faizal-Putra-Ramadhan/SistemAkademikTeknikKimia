@@ -208,7 +208,7 @@
 @section('content')
 <!-- Navigation -->
     <div class="nav-bar">
-        <div class="nav-title">📅 Buat Jadwal Wawancara</div>
+        <div class="nav-title"> Buat Jadwal Wawancara</div>
         <a href="{{ route('safety-officer.risk-assessment.index') }}" class="back-link">
             ← Kembali
         </a>
@@ -218,34 +218,34 @@
         <!-- Flash Messages -->
         @if ($message = Session::get('success'))
             <div class="alert alert-success">
-                <strong>✅ Sukses:</strong> {{ $message }}
+                <strong> Sukses:</strong> {{ $message }}
             </div>
         @endif
 
         @if ($message = Session::get('error'))
             <div class="alert alert-error">
-                <strong>❌ Error:</strong> {{ $message }}
+                <strong> Error:</strong> {{ $message }}
             </div>
         @endif
 
         <!-- Risk Assessment Info -->
         <div class="card">
-            <div class="section-title">📋 Informasi Risk Assessment</div>
+            <div class="section-title"> Informasi Risk Assessment</div>
             <div class="info-grid">
                 <div class="info-item">
-                    <span class="info-label">📝 Judul</span>
+                    <span class="info-label"> Judul</span>
                     <span class="info-value">{{ $riskAssessment->topik_judul ?? 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">👤 Peneliti</span>
+                    <span class="info-label"> Peneliti</span>
                     <span class="info-value">{{ $riskAssessment->user->Nama ?? 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">📧 Email</span>
+                    <span class="info-label"> Email</span>
                     <span class="info-value">{{ $riskAssessment->user->Email ?? 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">🏢 Laboratorium</span>
+                    <span class="info-label"> Laboratorium</span>
                     <span class="info-value">{{ $riskAssessment->daftarLab->Nama_Laboratorium ?? 'N/A' }}</span>
                 </div>
             </div>
@@ -256,14 +256,14 @@
             @csrf
 
             <div class="card">
-                <div class="section-title">📅 Buat Jadwal Wawancara</div>
+                <div class="section-title"> Buat Jadwal Wawancara</div>
                 
                 <div class="alert alert-warning" style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 6px; margin-bottom: 1.5rem;">
-                    <strong style="color: #92400e; display: block; margin-bottom: 0.5rem;">📋 INSTRUKSI PENTING:</strong>
+                    <strong style="color: #92400e; display: block; margin-bottom: 0.5rem;"> INSTRUKSI PENTING:</strong>
                     <p style="color: #b45309; margin: 0.5rem 0 0 0; line-height: 1.6;">
-                        ✅ Buat <strong>minimal 2 jadwal hingga maksimal 5 jadwal wawancara</strong> yang berbeda.<br>
-                        ✅ Mahasiswa akan memilih salah satu jadwal yang paling sesuai.<br>
-                        ✅ Gunakan tombol <strong>"➕ TAMBAH OPSI JADWAL"</strong> di bawah untuk menambah jadwal baru.
+                         Buat <strong>minimal 2 jadwal hingga maksimal 5 jadwal wawancara</strong> yang berbeda.<br>
+                         Mahasiswa akan memilih salah satu jadwal yang paling sesuai.<br>
+                         Gunakan tombol <strong>" TAMBAH OPSI JADWAL"</strong> di bawah untuk menambah jadwal baru.
                     </p>
                 </div>
 
@@ -286,14 +286,14 @@
                                 <span class="schedule-option-number">{{ $index + 1 }}</span>
                                 @if ($index > 1)
                                     <button type="button" class="btn-remove" onclick="removeSchedule(this)">
-                                        🗑️ Hapus
+                                         Hapus
                                     </button>
                                 @endif
                             </div>
 
                             <div class="schedule-grid">
                                 <div class="form-group">
-                                    <label class="form-label">📅 Tanggal Wawancara</label>
+                                    <label class="form-label"> Tanggal Wawancara</label>
                                     <input type="date" name="schedule_options[{{ $index }}][jadwal]" 
                                            class="form-input" 
                                            value="{{ old('schedule_options.' . $index . '.jadwal', $option['jadwal'] ?? '') }}"
@@ -316,7 +316,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">📍 Lokasi Wawancara</label>
+                                <label class="form-label"> Lokasi Wawancara</label>
                                 <input type="text" name="schedule_options[{{ $index }}][tempat]" 
                                        class="form-input" 
                                        placeholder="Contoh: Ruang Lab, Office Room A, Online via Zoom"
@@ -333,12 +333,12 @@
                 <!-- Add Schedule Button -->
                 <div style="margin: 2rem 0;">
                     <button type="button" class="btn-add" onclick="addSchedule()">
-                        ➕ TAMBAH OPSI JADWAL (Klik untuk menambah, min 2, maks 5)
+                         TAMBAH OPSI JADWAL (Klik untuk menambah, min 2, maks 5)
                     </button>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">💬 Catatan Tambahan (Opsional)</label>
+                    <label class="form-label"> Catatan Tambahan (Opsional)</label>
                     <textarea name="catatan" class="form-textarea" placeholder="Berikan instruksi atau informasi tambahan kepada mahasiswa...">{{ old('catatan') }}</textarea>
                 </div>
             </div>
@@ -346,13 +346,13 @@
             <!-- Submit Button -->
             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                 <button type="submit" class="btn-submit">
-                    ✅ Kirim Jadwal Wawancara
+                     Kirim Jadwal Wawancara
                 </button>
                 <a href="{{ route('safety-officer.risk-assessment.index') }}" 
                    style="display: inline-flex; align-items: center; padding: 0.75rem 2rem; background: #6b7280; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.3s;"
                    onmouseover="this.style.background='#4b5563'" 
                    onmouseout="this.style.background='#6b7280'">
-                    ❌ Batal
+                     Batal
                 </a>
             </div>
         </form>
@@ -365,7 +365,7 @@ let scheduleCount = document.querySelectorAll('.schedule-option').length;
 
         function addSchedule() {
             if (scheduleCount >= 5) {
-                alert('⚠️ Maksimal 5 jadwal wawancara!\n\nHapus beberapa jadwal menggunakan tombol 🗑️ Hapus jika perlu.');
+                alert(' Maksimal 5 jadwal wawancara!\n\nHapus beberapa jadwal menggunakan tombol  Hapus jika perlu.');
                 return;
             }
 
@@ -377,12 +377,12 @@ let scheduleCount = document.querySelectorAll('.schedule-option').length;
                 <div class="schedule-option-header">
                     <span class="schedule-option-number">${scheduleCount + 1}</span>
                     <button type="button" class="btn-remove" onclick="removeSchedule(this)">
-                        🗑️ Hapus
+                         Hapus
                     </button>
                 </div>
                 <div class="schedule-grid">
                     <div class="form-group">
-                        <label class="form-label">📅 Tanggal Wawancara</label>
+                        <label class="form-label"> Tanggal Wawancara</label>
                         <input type="date" name="schedule_options[${scheduleCount}][jadwal]" class="form-input" required>
                     </div>
                     <div class="form-group">
@@ -391,7 +391,7 @@ let scheduleCount = document.querySelectorAll('.schedule-option').length;
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">📍 Lokasi Wawancara</label>
+                    <label class="form-label"> Lokasi Wawancara</label>
                     <input type="text" name="schedule_options[${scheduleCount}][tempat]" class="form-input" placeholder="Contoh: Ruang Lab, Office Room A, Online via Zoom" required>
                 </div>
             `;
@@ -408,7 +408,7 @@ let scheduleCount = document.querySelectorAll('.schedule-option').length;
         function removeSchedule(button) {
             const currentCount = document.querySelectorAll('.schedule-option').length;
             if (currentCount <= 2) {
-                alert('⚠️ Minimal 2 jadwal wawancara harus ada!');
+                alert(' Minimal 2 jadwal wawancara harus ada!');
                 return;
             }
             button.closest('.schedule-option').remove();
@@ -423,19 +423,19 @@ let scheduleCount = document.querySelectorAll('.schedule-option').length;
             });
         }
 
-        // ✅ Validasi form sebelum submit
+        //  Validasi form sebelum submit
         document.querySelector('form').addEventListener('submit', function(e) {
             const scheduleCount = document.querySelectorAll('.schedule-option').length;
             
             if (scheduleCount < 2) {
                 e.preventDefault();
-                alert('⚠️ MINIMAL 2 JADWAL WAWANCARA HARUS DIBUAT!\n\nKlik tombol "➕ TAMBAH OPSI JADWAL" untuk menambah jadwal.');
+                alert(' MINIMAL 2 JADWAL WAWANCARA HARUS DIBUAT!\n\nKlik tombol " TAMBAH OPSI JADWAL" untuk menambah jadwal.');
                 return false;
             }
             
             if (scheduleCount > 5) {
                 e.preventDefault();
-                alert('⚠️ MAKSIMAL 5 JADWAL WAWANCARA!\n\nHapus beberapa jadwal menggunakan tombol 🗑️ Hapus.');
+                alert(' MAKSIMAL 5 JADWAL WAWANCARA!\n\nHapus beberapa jadwal menggunakan tombol  Hapus.');
                 return false;
             }
         });

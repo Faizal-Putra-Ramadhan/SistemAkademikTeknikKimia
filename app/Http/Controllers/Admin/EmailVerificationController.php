@@ -13,21 +13,16 @@ use Illuminate\Support\Facades\Log;
 
 class EmailVerificationController extends Controller
 {
-    /**
-     * Halaman untuk verifikasi email dengan token
-     */
     public function verify($token)
     {
         $pending = PendingRegistration::where('verification_token', $token)->first();
 
-        // Check apakah token ada dan valid
         if (! $pending) {
             return view('admin.email-verification.token-invalid', [
                 'message' => 'Token verifikasi tidak ditemukan atau sudah dihapus.',
             ]);
         }
 
-        // Check apakah token sudah expired
         if ($pending->isTokenExpired()) {
             return view('admin.email-verification.token-expired', [
                 'pending' => $pending,
@@ -35,7 +30,6 @@ class EmailVerificationController extends Controller
             ]);
         }
 
-        // Check apakah sudah diverifikasi
         if ($pending->is_verified) {
             return view('admin.email-verification.already-verified', [
                 'message' => 'Email ini sudah diverifikasi sebelumnya.',
@@ -55,7 +49,6 @@ class EmailVerificationController extends Controller
     {
         $pending = PendingRegistration::where('verification_token', $token)->first();
 
-        // Validasi token
         if (! $pending) {
             return redirect()->route('admin.email-verification.token-invalid')
                 ->with('error', 'Token verifikasi tidak ditemukan.');
@@ -74,23 +67,20 @@ class EmailVerificationController extends Controller
         DB::beginTransaction();
 
         try {
-            // Mark sebagai terverifikasi
             $pending->update(['is_verified' => true]);
 
-            // Buat user baru dengan data dari pending registration
             $user = DaftarUser::create([
                 'UserID' => $this->generateUserId($pending->role),
                 'Nama' => $pending->nama,
                 'Email' => $pending->email,
                 'Phone' => $pending->phone,
-                'Password' => $pending->password, // Password sudah di-hash di pending
+                'Password' => $pending->password, 
                 'Role_User' => $pending->role,
                 'nomor_identitas' => $pending->nomor_identitas,
                 'is_primary' => $pending->is_primary,
                 'parent_user_id' => $pending->parent_user_id,
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => auth()->user()->Nama ?? 'Admin',
                 'action' => 'Email Terverifikasi dan User Ditambahkan',
@@ -137,20 +127,17 @@ class EmailVerificationController extends Controller
 
         $pending = PendingRegistration::where('email', $request->email)->first();
 
-        // Check apakah sudah diverifikasi
         if ($pending->is_verified) {
             return redirect()->back()
                 ->with('info', 'Email ini sudah diverifikasi sebelumnya.');
         }
 
-        // Generate token baru
         $newToken = \Illuminate\Support\Str::random(64);
         $pending->update([
             'verification_token' => $newToken,
-            'token_expires_at' => now()->addHours(24), // Token berlaku 24 jam
+            'token_expires_at' => now()->addHours(24), 
         ]);
 
-        // Send email ulang
         try {
             \Illuminate\Support\Facades\Mail::send('emails.verification', [
                 'nama' => $pending->nama,
@@ -160,7 +147,6 @@ class EmailVerificationController extends Controller
                     ->subject('Verifikasi Email - Sistem RegLab UAD (Resend)');
             });
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => auth()->user()->Nama ?? 'System',
                 'action' => 'Kirim Ulang Email Verifikasi',
@@ -190,7 +176,6 @@ class EmailVerificationController extends Controller
     {
         $pending = PendingRegistration::findOrFail($id);
 
-        // Verifikasi bahwa hanya admin yang bisa membatalkan
         if (auth()->user()->Role_User !== 'Admin') {
             return redirect()->back()
                 ->with('error', 'Anda tidak memiliki akses untuk membatalkan pendaftaran.');
@@ -200,10 +185,8 @@ class EmailVerificationController extends Controller
             $email = $pending->email;
             $nama = $pending->nama;
 
-            // Delete pending registration
             $pending->delete();
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => auth()->user()->Nama ?? 'Admin',
                 'action' => 'Batalkan Pendaftaran Tertunda',
@@ -265,12 +248,10 @@ class EmailVerificationController extends Controller
                 $prefix = 'USR';
         }
 
-        // Generate unique ID dengan timestamp + random
         $timestamp = now()->format('ymd'); // Format: YYMMDD
         $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
         $userId = "{$prefix}-{$timestamp}{$random}";
 
-        // Cek apakah UserID sudah ada, jika ya generate ulang
         while (DaftarUser::where('UserID', $userId)->exists()) {
             $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
             $userId = "{$prefix}-{$timestamp}{$random}";

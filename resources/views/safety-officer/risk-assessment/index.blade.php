@@ -159,12 +159,7 @@
 <div class="ra-page">
 
     {{-- Alert --}}
-    @if(session('success'))
-    <div class="ra-alert success">
-        <i class="fas fa-check-circle"></i>
-        {{ session('success') }}
-    </div>
-    @endif
+    
 
     {{-- Header --}}
     <div class="ra-header">

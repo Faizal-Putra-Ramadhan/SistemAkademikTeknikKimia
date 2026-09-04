@@ -34,10 +34,8 @@ class ForgotPasswordController extends Controller
             'email.exists' => 'Email tidak terdaftar di sistem'
         ]);
 
-        // Generate token
         $token = Str::random(64);
         
-        // Simpan atau update token di database
         \DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $request->email],
             [
@@ -47,7 +45,6 @@ class ForgotPasswordController extends Controller
             ]
         );
 
-        // Kirim email
         try {
             $user = DaftarUser::where('Email', $request->email)->first();
             
@@ -88,7 +85,6 @@ class ForgotPasswordController extends Controller
             'password.confirmed' => 'Konfirmasi password tidak cocok'
         ]);
 
-        // Cek token validity
         $resetRecord = \DB::table('password_reset_tokens')
             ->where('email', $request->email)
             ->first();
@@ -97,23 +93,19 @@ class ForgotPasswordController extends Controller
             return back()->with('error', 'Token reset password tidak valid atau sudah kadaluarsa.');
         }
 
-        // Cek apakah token cocok
         if (!Hash::check($request->token, $resetRecord->token)) {
             return back()->with('error', 'Token reset password tidak valid.');
         }
 
-        // Cek apakah token sudah kadaluarsa (lebih dari 1 jam)
         $tokenAge = now()->diffInMinutes($resetRecord->created_at);
         if ($tokenAge > 60) {
             return back()->with('error', 'Token reset password sudah kadaluarsa. Silakan request ulang.');
         }
 
-        // Update password
         $user = DaftarUser::where('Email', $request->email)->first();
         $user->Password = Hash::make($request->password);
         $user->save();
 
-        // Hapus token setelah digunakan
         \DB::table('password_reset_tokens')
             ->where('email', $request->email)
             ->delete();

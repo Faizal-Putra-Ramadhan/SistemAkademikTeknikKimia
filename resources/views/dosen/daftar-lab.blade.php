@@ -68,7 +68,7 @@
 @section('content')
     <div class="card">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-            <h3>🔬 Pilih Laboratorium</h3>
+            <h3> Pilih Laboratorium</h3>
             <a href="{{ route('dosen.dashboard') }}" style="padding: 0.5rem 1rem; background: #6c757d; color: white; border-radius: 5px; text-decoration: none; font-weight: 600;">← Kembali ke Dashboard</a>
         </div>
         <div class="card-body">
@@ -93,10 +93,10 @@
                     
                     <div class="lab-actions">
                         <a href="{{ route('dosen.pinjam-ruangan', $lab->id) }}" class="btn-lab btn-lab-primary">
-                            📅 Pinjam Ruangan
+                             Pinjam Ruangan
                         </a>
                         <a href="{{ route('dosen.pinjam-alat', $lab->id) }}" class="btn-lab btn-lab-success">
-                            🔧 Pinjam Alat
+                             Pinjam Alat
                         </a>
                     </div>
                 </div>

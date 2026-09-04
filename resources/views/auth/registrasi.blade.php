@@ -520,7 +520,7 @@
                 </div>
 
                 <button type="submit" class="btn-register">
-                    📧 Daftar & Kirim Verifikasi
+                     Daftar & Kirim Verifikasi
                 </button>
             </form>
 
@@ -532,7 +532,7 @@
         <!-- Info Section -->
         <div class="info-section">
             <div class="info-header">
-                <h2>🎓 Bergabung dengan Lab TEKIM</h2>
+                <h2> Bergabung dengan Lab TEKIM</h2>
                 <p>Dapatkan akses penuh ke fasilitas laboratorium</p>
             </div>
 

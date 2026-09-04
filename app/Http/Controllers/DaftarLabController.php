@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class DaftarLabController extends Controller
 {
-    // app/Http/Controllers/DaftarLabController.php
+    
     public function index()
     {
         $daftar_labs = DaftarLab::paginate(10);
@@ -51,7 +51,7 @@ class DaftarLabController extends Controller
         ])->id;
         $lab = DaftarLab::create($data);
 
-        // LOG OTOMATIS
+        
         ActivityLog::create([
             'user_name' => auth()->user()->Nama ?? 'System',
             'action' => 'Menambah Laboratorium',
@@ -93,7 +93,7 @@ class DaftarLabController extends Controller
         ])->id;
         $lab->update($data);
 
-        // LOG OTOMATIS
+        
         ActivityLog::create([
             'user_name' => auth()->user()->Nama ?? 'System',
             'action' => 'Mengubah Laboratorium',
@@ -106,9 +106,9 @@ class DaftarLabController extends Controller
 
     public function destroy(DaftarLab $lab)
     {
-        $namaLab = $lab->Nama_Laboratorium; // simpan dulu sebelum dihapus
+        $namaLab = $lab->Nama_Laboratorium; 
 
-        // Hapus semua laboran yang terdaftar di laboratorium ini (beserta akun daftar_users-nya)
+        
         $laborans = DaftarLaboranLaboratorium::where('Laboratorium', $namaLab)->get();
         foreach ($laborans as $laboran) {
             $userId = $laboran->UserID;
@@ -118,7 +118,7 @@ class DaftarLabController extends Controller
 
         $lab->delete();
 
-        // LOG OTOMATIS
+        
         ActivityLog::create([
             'user_name' => auth()->user()->Nama ?? 'System',
             'action' => 'Menghapus Laboratorium',

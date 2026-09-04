@@ -2,7 +2,7 @@
 <div id="modal-peminjaman" class="modal-overlay" onclick="closeModalOnOverlay(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
-            <h2>📋 Form Peminjaman Ruangan</h2>
+            <h2> Form Peminjaman Ruangan</h2>
             <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
         <div class="modal-body">
@@ -659,23 +659,13 @@ body { background: #f5f7fa; }
 
 @section('content')
 <!-- Alert Messages -->
-                @if(session('success'))
-                    <div class="alert alert-success">
-                        <span class="alert-icon">✅</span>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                @endif
+                
 
-                @if(session('error'))
-                    <div class="alert alert-error">
-                        <span class="alert-icon">❌</span>
-                        <span>{{ session('error') }}</span>
-                    </div>
-                @endif
+                
 
                 @if($errors->any())
                     <div class="alert alert-error">
-                        <span class="alert-icon">❌</span>
+                        <span class="alert-icon"></span>
                         <div>
                             <strong>Terjadi kesalahan:</strong>
                             <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
@@ -690,7 +680,7 @@ body { background: #f5f7fa; }
                 <div class="grid-layout">
                     <div>
                         <div class="lab-selection">
-                            <h2>🏢 Pilih Laboratorium</h2>
+                            <h2> Pilih Laboratorium</h2>
                             <p>Pilih laboratorium yang ingin Anda gunakan</p>
 
                             <div class="form-group">
@@ -711,7 +701,7 @@ body { background: #f5f7fa; }
                         <div id="lab-container">
                             <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);">
                                 <h3 style="font-size: 1.25rem; font-weight: bold; color: #333; margin-bottom: 1rem;">
-                                    📋 Informasi Laboratorium
+                                     Informasi Laboratorium
                                 </h3>
                                 <p style="color: #666; margin-bottom: 1.5rem;">
                                     Klik card untuk mengajukan peminjaman ruangan
@@ -723,53 +713,53 @@ body { background: #f5f7fa; }
                                          onclick="openModal({{ $labItem->id }}, '{{ $labItem->Nama_Laboratorium }}', '{{ $labItem->Kepala_Labolatorium }}', '{{ $labItem->email_lab }}')" 
                                          data-lab-id="{{ $labItem->id }}"
                                          style="display: none;">
-                                        <div class="lab-image">🧪</div>
+                                        <div class="lab-image"></div>
                                         <div class="lab-body">
                                             <h3>{{ $labItem->Nama_Laboratorium }} - Lt. {{ $labItem->floor }}</h3>
                                             <div class="lab-info">
-                                                <span>👨‍🔬</span>
+                                                <span>‍</span>
                                                 <span>{{ $labItem->Kepala_Labolatorium }}</span>
                                             </div>
                                             <div class="lab-info">
-                                                <span>📧</span>
+                                                <span></span>
                                                 <span>{{ $labItem->email_lab }}</span>
                                             </div>
-                                            <span class="lab-badge">📅 Reservasi Tersedia</span>
+                                            <span class="lab-badge"> Reservasi Tersedia</span>
 
                                             @if(isset($peminjaman_aktif_per_lab[$labItem->id]) && $peminjaman_aktif_per_lab[$labItem->id]->count() > 0)
                                                 <div class="warning-box">
                                                     <div class="warning-box-header">
-                                                        <span class="warning-icon">⚠️</span>
+                                                        <span class="warning-icon"></span>
                                                         <span>Jadwal Terpakai ({{ $peminjaman_aktif_per_lab[$labItem->id]->count() }} booking)</span>
                                                     </div>
                                                     <div class="warning-schedules">
                                                         @foreach($peminjaman_aktif_per_lab[$labItem->id] as $aktif)
                                                             <div class="warning-schedule">
                                                                 <div class="warning-schedule-title">
-                                                                    <span>👤</span>
+                                                                    <span></span>
                                                                     <span>{{ $aktif->user_nama }}</span>
                                                                     <span class="status-badge status-{{ $aktif->status }}">
                                                                         @if($aktif->status === 'menunggu')
                                                                             ⏳ Menunggu
                                                                         @elseif($aktif->status === 'disetujui_laboran' || $aktif->status === 'menunggu_kepala_lab')
-                                                                            🔄 Proses
+                                                                             Proses
                                                                         @elseif($aktif->status === 'disetujui')
-                                                                            ✓ Disetujui
+                                                                             Disetujui
                                                                         @elseif($aktif->status === 'dikembalikan')
-                                                                            🔄 Selesai
+                                                                             Selesai
                                                                         @else
-                                                                            ❌ Ditolak
+                                                                             Ditolak
                                                                         @endif
                                                                     </span>
                                                                 </div>
                                                                 <div class="warning-schedule-time">
                                                                     <span>
-                                                                        <strong>📅</strong>
+                                                                        <strong></strong>
                                                                         {{ \Carbon\Carbon::parse($aktif->tanggal)->format('d M Y') }} - 
                                                                         {{ \Carbon\Carbon::parse($aktif->tanggal_selesai)->format('d M Y') }}
                                                                     </span>
                                                                     <span>
-                                                                        <strong>🕐</strong>
+                                                                        <strong></strong>
                                                                         {{ \Carbon\Carbon::parse($aktif->jam_mulai)->format('H:i') }} - 
                                                                         {{ \Carbon\Carbon::parse($aktif->jam_selesai)->format('H:i') }}
                                                                     </span>
@@ -781,7 +771,7 @@ body { background: #f5f7fa; }
                                             @else
                                                 <div class="warning-box">
                                                     <div class="no-schedule">
-                                                        <span class="no-schedule-icon">✅</span>
+                                                        <span class="no-schedule-icon"></span>
                                                         <strong>Tidak ada jadwal terpakai</strong>
                                                         <span>Ruangan tersedia untuk semua waktu</span>
                                                     </div>
@@ -798,7 +788,7 @@ body { background: #f5f7fa; }
                     <div>
                         <div class="history-card">
                             <div class="history-header">
-                                <div class="history-icon">🕒</div>
+                                
                                 <h3>Riwayat Peminjaman</h3>
                             </div>
 
@@ -807,8 +797,8 @@ body { background: #f5f7fa; }
                                     <div class="history-item status-{{ $peminjaman->status }}">
                                         <div class="history-lab-name">{{ $peminjaman->daftarLab->Nama_Laboratorium ?? 'N/A' }}</div>
                                         <div class="history-meta">
-                                            <span>📅 {{ \Carbon\Carbon::parse($peminjaman->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($peminjaman->tanggal_selesai)->format('d M Y') }}</span>
-                                            <span>🕐 {{ \Carbon\Carbon::parse($peminjaman->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($peminjaman->jam_selesai)->format('H:i') }}</span>
+                                            <span> {{ \Carbon\Carbon::parse($peminjaman->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($peminjaman->tanggal_selesai)->format('d M Y') }}</span>
+                                            <span> {{ \Carbon\Carbon::parse($peminjaman->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($peminjaman->jam_selesai)->format('H:i') }}</span>
                                         </div>
                                         <div class="history-purpose">
                                             "{{ Str::limit($peminjaman->keperluan, 80) }}"
@@ -816,14 +806,14 @@ body { background: #f5f7fa; }
 
                                         @if($peminjaman->catatan_laboran)
                                             <div style="margin-top: 0.5rem; font-size: 0.85rem; padding: 0.5rem; background: rgba(255, 255, 255, 0.5); border-radius: 8px;">
-                                                <strong>📝 Catatan Laboran:</strong><br>
+                                                <strong> Catatan Laboran:</strong><br>
                                                 <span style="color: #666;">{{ $peminjaman->catatan_laboran }}</span>
                                             </div>
                                         @endif
 
                                         @if($peminjaman->catatan_kepala_lab)
                                             <div style="margin-top: 0.5rem; font-size: 0.85rem; padding: 0.5rem; background: rgba(255, 255, 255, 0.5); border-radius: 8px;">
-                                                <strong>📝 Catatan Kepala Lab:</strong><br>
+                                                <strong> Catatan Kepala Lab:</strong><br>
                                                 <span style="color: #666;">{{ $peminjaman->catatan_kepala_lab }}</span>
                                             </div>
                                         @endif
@@ -832,23 +822,23 @@ body { background: #f5f7fa; }
                                             @if($peminjaman->status === 'menunggu')
                                                 ⏳ Menunggu Laboran
                                             @elseif($peminjaman->status === 'disetujui_laboran' || $peminjaman->status === 'menunggu_kepala_lab')
-                                                📋 Menunggu Kepala Lab
+                                                 Menunggu Kepala Lab
                                             @elseif($peminjaman->status === 'disetujui')
                                                 @if($peminjaman->pengajuan_pengembalian)
-                                                    🔄 Menunggu Verifikasi Kembali
+                                                     Menunggu Verifikasi Kembali
                                                 @else
-                                                    ✅ Disetujui
+                                                     Disetujui
                                                 @endif
                                             @elseif($peminjaman->status === 'dikembalikan')
-                                                🔄 Dikembalikan
+                                                 Dikembalikan
                                             @else
-                                                ❌ Ditolak
+                                                 Ditolak
                                             @endif
                                         </span>
                                     </div>
                                 @empty
                                     <div class="empty-history">
-                                        <div class="empty-history-icon">🗓️</div>
+                                        
                                         <p>Belum ada riwayat peminjaman</p>
                                     </div>
                                 @endforelse
@@ -981,7 +971,7 @@ let selectedLabId = null;
             const tanggalSelesai = this.value;
             
             if (tanggalMulai && tanggalSelesai < tanggalMulai) {
-                alert('⚠️ Tanggal selesai harus sama atau lebih besar dari tanggal mulai!');
+                alert(' Tanggal selesai harus sama atau lebih besar dari tanggal mulai!');
                 this.value = '';
             }
         });
@@ -1003,7 +993,7 @@ let selectedLabId = null;
             if (!jamMulaiInput.value || !jamSelesaiInput.value) return;
 
             if (isSameDate() && jamSelesaiInput.value < jamMulaiInput.value) {
-                alert('⚠️ Jam selesai tidak boleh lebih kecil dari jam mulai jika tanggal sama!');
+                alert(' Jam selesai tidak boleh lebih kecil dari jam mulai jika tanggal sama!');
                 jamSelesaiInput.value = '';
             }
         };

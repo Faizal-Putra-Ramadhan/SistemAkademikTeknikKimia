@@ -43,7 +43,7 @@
                         title="Pilih Laboratorium">
                     @foreach($labsForLaboran as $lab)
                         <option value="{{ $lab->id }}" {{ $activeLab && $activeLab->id == $lab->id ? 'selected' : '' }}>
-                            🧪 {{ $lab->Nama_Laboratorium }} ({{ $lab->floor }} - {{ ucfirst($lab->lab_type) }})
+                             {{ $lab->Nama_Laboratorium }} ({{ $lab->floor }} - {{ ucfirst($lab->lab_type) }})
                         </option>
                     @endforeach
                 </select>

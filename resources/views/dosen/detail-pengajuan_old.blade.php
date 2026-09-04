@@ -138,7 +138,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>🔬 Detail Pengajuan Penelitian</h1>
+        <h1> Detail Pengajuan Penelitian</h1>
     </div>
 
     <div class="container">
@@ -216,14 +216,14 @@
                 <form action="{{ route('dosen.pengajuan.setujui', $pengajuan->id) }}" method="POST" style="flex: 1;">
                     @csrf
                     <button type="submit" class="btn btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan penelitian ini?')">
-                        ✓ Setujui Pengajuan
+                         Setujui Pengajuan
                     </button>
                 </form>
                 
                 <form action="{{ route('dosen.pengajuan.tolak', $pengajuan->id) }}" method="POST" style="flex: 1;">
                     @csrf
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan penelitian ini?')">
-                        ✗ Tolak Pengajuan
+                         Tolak Pengajuan
                     </button>
                 </form>
             </div>

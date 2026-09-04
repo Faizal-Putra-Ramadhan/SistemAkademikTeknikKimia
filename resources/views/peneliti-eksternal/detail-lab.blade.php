@@ -111,7 +111,7 @@
                     @if($alat->foto)
                         <img src="{{ asset('storage/' . $alat->foto) }}" alt="{{ $alat->nama_alat }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
-                        🔧
+                        
                     @endif
                 </div>
                 <div class="alat-body">
@@ -119,11 +119,11 @@
                     <p>{{ $alat->deskripsi ?? 'Tidak ada deskripsi' }}</p>
                     
                     @if($alat->jumlah_tersedia > 5)
-                        <span class="stock stock-available">✓ Tersedia: {{ $alat->jumlah_tersedia }} unit</span>
+                        <span class="stock stock-available"> Tersedia: {{ $alat->jumlah_tersedia }} unit</span>
                     @elseif($alat->jumlah_tersedia > 0)
-                        <span class="stock stock-low">⚠ Stok Terbatas: {{ $alat->jumlah_tersedia }} unit</span>
+                        <span class="stock stock-low"> Stok Terbatas: {{ $alat->jumlah_tersedia }} unit</span>
                     @else
-                        <span class="stock stock-empty">✗ Stok Habis</span>
+                        <span class="stock stock-empty"> Stok Habis</span>
                     @endif
                 </div>
             </div>

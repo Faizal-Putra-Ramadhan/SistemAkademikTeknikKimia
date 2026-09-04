@@ -183,7 +183,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>👨‍🏫 Portal Dosen</h1>
+        <h1>‍ Portal Dosen</h1>
         <div class="user-info">
             <span>Halo, <strong>{{ $user->Nama }}</strong></span>
             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
@@ -203,7 +203,7 @@
         <!-- Statistik -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">📊</div>
+                <div class="stat-icon"></div>
                 <div class="stat-info">
                     <h3>Total Pengajuan</h3>
                     <p>{{ $totalPengajuan }}</p>
@@ -217,14 +217,14 @@
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">✅</div>
+                <div class="stat-icon"></div>
                 <div class="stat-info">
                     <h3>Disetujui</h3>
                     <p>{{ $disetujui }}</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">❌</div>
+                <div class="stat-icon"></div>
                 <div class="stat-info">
                     <h3>Ditolak</h3>
                     <p>{{ $ditolak }}</p>
@@ -235,22 +235,22 @@
         <!-- Menu Utama -->
         <div class="menu-grid">
             <a href="{{ route('dosen.lab') }}" class="menu-card">
-                <div class="icon">🔬</div>
+                <div class="icon"></div>
                 <h3>Pinjam Ruangan/Alat</h3>
             </a>
             <a href="{{ route('dosen.pengumuman.index') }}" class="menu-card">
-                <div class="icon">📢</div>
+                <div class="icon"></div>
                 <h3>Kelola Pengumuman</h3>
             </a>
             <a href="{{ route('dosen.profil') }}" class="menu-card">
-                <div class="icon">👤</div>
+                <div class="icon"></div>
                 <h3>Profil Saya</h3>
             </a>
         </div>
 
         <!-- Pengajuan Penelitian -->
         <div class="section">
-            <h2>🔬 Pengajuan Penelitian yang Perlu Disetujui</h2>
+            <h2> Pengajuan Penelitian yang Perlu Disetujui</h2>
             @if($pengajuanPenelitian->where('status', 'menunggu')->count() > 0)
             <table>
                 <thead>
@@ -296,7 +296,7 @@
 
         <!-- Riwayat Pengajuan -->
         <div class="section">
-            <h2>📜 Riwayat Pengajuan Penelitian</h2>
+            <h2> Riwayat Pengajuan Penelitian</h2>
             @if($pengajuanPenelitian->whereIn('status', ['disetujui', 'ditolak'])->count() > 0)
             <table>
                 <thead>
@@ -337,7 +337,7 @@
 
         <!-- Peminjaman Saya -->
         <div class="section">
-            <h2>📅 Peminjaman Ruangan Saya</h2>
+            <h2> Peminjaman Ruangan Saya</h2>
             @if($peminjamanRuangan->count() > 0)
             <table>
                 <thead>
@@ -372,7 +372,7 @@
 
         <!-- Peminjaman Alat Saya -->
         <div class="section">
-            <h2>🔧 Peminjaman Alat Saya</h2>
+            <h2> Peminjaman Alat Saya</h2>
             @if($peminjamanAlat->count() > 0)
             <table>
                 <thead>

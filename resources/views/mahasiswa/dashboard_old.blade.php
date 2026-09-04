@@ -164,7 +164,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>🎓 Portal Mahasiswa</h1>
+        <h1> Portal Mahasiswa</h1>
         <div class="user-info">
             <span>Halo, <strong>{{ $user->Nama }}</strong></span>
             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
@@ -182,7 +182,7 @@
 
         <div class="menu-grid">
             <a href="{{ route('mahasiswa.pengumuman') }}" class="menu-card">
-                <div class="icon">📢</div>
+                <div class="icon"></div>
                 <h3>Pengumuman</h3>
                 <p>Lihat pengumuman terbaru</p>
             </a>

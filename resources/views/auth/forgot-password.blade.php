@@ -190,7 +190,7 @@
         @endif
 
         <div class="info-box">
-            <p><strong>ℹ️ Informasi:</strong></p>
+            <p><strong>ℹ Informasi:</strong></p>
             <ul>
                 <li>Link reset password akan dikirim ke email Anda</li>
                 <li>Link berlaku selama 1 jam</li>
@@ -205,7 +205,7 @@
                 <label for="email">Email Terdaftar</label>
                 <div class="input-wrapper">
                     <input type="email" id="email" name="email" placeholder="Masukkan email Anda" value="{{ old('email') }}" required autofocus>
-                    <span class="icon">📧</span>
+                    <span class="icon"></span>
                 </div>
                 @error('email')
                     <div style="color: #c33; font-size: 13px; margin-top: 5px;">{{ $message }}</div>

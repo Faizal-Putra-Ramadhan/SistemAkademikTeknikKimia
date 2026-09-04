@@ -10,7 +10,7 @@ use App\Mail\RiskAssessmentMail;
 use App\Models\ActivityLog;
 use App\Models\AlatLab;
 use App\Models\BebasLabApproval;
-use App\Models\BebasLabRequest; // Pastikan Model AlatLab sudah ada
+use App\Models\BebasLabRequest; 
 use App\Models\DaftarLab;
 use App\Models\DaftarLaboranLaboratorium;
 use App\Models\DaftarUser;
@@ -34,33 +34,33 @@ class LaboranController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil data laboran berdasarkan user yang login
+        
         $laboran = DaftarLaboranLaboratorium::with('laboratoriums')->where('UserID', $user->UserID)->first();
 
         if (! $laboran) {
             return redirect()->route('login')->with('error', 'Data laboran tidak ditemukan');
         }
 
-        // Ambil lab aktif: PRIORITAS: parameter route > session > lab pertama
+        
         if ($id) {
-            // Jika ada parameter route, gunakan itu
+            
             $daftarLab = DaftarLab::findOrFail($id);
-            // Validasi bahwa lab ini dikelola oleh laboran
+            
             if (! $laboran->laboratoriums->contains('id', $id)) {
                 return redirect()->back()->with('error', 'Anda tidak memiliki akses ke laboratorium ini.');
             }
-            // Simpan ke session untuk penggunaan selanjutnya
+            
             session(['active_lab_id' => $id]);
             request()->session()->put('active_lab_id', $id);
         } else {
-            // Jika tidak ada parameter, cek session
+            
             $activeLabId = session('active_lab_id') ?? request()->session()->get('active_lab_id');
 
             if ($activeLabId && $laboran->laboratoriums->contains('id', $activeLabId)) {
-                // Gunakan lab dari session jika valid
+                
                 $daftarLab = DaftarLab::findOrFail($activeLabId);
             } else {
-                // Fallback ke lab pertama
+                
                 $daftarLab = $laboran->laboratoriums->first();
                 if ($daftarLab) {
                     session(['active_lab_id' => $daftarLab->id]);
@@ -69,7 +69,7 @@ class LaboranController extends Controller
             }
         }
 
-        // Debug: Pastikan lab yang digunakan benar
+        
         Log::info('Dashboard - Active Lab', [
             'route_id' => $id,
             'active_lab_id' => $daftarLab->id ?? null,
@@ -81,7 +81,7 @@ class LaboranController extends Controller
             return redirect()->route('login')->with('error', 'Laboratorium tidak ditemukan');
         }
 
-        // Statistik
+        
         $peminjamanRuanganMenunggu = PeminjamanRuangan::where('daftar_lab_id', $daftarLab->id)
             ->where('status', 'menunggu')
             ->count();
@@ -92,7 +92,7 @@ class LaboranController extends Controller
             ->where('status', 'publish')
             ->count();
 
-        // Data untuk tabel
+        
         $peminjamanRuangan = PeminjamanRuangan::where('daftar_lab_id', $daftarLab->id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -103,7 +103,7 @@ class LaboranController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Ambil semua lab yang dikelola laboran untuk navbar
+        
         $labs = $laboran->laboratoriums;
 
         return view('laboran.dashboard', compact(
@@ -126,19 +126,19 @@ class LaboranController extends Controller
         $lab = DaftarLab::findOrFail($id);
         $laboran = DaftarLaboranLaboratorium::with('laboratoriums')->where('UserID', $user->UserID)->first();
 
-        // Validasi bahwa lab ini dikelola oleh laboran
+        
         if (! $laboran || ! $laboran->laboratoriums->contains('id', $id)) {
             return redirect()->back()->with('error', 'Anda tidak memiliki akses ke laboratorium ini.');
         }
 
-        // PERBAIKAN: Gunakan daftar_lab_id sesuai struktur database
+        
         $peminjamanRuangan = PeminjamanRuangan::where('daftar_lab_id', $lab->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Simpan lab aktif ke session
+        
         session(['active_lab_id' => $id]);
-        // Ambil semua lab yang dikelola laboran untuk navbar
+        
         $labs = $laboran->laboratoriums;
 
         return view('laboran.peminjaman-ruangan', compact(
@@ -156,18 +156,18 @@ class LaboranController extends Controller
         $lab = DaftarLab::findOrFail($id);
         $laboran = DaftarLaboranLaboratorium::with('laboratoriums')->where('UserID', $user->UserID)->first();
 
-        // Validasi bahwa lab ini dikelola oleh laboran
+        
         if (! $laboran || ! $laboran->laboratoriums->contains('id', $id)) {
             return redirect()->back()->with('error', 'Anda tidak memiliki akses ke laboratorium ini.');
         }
 
-        // PERBAIKAN: Gunakan daftar_lab_id untuk visibilitas ketat
+        
         $peminjamanAlat = PeminjamanAlat::with('alatLab')
             ->where('daftar_lab_id', $lab->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Simpan lab aktif ke session
+        
         session(['active_lab_id' => $id]);
         $labs = $laboran->laboratoriums;
 
@@ -186,7 +186,7 @@ class LaboranController extends Controller
         $lab = DaftarLab::findOrFail($id);
         $laboran = DaftarLaboranLaboratorium::where('UserID', $user->UserID)->first();
 
-        // Ambil semua pengumuman untuk author ini
+        
         $pengumuman = Pengumuman::where('author', $user->Nama)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -215,15 +215,15 @@ class LaboranController extends Controller
         try {
             $peminjaman = PeminjamanAlat::with('alatLab.daftarLab')->findOrFail($id);
 
-            // Ambil data alat
+            
             $alat = AlatLab::findOrFail($peminjaman->alat_lab_id);
 
-            // Cek apakah stok tersedia
+            
             if ($alat->jumlah_tersedia < $peminjaman->jumlah) {
                 return redirect()->back()->with('error', 'Stok alat tidak mencukupi. Stok tersedia: '.$alat->jumlah_tersedia.', diminta: '.$peminjaman->jumlah);
             }
 
-            // Update status peminjaman
+            
             $peminjaman->status = 'disetujui';
 
             if ($request->filled('durasi_hari')) {
@@ -234,7 +234,7 @@ class LaboranController extends Controller
             }
             $peminjaman->save();
 
-            // Kurangi stok alat sebanyak jumlah yang dipinjam
+            
             $alat->jumlah_tersedia = $alat->jumlah_tersedia - $peminjaman->jumlah;
             $alat->save();
 
@@ -245,7 +245,7 @@ class LaboranController extends Controller
                 'ip_address' => request()->ip(),
             ]);
 
-            // ✅ KIRIM EMAIL KE MAHASISWA
+            
             $mahasiswa = DaftarUser::where('Nama', $peminjaman->user_nama)->first();
             if ($mahasiswa && $mahasiswa->Email) {
                 try {
@@ -275,7 +275,7 @@ class LaboranController extends Controller
         $lab = DaftarLab::findOrFail($id);
         $laboran = DaftarLaboranLaboratorium::where('UserID', $user->UserID)->first();
 
-        // Ambil requests dengan approval milik laboran yang login saja
+        
         $requests = BebasLabRequest::with(['user', 'riskAssessment', 'approvals' => function ($query) use ($lab, $user) {
             $query->where('daftar_lab_id', $lab->id)
                 ->where('laboran_user_id', $user->UserID);
@@ -286,7 +286,7 @@ class LaboranController extends Controller
         $equipmentByRequest = [];
         $roomByRequest = [];
         foreach ($requests as $req) {
-            // Cek peminjaman alat yang terkait dengan mahasiswa ini dan RA ini
+            
             $alat = PeminjamanAlat::with('alatLab')
                 ->where('user_nama', $req->user_nama)
                 ->where('risk_assessment_id', $req->risk_assessment_id)
@@ -294,22 +294,22 @@ class LaboranController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Cek peminjaman ruangan
+            
             $ruangan = PeminjamanRuangan::where('user_nama', $req->user_nama)
                 ->where('daftar_lab_id', $lab->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Ambil approval spesifik laboran ini
+            
             $req->approval = $req->approvals->first();
 
-            // Hitung tanggungan saat pengajuan
+            
             $req->pending_alat_count_at_request = $alat
                 ->whereIn('status', ['menunggu', 'disetujui'])
                 ->where('created_at', '<=', $req->created_at)
                 ->count();
 
-            // Hitung tanggungan saat ini
+            
             $req->pending_alat_count_now = $alat
                 ->whereIn('status', ['menunggu', 'disetujui'])
                 ->count();
@@ -319,7 +319,7 @@ class LaboranController extends Controller
                 ->where('created_at', '<=', $req->created_at)
                 ->count();
 
-            // Hitung tanggungan saat ini
+            
             $req->pending_ruangan_count_now = $ruangan
                 ->whereIn('status', ['menunggu', 'menunggu_kepala_lab', 'disetujui'])
                 ->count();
@@ -328,7 +328,7 @@ class LaboranController extends Controller
             $roomByRequest[$req->id] = $ruangan;
         }
 
-        // Ambil semua lab yang dikelola laboran untuk navbar
+        
         $labs = $this->getLabsForUser($user);
 
         return view('laboran.bebas-lab', compact(
@@ -356,7 +356,7 @@ class LaboranController extends Controller
 
         $approval = $bebasLabRequest->approvals->first();
 
-        // Data tanggungan alat
+        
         $alatList = PeminjamanAlat::with('alatLab')
             ->where('user_nama', $bebasLabRequest->user_nama)
             ->where('risk_assessment_id', $bebasLabRequest->risk_assessment_id)
@@ -364,7 +364,7 @@ class LaboranController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Data tanggungan ruangan
+        
         $ruanganList = PeminjamanRuangan::where('user_nama', $bebasLabRequest->user_nama)
             ->where('daftar_lab_id', $lab->id)
             ->orderBy('created_at', 'desc')
@@ -380,7 +380,7 @@ class LaboranController extends Controller
 
         $pendingNow = $pendingAlatNow + $pendingRuanganNow;
 
-        // Ambil semua lab yang dikelola laboran untuk navbar
+        
         $labs = $this->getLabsForUser($user);
 
         return view('laboran.bebas-lab-detail', compact(
@@ -414,10 +414,10 @@ class LaboranController extends Controller
             $approval->approved_at = now();
             $approval->save();
 
-            // Cek apakah ini approval terakhir
+            
             if ($bebasLabRequest->isFullyApproved()) {
                 $bebasLabRequest->status = 'disetujui';
-                $bebasLabRequest->setMasaBerlaku(); // Set 6 bulan masa berlaku
+                $bebasLabRequest->setMasaBerlaku(); 
                 $bebasLabRequest->save();
             }
 
@@ -489,12 +489,12 @@ class LaboranController extends Controller
                 $phpWord->setValue('NOMOR#'.$rowNumber, (string) $rowNumber);
                 $phpWord->setValue('LAB_NAME#'.$rowNumber, $approval->lab->Nama_Laboratorium ?? '-');
                 $phpWord->setValue('LABORAN_NAME#'.$rowNumber, $approval->laboran_nama ?? '-');
-                $persetujuan = $approval->status === 'disetujui' ? '✓ Disetujui' : 'Menunggu';
+                $persetujuan = $approval->status === 'disetujui' ? ' Disetujui' : 'Menunggu';
                 $phpWord->setValue('PERSETUJUAN#'.$rowNumber, $persetujuan);
             }
         }
 
-        // Kepala lab - mendukung multi-role
+        
         $kepalaLabs = DaftarUser::where(function ($query) {
             $query->where('Role_User', 'Kepala Laboratorium')
                 ->orWhereHas('roles', fn ($q) => $q->where('name', 'Kepala Laboratorium'));
@@ -678,6 +678,7 @@ class LaboranController extends Controller
             'nama_alat' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ttd' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'deskripsi' => 'nullable|string',
             'scope' => 'required|in:this_lab,all_labs',
         ]);
@@ -709,6 +710,7 @@ class LaboranController extends Controller
             'nama_alat' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ttd' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'deskripsi' => 'nullable|string',
             'scope' => 'required|in:this_lab,all_labs',
         ]);
@@ -774,6 +776,7 @@ class LaboranController extends Controller
             'Phone' => 'required|string|max:20',
             'Email' => 'required|email|unique:daftar_users,Email,' . $user->id,
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ttd' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -784,22 +787,33 @@ class LaboranController extends Controller
                 'Email' => $request->Email,
             ];
 
-            // Upload foto jika ada
+            
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $filename = time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile'), $filename);
                 $data['foto'] = $filename;
 
-                // Hapus foto lama jika ada
+                
                 if ($user->foto && file_exists(public_path('uploads/profile/' . $user->foto))) {
                     unlink(public_path('uploads/profile/' . $user->foto));
                 }
             }
 
+            if ($request->hasFile('ttd')) {
+                $file = $request->file('ttd');
+                $filename = time() . '_ttd.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ttd'), $filename);
+                $data['ttd'] = $filename;
+
+                if ($user->ttd && file_exists(public_path('uploads/ttd/' . $user->ttd))) {
+                    unlink(public_path('uploads/ttd/' . $user->ttd));
+                }
+            }
+
             $user->update($data);
 
-            // Log aktivitas
+            
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Update Profil',
@@ -845,9 +859,9 @@ class LaboranController extends Controller
             'NAMA_KEPALA_LAB' => $riskAssessment->kepala_lab_nama ?? '-',
             'CURRENT_TIME' => $current_time ?? '-',
             'WAKTU_PENGAJUAN' => $formatDate($riskAssessment->created_at),
-            'PENELITIAN' => $riskAssessment->jenis_ra == 'Penelitian' ? '✔' : '',
-            'PRAKTIKUM' => $riskAssessment->jenis_ra == 'Praktikum' ? '✔' : '',
-            'LAIN' => $riskAssessment->jenis_ra == 'Lain-lain' ? '✔' : '',
+            'PENELITIAN' => $riskAssessment->jenis_ra == 'Penelitian' ? '' : '',
+            'PRAKTIKUM' => $riskAssessment->jenis_ra == 'Praktikum' ? '' : '',
+            'LAIN' => $riskAssessment->jenis_ra == 'Lain-lain' ? '' : '',
             'KATEGORI_BAHAN_KIMIA' => ucwords(str_replace('_', ' ', $riskAssessment->kategoriHazardBahan?->kategori ?? '-')),
             'TEMPERATURE_MAKS' => $riskAssessment->peralatanOperasi?->temperatur_maksimum ?? '-',
             'TEKANAN_MAKS' => $riskAssessment->peralatanOperasi?->tekanan_maksimum ?? '-',
@@ -868,7 +882,7 @@ class LaboranController extends Controller
         $bahanList = $riskAssessment->bahanKimias;
         for ($i = 1; $i <= 10; $i++) {
             $bahan = $bahanList[$i - 1] ?? null;
-            $cek = fn ($v) => $v == 1 ? '✓' : '';
+            $cek = fn ($v) => $v == 1 ? '' : '';
             $phpWord->setValue("BAHAN_KIMIA_{$i}", $bahan->nama_bahan ?? '');
             foreach (['explosive', 'flammable', 'toxic', 'corrosive', 'irritant', 'oxidizing'] as $attr) {
                 $phpWord->setValue(strtoupper($attr)."_{$i}", $bahan ? $cek($bahan->$attr) : '');

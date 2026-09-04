@@ -1,11 +1,11 @@
 <div class="header">
     <div class="header-left">
-        <div class="logo">🎓</div>
+        <div class="logo"></div>
         <div class="header-title">Teknik Kimia UAD</div>
-        <button class="menu-icon" onclick="toggleSidebar()">☰</button>
+        <button class="menu-icon" onclick="toggleSidebar()"></button>
     </div>
     <div class="user-profile" onclick="toggleDropdown()">
-        <span>👤</span>
+        <span></span>
         @auth
             <span>{{ Auth::user()->Nama }}</span>
         @else

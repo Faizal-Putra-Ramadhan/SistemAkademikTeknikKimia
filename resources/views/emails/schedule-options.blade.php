@@ -10,7 +10,7 @@
         <!-- Header -->
         <tr>
             <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center;">
-                <h1 style="margin: 0; font-size: 24px;">📅 LIMS - Jadwal Wawancara Risk Assessment</h1>
+                <h1 style="margin: 0; font-size: 24px;"> LIMS - Jadwal Wawancara Risk Assessment</h1>
             </td>
         </tr>
 
@@ -26,7 +26,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin-top: 0; color: #667eea;">📋 Informasi Risk Assessment</h3>
+                            <h3 style="margin-top: 0; color: #667eea;"> Informasi Risk Assessment</h3>
                             
                             <table width="100%" cellpadding="8" cellspacing="0">
                                 <tr style="border-bottom: 1px solid #eee;">
@@ -58,7 +58,7 @@
                                 </div>
                                 <table width="100%" cellpadding="4" cellspacing="0">
                                     <tr>
-                                        <td style="color: #6b7280; width: 30%;">📅 Tanggal:</td>
+                                        <td style="color: #6b7280; width: 30%;"> Tanggal:</td>
                                         <td style="color: #1f2937; font-weight: 600;">
                                             {{ \Carbon\Carbon::parse($option['jadwal'])->format('l, d F Y') }}
                                         </td>
@@ -68,7 +68,7 @@
                                         <td style="color: #1f2937; font-weight: 600;">{{ $option['waktu'] ?? 'N/A' }}</td>
                                     </tr>
                                     <tr>
-                                        <td style="color: #6b7280;">📍 Lokasi:</td>
+                                        <td style="color: #6b7280;"> Lokasi:</td>
                                         <td style="color: #1f2937; font-weight: 600;">{{ $option['tempat'] ?? 'N/A' }}</td>
                                     </tr>
                                 </table>
@@ -77,7 +77,7 @@
                     </table>
                 @empty
                     <p style="background: #fef3c7; padding: 15px; border-radius: 6px; color: #92400e;">
-                        ⚠️ Belum ada opsi jadwal yang tersedia.
+                         Belum ada opsi jadwal yang tersedia.
                     </p>
                 @endforelse
 
@@ -86,7 +86,7 @@
                     <table width="100%" cellpadding="0" cellspacing="0" style="background: #e0e7ff; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
                         <tr>
                             <td style="padding: 15px;">
-                                <h4 style="margin: 0 0 8px 0; color: #3730a3;">📌 Catatan dari Safety Officer</h4>
+                                <h4 style="margin: 0 0 8px 0; color: #3730a3;"> Catatan dari Safety Officer</h4>
                                 <p style="margin: 0; color: #3730a3; line-height: 1.6;">{{ $riskAssessment->catatan_safety_officer }}</p>
                             </td>
                         </tr>
@@ -99,7 +99,7 @@
                         <td>
                             <a href="{{ route('mahasiswa.risk-assessment.pending-schedules', $riskAssessment->id) }}" 
                                style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
-                                📅 Pilih Jadwal Sekarang
+                                 Pilih Jadwal Sekarang
                             </a>
                         </td>
                     </tr>

@@ -58,7 +58,7 @@
                         <a href="{{ route('kaprodi.peminjaman-ruangan.index') }}" 
                            class="{{ request()->routeIs('kaprodi.peminjaman-ruangan.*') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} 
                                   rounded-md px-3 py-2 text-sm font-medium inline-flex items-center gap-2">
-                            🏢 Peminjaman Ruangan
+                             Peminjaman Ruangan
                             @php
                                 $pendingRuanganCount = \App\Models\PeminjamanRuangan::whereIn('status', ['disetujui_laboran', 'menunggu_kepala_lab'])
                                     ->count();
@@ -172,7 +172,7 @@
             <a href="{{ route('kaprodi.peminjaman-ruangan.index') }}" 
                class="{{ request()->routeIs('kaprodi.peminjaman-ruangan.*') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} 
                       block rounded-md px-3 py-2 text-base font-medium">
-                🏢 Peminjaman Ruangan
+                 Peminjaman Ruangan
                 @php
                     $pendingRuanganCount = \App\Models\PeminjamanRuangan::whereIn('status', ['disetujui_laboran', 'menunggu_kepala_lab'])->count();
                 @endphp

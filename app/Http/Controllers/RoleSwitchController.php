@@ -17,23 +17,23 @@ class RoleSwitchController extends Controller
         $currentUser = Auth::user();
         $targetUser = DaftarUser::findOrFail($targetUserId);
 
-        // Validasi bahwa target user adalah linked account
+        
         if (!$this->isValidLinkedAccount($currentUser, $targetUser)) {
             return redirect()->back()->with('error', 'Akun target tidak ter-link dengan akun Anda.');
         }
 
-        // Simpan original_user_id yang sudah ada (jika sedang dalam switched state)
+        
         $existingOriginalId = $request->session()->get('original_user_id');
 
-        // Regenerate session to prevent fixation
+        
         $request->session()->regenerate();
 
-        // Set session untuk role switching
+        
         $request->session()->put('role_switch_id', $targetUser->id);
-        // Preserve original user ID jika sudah dalam switched state (nested switch)
+        
         $request->session()->put('original_user_id', $existingOriginalId ?? $currentUser->id);
 
-        // Log aktivitas
+        
         ActivityLog::create([
             'user_name' => $currentUser->Nama,
             'action' => 'Switch Role',
@@ -41,7 +41,7 @@ class RoleSwitchController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        // Redirect ke dashboard sesuai role baru
+        
         return $this->redirectToDashboard($targetUser);
     }
 
@@ -65,7 +65,7 @@ class RoleSwitchController extends Controller
             return redirect()->route('login')->with('error', 'Akun original tidak ditemukan.');
         }
 
-        // Log aktivitas
+        
         ActivityLog::create([
             'user_name' => $currentUser->Nama,
             'action' => 'Switch Back',
@@ -73,13 +73,13 @@ class RoleSwitchController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        // Hapus session switching
+        
         $request->session()->forget(['role_switch_id', 'original_user_id']);
 
-        // Regenerate session to prevent fixation
+        
         $request->session()->regenerate();
 
-        // Refresh halaman setelah kembali ke original
+        
         return $this->redirectToDashboard($originalUser);
     }
 
@@ -118,7 +118,7 @@ class RoleSwitchController extends Controller
     {
         $user = Auth::user();
 
-        // Hanya primary account yang bisa manage
+        
         if (!$user->isPrimaryAccount()) {
             return redirect()->back()->with('error', 'Hanya akun utama yang dapat mengelola linked accounts.');
         }
@@ -141,12 +141,12 @@ class RoleSwitchController extends Controller
         $currentUser = Auth::user();
         $targetUser = DaftarUser::where('Email', $request->target_email)->first();
 
-        // Validasi
+        
         if (!$currentUser->isPrimaryAccount()) {
             return back()->with('error', 'Hanya akun utama yang dapat me-link akun lain.');
         }
 
-        // Batasi linking: hanya Admin atau user dengan nomor_identitas yang sama
+        
         if (!$currentUser->isAdmin() && $currentUser->nomor_identitas !== $targetUser->nomor_identitas) {
             return back()->with('error', 'Tidak diizinkan me-link akun dengan identitas berbeda.');
         }
@@ -159,7 +159,7 @@ class RoleSwitchController extends Controller
             return back()->with('error', 'Tidak dapat me-link akun sendiri.');
         }
 
-        // Link account
+        
         try {
             $currentUser->linkAccount($targetUser);
 
@@ -185,12 +185,12 @@ class RoleSwitchController extends Controller
         $currentUser = Auth::user();
         $targetUser = DaftarUser::findOrFail($userId);
 
-        // Validasi hanya primary account yang bisa unlink
+        
         if (!$currentUser->isPrimaryAccount()) {
             return back()->with('error', 'Hanya akun utama yang dapat unlink akun.');
         }
 
-        // Validasi target adalah child dari current user
+        
         if ($targetUser->parent_user_id !== $currentUser->id) {
             return back()->with('error', 'Akun ini tidak ter-link dengan akun Anda.');
         }

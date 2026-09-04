@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('Password');
             $table->string('Role_User');
             $table->string('foto')->nullable();
+            $table->string('ttd')->nullable();
             $table->timestamps();
 
             $table->foreign('parent_user_id', 'daftar_users_parent_user_id_foreign')->references('id')->on('daftar_users')->onDelete('cascade');

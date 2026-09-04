@@ -146,7 +146,7 @@
 @section('content')
     @if($riskAssessment->status !== 'menunggu_dosen')
     <div class="alert-warning">
-        ⚠️ <strong>Perhatian:</strong> Risk Assessment ini sudah diproses sebelumnya.
+         <strong>Perhatian:</strong> Risk Assessment ini sudah diproses sebelumnya.
     </div>
     @endif
 
@@ -157,27 +157,27 @@
         </h2>
         <div class="detail-grid">
             <div class="detail-item">
-                <span class="detail-label">👤 Mahasiswa</span>
+                <span class="detail-label"> Mahasiswa</span>
                 <span class="detail-value">{{ $riskAssessment->nama }}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">🎓 NIM</span>
+                <span class="detail-label"> NIM</span>
                 <span class="detail-value">{{ $riskAssessment->nim }}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">🏫 Laboratorium</span>
+                <span class="detail-label"> Laboratorium</span>
                 <span class="detail-value">{{ $riskAssessment->daftarLab->Nama_Laboratorium ?? 'N/A' }}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">📋 Jenis</span>
+                <span class="detail-label"> Jenis</span>
                 <span class="detail-value">{{ $riskAssessment->jenis_ra }}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">📞 Kontak</span>
+                <span class="detail-label"> Kontak</span>
                 <span class="detail-value">{{ $riskAssessment->no_kontak }}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">📅 Tanggal Diajukan</span>
+                <span class="detail-label"> Tanggal Diajukan</span>
                 <span class="detail-value">{{ $riskAssessment->created_at->format('d M Y, H:i') }}</span>
             </div>
         </div>
@@ -185,25 +185,25 @@
 
     <!-- Bahan Kimia -->
     <div class="detail-section">
-        <h3>⚗️ Bahan Kimia yang Digunakan</h3>
+        <h3> Bahan Kimia yang Digunakan</h3>
         @foreach($riskAssessment->bahanKimias as $index => $bahan)
         <div style="border: 2px solid #e5e7eb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
             <h4 style="color: #667eea; margin-bottom: 1rem; font-weight: 600;">
                 Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}
             </h4>
             <div>
-                @if($bahan->explosive) <span class="badge badge-danger">☢️ Explosive</span> @endif
-                @if($bahan->flammable) <span class="badge badge-warning">🔥 Flammable</span> @endif
-                @if($bahan->toxic) <span class="badge badge-danger">☠️ Toxic</span> @endif
-                @if($bahan->corrosive) <span class="badge badge-warning">⚗️ Corrosive</span> @endif
-                @if($bahan->irritant) <span class="badge badge-info">⚠️ Irritant</span> @endif
-                @if($bahan->oxidizing) <span class="badge badge-info">💨 Oxidizing</span> @endif
+                @if($bahan->explosive) <span class="badge badge-danger"> Explosive</span> @endif
+                @if($bahan->flammable) <span class="badge badge-warning"> Flammable</span> @endif
+                @if($bahan->toxic) <span class="badge badge-danger"> Toxic</span> @endif
+                @if($bahan->corrosive) <span class="badge badge-warning"> Corrosive</span> @endif
+                @if($bahan->irritant) <span class="badge badge-info"> Irritant</span> @endif
+                @if($bahan->oxidizing) <span class="badge badge-info"> Oxidizing</span> @endif
                 @if($bahan->lain_lain) <span class="badge badge-info">{{ $bahan->lain_lain }}</span> @endif
             </div>
             @if($bahan->msds_file)
             <div style="margin-top: 1rem;">
                 <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" style="color: #667eea; font-weight: 500;">
-                    📄 Lihat/Download MSDS
+                     Lihat/Download MSDS
                 </a>
             </div>
             @endif
@@ -220,19 +220,19 @@
 
     <!-- Peralatan -->
     <div class="detail-section">
-        <h3>🔧 Peralatan & Kondisi Operasi</h3>
+        <h3> Peralatan & Kondisi Operasi</h3>
         <div>
             @if($riskAssessment->peralatanOperasi->tekanan_tinggi)
-                <span class="badge badge-warning">⚡ Tekanan Tinggi</span>
+                <span class="badge badge-warning"> Tekanan Tinggi</span>
             @endif
             @if($riskAssessment->peralatanOperasi->suhu_tinggi)
-                <span class="badge badge-danger">🌡️ Suhu Tinggi</span>
+                <span class="badge badge-danger"> Suhu Tinggi</span>
             @endif
             @if($riskAssessment->peralatanOperasi->nyala_api)
-                <span class="badge badge-danger">🔥 Nyala Api</span>
+                <span class="badge badge-danger"> Nyala Api</span>
             @endif
             @if($riskAssessment->peralatanOperasi->peralatan_berputar)
-                <span class="badge badge-info">⚙️ Peralatan Berputar</span>
+                <span class="badge badge-info"> Peralatan Berputar</span>
             @endif
         </div>
 
@@ -262,17 +262,17 @@
 
     <!-- Pelaku Kerja -->
     <div class="detail-section">
-        <h3>👤 Pemahaman Mahasiswa</h3>
+        <h3> Pemahaman Mahasiswa</h3>
         
         <div style="margin-bottom: 1.5rem;">
             <span class="detail-label">Pemahaman Keselamatan:</span>
             <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                <div>{!! $riskAssessment->pelakuKerja->menyadari_faktor_manusia ? '✅' : '❌' !!} Menyadari faktor manusia dalam kecelakaan</div>
-                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_diri ? '✅' : '❌' !!} Memahami bahaya terhadap diri sendiri</div>
-                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_orang_lain ? '✅' : '❌' !!} Memahami bahaya terhadap orang lain</div>
-                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_lingkungan ? '✅' : '❌' !!} Memahami bahaya terhadap lingkungan</div>
-                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_peralatan ? '✅' : '❌' !!} Memahami bahaya peralatan</div>
-                <div>{!! $riskAssessment->pelakuKerja->paham_tindakan_kecelakaan ? '✅' : '❌' !!} Paham tindakan kecelakaan</div>
+                <div>{!! $riskAssessment->pelakuKerja->menyadari_faktor_manusia ? '' : '' !!} Menyadari faktor manusia dalam kecelakaan</div>
+                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_diri ? '' : '' !!} Memahami bahaya terhadap diri sendiri</div>
+                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_orang_lain ? '' : '' !!} Memahami bahaya terhadap orang lain</div>
+                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_lingkungan ? '' : '' !!} Memahami bahaya terhadap lingkungan</div>
+                <div>{!! $riskAssessment->pelakuKerja->memahami_bahaya_peralatan ? '' : '' !!} Memahami bahaya peralatan</div>
+                <div>{!! $riskAssessment->pelakuKerja->paham_tindakan_kecelakaan ? '' : '' !!} Paham tindakan kecelakaan</div>
             </div>
         </div>
 
@@ -288,7 +288,7 @@
     @if($riskAssessment->status === 'menunggu_dosen')
     <div class="approval-form">
         <h3 style="color: #333; font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center;">
-            📋 Form Persetujuan Dosen Pembimbing
+             Form Persetujuan Dosen Pembimbing
         </h3>
 
         <form action="{{ route('dosen.risk-assessment.approve', $riskAssessment->id) }}" method="POST" id="approvalForm">
@@ -299,15 +299,15 @@
                 <div class="radio-group">
                     <label class="radio-item" style="border-color: #fee2e2;">
                         <input type="radio" name="kategori_resiko" value="tinggi" required>
-                        <span style="font-size: 1rem; font-weight: 600;">🔴 Beresiko Tinggi</span>
+                        <span style="font-size: 1rem; font-weight: 600;"> Beresiko Tinggi</span>
                     </label>
                     <label class="radio-item" style="border-color: #fef3c7;">
                         <input type="radio" name="kategori_resiko" value="sedang" required>
-                        <span style="font-size: 1rem; font-weight: 600;">🟡 Beresiko Sedang</span>
+                        <span style="font-size: 1rem; font-weight: 600;"> Beresiko Sedang</span>
                     </label>
                     <label class="radio-item" style="border-color: #d1fae5;">
                         <input type="radio" name="kategori_resiko" value="rendah" required>
-                        <span style="font-size: 1rem; font-weight: 600;">🟢 Beresiko Rendah</span>
+                        <span style="font-size: 1rem; font-weight: 600;"> Beresiko Rendah</span>
                     </label>
                 </div>
             </div>
@@ -317,11 +317,11 @@
                 <div class="radio-group">
                     <label class="radio-item" style="border-color: #d1fae5;">
                         <input type="radio" name="persetujuan" value="setuju" required>
-                        <span style="font-size: 1.1rem; font-weight: 600;">✅ Setuju / Disetujui</span>
+                        <span style="font-size: 1.1rem; font-weight: 600;"> Setuju / Disetujui</span>
                     </label>
                     <label class="radio-item" style="border-color: #fee2e2;">
                         <input type="radio" name="persetujuan" value="tolak" required>
-                        <span style="font-size: 1.1rem; font-weight: 600;">❌ Tolak / Ditolak</span>
+                        <span style="font-size: 1.1rem; font-weight: 600;"> Tolak / Ditolak</span>
                     </label>
                 </div>
             </div>
@@ -333,10 +333,10 @@
 
             <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
                 <button type="submit" class="btn-review btn-review-success">
-                    ✅ Submit Keputusan
+                     Submit Keputusan
                 </button>
                 <a href="{{ route('dosen.risk-assessment.index') }}" class="btn-review btn-review-secondary">
-                    ❌ Batal
+                     Batal
                 </a>
             </div>
         </form>
@@ -344,7 +344,7 @@
     @else
     <!-- Keputusan yang sudah dibuat -->
     <div class="detail-section" style="border: 3px solid #667eea;">
-        <h3>📋 Keputusan Dosen Pembimbing</h3>
+        <h3> Keputusan Dosen Pembimbing</h3>
         
         <div class="detail-grid">
             <div class="detail-item">
@@ -356,7 +356,7 @@
             <div class="detail-item">
                 <span class="detail-label">Keputusan</span>
                 <span style="font-size: 1.1rem; font-weight: 600; color: {{ $riskAssessment->persetujuan_dosen ? '#10b981' : '#ef4444' }};">
-                    {{ $riskAssessment->persetujuan_dosen ? '✅ Disetujui' : '❌ Ditolak' }}
+                    {{ $riskAssessment->persetujuan_dosen ? ' Disetujui' : ' Ditolak' }}
                 </span>
             </div>
             <div class="detail-item">
@@ -367,7 +367,7 @@
 
         @if($riskAssessment->catatan_dosen)
         <div style="margin-top: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #667eea;">
-            <strong style="color: #374151;">📝 Catatan:</strong>
+            <strong style="color: #374151;"> Catatan:</strong>
             <div style="margin-top: 0.5rem; color: #4b5563;">
                 {{ $riskAssessment->catatan_dosen }}
             </div>

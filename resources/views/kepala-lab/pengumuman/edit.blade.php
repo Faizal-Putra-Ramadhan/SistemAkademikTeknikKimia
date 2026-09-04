@@ -28,7 +28,7 @@
     <div class="form-container">
         <div class="card">
             <div class="card-body">
-                <h2 style="margin-bottom: 0.5rem;">✏️ Edit Pengumuman</h2>
+                <h2 style="margin-bottom: 0.5rem;"> Edit Pengumuman</h2>
                 <p class="subtitle">Update pengumuman yang sudah dibuat</p>
 
                 @if($errors->any())

@@ -148,7 +148,7 @@
                                         <span class="role-badge {{ $roleClass }}" style="{{ $isPrimary ? 'border: 2px solid #1d4ed8; font-weight: 600;' : '' }}" title="{{ $isPrimary ? 'Primary Role' : '' }}">
                                             {{ $roleName }}
                                             @if($isPrimary && count($userRoles) > 1)
-                                                <span style="margin-left: 4px; font-size: 10px;">★</span>
+                                                <span style="margin-left: 4px; font-size: 10px;"></span>
                                             @endif
                                         </span>
                                     @endforeach

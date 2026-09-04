@@ -35,13 +35,13 @@
                 </svg>
             </div>
             <!-- Sparkles -->
-            <div class="absolute -top-2 -right-2 text-yellow-400 text-3xl animate-bounce">✨</div>
-            <div class="absolute -bottom-2 -left-2 text-yellow-400 text-2xl animate-bounce" style="animation-delay: 0.2s;">✨</div>
+            <div class="absolute -top-2 -right-2 text-yellow-400 text-3xl animate-bounce"></div>
+            <div class="absolute -bottom-2 -left-2 text-yellow-400 text-2xl animate-bounce" style="animation-delay: 0.2s;"></div>
         </div>
 
         <!-- Title -->
         <h1 class="text-3xl font-bold text-gray-800 mb-2">
-            🎉 Registrasi Berhasil!
+             Registrasi Berhasil!
         </h1>
         <p class="text-gray-600 mb-8">
             Selamat datang di Sistem RegLab UAD
@@ -101,14 +101,14 @@
                 href="{{ route('login') }}"
                 class="block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 rounded-xl transition duration-300 transform hover:scale-[1.02] hover:shadow-xl"
             >
-                🔐 Login Sekarang
+                 Login Sekarang
             </a>
             
             <a 
                 href="{{ route('home') }}"
                 class="block w-full bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-3 rounded-xl transition duration-300"
             >
-                🏠 Kembali ke Beranda
+                 Kembali ke Beranda
             </a>
         </div>
     </div>
@@ -117,7 +117,7 @@
         function copyUserID(userID) {
             navigator.clipboard.writeText(userID).then(function() {
                 const message = document.getElementById('copyMessage');
-                message.textContent = '✅ User ID berhasil dicopy!';
+                message.textContent = ' User ID berhasil dicopy!';
                 message.classList.add('text-green-600', 'font-semibold');
                 
                 setTimeout(function() {

@@ -148,7 +148,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>📢 Kelola Pengumuman</h1>
+        <h1> Kelola Pengumuman</h1>
     </div>
 
     <div class="container">
@@ -171,8 +171,8 @@
                     <div class="pengumuman-title">
                         <h3>{{ $item->judul }}</h3>
                         <div class="pengumuman-meta">
-                            <span>👤 {{ $item->author }}</span>
-                            <span>📅 {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</span>
+                            <span> {{ $item->author }}</span>
+                            <span> {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</span>
                             <span class="status-badge status-{{ $item->status }}">
                                 {{ ucfirst($item->status) }}
                             </span>
@@ -186,13 +186,13 @@
                 @if($item->author === $user->Nama)
                 <div class="pengumuman-actions">
                     <a href="{{ route('dosen.pengumuman.edit', $item->id) }}" class="btn-sm btn-warning">
-                        ✏️ Edit
+                         Edit
                     </a>
                     <form action="{{ route('dosen.pengumuman.destroy', $item->id) }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus pengumuman ini?')">
-                            🗑️ Hapus
+                             Hapus
                         </button>
                     </form>
                 </div>

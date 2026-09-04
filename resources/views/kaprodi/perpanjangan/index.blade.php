@@ -147,19 +147,15 @@
 @endpush
 
 @section('content')
-@if(session('success'))
-            <div class="alert alert-success">
-                ✅ {{ session('success') }}
-            </div>
-            @endif
+
 
             {{-- Tabs --}}
             <div class="tabs">
                 <div class="tab active" onclick="showTab('pending')">
-                    📋 Menunggu Persetujuan ({{ $pengajuanPerpanjangan->total() }})
+                     Menunggu Persetujuan ({{ $pengajuanPerpanjangan->total() }})
                 </div>
                 <div class="tab" onclick="showTab('riwayat')">
-                    📚 Riwayat ({{ $riwayatPerpanjangan->total() }})
+                     Riwayat ({{ $riwayatPerpanjangan->total() }})
                 </div>
             </div>
 
@@ -185,11 +181,11 @@
 
                             <div class="ra-info">
                                 <div class="info-item">
-                                    <span class="info-label">🏫 Laboratorium</span>
+                                    <span class="info-label"> Laboratorium</span>
                                     <span class="info-value">{{ $ra->daftarLab->Nama_Laboratorium }}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">📅 Diajukan</span>
+                                    <span class="info-label"> Diajukan</span>
                                     <span class="info-value">{{ $ra->tanggal_pengajuan_perpanjangan->format('d M Y, H:i') }}</span>
                                 </div>
                                 <div class="info-item">
@@ -199,19 +195,19 @@
                                     </span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">🔄 Durasi Diminta</span>
+                                    <span class="info-label"> Durasi Diminta</span>
                                     <span class="info-value">{{ $ra->durasi_perpanjangan_diminta }} Bulan</span>
                                 </div>
                                 @if($ra->jumlah_perpanjangan > 0)
                                 <div class="info-item">
-                                    <span class="info-label">📊 Riwayat Perpanjangan</span>
+                                    <span class="info-label"> Riwayat Perpanjangan</span>
                                     <span class="info-value">{{ $ra->jumlah_perpanjangan }} kali</span>
                                 </div>
                                 @endif
                             </div>
 
                             <div class="alasan-box">
-                                <strong style="color: #1e40af;">📝 Alasan Perpanjangan:</strong>
+                                <strong style="color: #1e40af;"> Alasan Perpanjangan:</strong>
                                 <p style="margin-top: 0.5rem; color: #374151; line-height: 1.6;">
                                     {{ $ra->alasan_perpanjangan }}
                                 </p>
@@ -219,7 +215,7 @@
 
                             <div style="margin-top: 1.5rem;">
                                 <a href="{{ route('kaprodi.perpanjangan.show', $ra->id) }}" class="btn btn-primary">
-                                    👁️ Review & Proses
+                                     Review & Proses
                                 </a>
                             </div>
                         </div>
@@ -239,7 +235,7 @@
             {{-- Tab Content: Riwayat --}}
             <div id="tab-riwayat" class="tab-content" style="display: none;">
                 <div class="section-card">
-                    <h3 class="section-title">📚 Riwayat Perpanjangan</h3>
+                    <h3 class="section-title"> Riwayat Perpanjangan</h3>
 
                     @if($riwayatPerpanjangan->count() > 0)
                         @foreach($riwayatPerpanjangan as $ra)
@@ -252,22 +248,22 @@
                                     </p>
                                 </div>
                                 <span class="badge {{ $ra->persetujuan_perpanjangan_kaprodi ? 'badge-approved' : 'badge-rejected' }}">
-                                    {{ $ra->persetujuan_perpanjangan_kaprodi ? '✅ Disetujui' : '❌ Ditolak' }}
+                                    {{ $ra->persetujuan_perpanjangan_kaprodi ? ' Disetujui' : ' Ditolak' }}
                                 </span>
                             </div>
 
                             <div class="ra-info">
                                 <div class="info-item">
-                                    <span class="info-label">📅 Diproses</span>
+                                    <span class="info-label"> Diproses</span>
                                     <span class="info-value">{{ $ra->tanggal_persetujuan_perpanjangan->format('d M Y, H:i') }}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">🔄 Durasi Diminta</span>
+                                    <span class="info-label"> Durasi Diminta</span>
                                     <span class="info-value">{{ $ra->durasi_perpanjangan_diminta }} Bulan</span>
                                 </div>
                                 @if($ra->persetujuan_perpanjangan_kaprodi)
                                 <div class="info-item">
-                                    <span class="info-label">✅ Durasi Disetujui</span>
+                                    <span class="info-label"> Durasi Disetujui</span>
                                     <span class="info-value">{{ $ra->durasi_perpanjangan_disetujui }} Bulan</span>
                                 </div>
                                 <div class="info-item">
@@ -281,7 +277,7 @@
 
                             @if($ra->catatan_perpanjangan_kaprodi)
                             <div class="alasan-box">
-                                <strong style="color: #1e40af;">💬 Catatan Kaprodi:</strong>
+                                <strong style="color: #1e40af;"> Catatan Kaprodi:</strong>
                                 <p style="margin-top: 0.5rem; color: #374151;">
                                     {{ $ra->catatan_perpanjangan_kaprodi }}
                                 </p>

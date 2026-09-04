@@ -134,7 +134,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>👤 Profil Saya</h1>
+        <h1> Profil Saya</h1>
     </div>
 
     <div class="container">
@@ -158,7 +158,7 @@
                     @if($user->foto)
                         <img src="{{ asset('uploads/profile/' . $user->foto) }}" alt="Foto Profil">
                     @else
-                        👨‍🏫
+                        ‍
                     @endif
                 </div>
                 <div class="profile-info">
@@ -169,7 +169,7 @@
             </div>
 
             <div class="info-box">
-                <p><strong>ℹ️ Informasi:</strong></p>
+                <p><strong>ℹ Informasi:</strong></p>
                 <p>Update informasi profil Anda. Pastikan data yang dimasukkan valid.</p>
             </div>
 
@@ -211,7 +211,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary">💾 Simpan Perubahan</button>
+                <button type="submit" class="btn btn-primary"> Simpan Perubahan</button>
             </form>
         </div>
     </div>

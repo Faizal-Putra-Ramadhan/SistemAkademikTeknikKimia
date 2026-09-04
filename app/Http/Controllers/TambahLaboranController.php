@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use App\Models\DaftarLab;
-use App\Models\DaftarLaboranLaboratorium; // Tambahkan ini
+use App\Models\DaftarLaboranLaboratorium; 
 use App\Models\DaftarUser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; // Tambahkan ini
+use Illuminate\Support\Facades\Hash; 
 use Illuminate\Support\Facades\Validator;
 
 class TambahLaboranController extends Controller
@@ -73,13 +73,13 @@ class TambahLaboranController extends Controller
         try {
             $userId = $this->generateUserId($request->Role_User);
 
-            // Ambil nama laboratorium pertama untuk backward compatibility (kolom Laboratorium)
+            
             $firstLab = DaftarLab::find($request->laboratorium_ids[0]);
             $firstLabName = $firstLab ? $firstLab->Nama_Laboratorium : '';
 
-            // 1. Simpan ke tabel daftar_laboran_laboratoriums
+            
             $laboran = DaftarLaboranLaboratorium::create([
-                'Laboratorium' => $firstLabName, // Backward compatibility
+                'Laboratorium' => $firstLabName, 
                 'Nama_Laboran' => $request->Nama_Laboran,
                 'UserID' => $userId,
                 'Phone' => $request->Phone,
@@ -87,10 +87,10 @@ class TambahLaboranController extends Controller
                 'Role_User' => $request->Role_User,
             ]);
 
-            // 2. Simpan relasi many-to-many ke tabel pivot
+            
             $laboran->laboratoriums()->sync($request->laboratorium_ids);
 
-            // 3. Simpan ke tabel daftar_users (dengan opsi Account Linking)
+            
             $isPrimary = ! $request->filled('link_to_parent');
             $parentUserId = $request->link_to_parent;
             DaftarUser::create([
@@ -105,10 +105,10 @@ class TambahLaboranController extends Controller
                 'parent_user_id' => $parentUserId,
             ]);
 
-            // LOG TAMBAH LABORAN
+            
             $labNames = DaftarLab::whereIn('id', $request->laboratorium_ids)->pluck('Nama_Laboratorium')->implode(', ');
             ActivityLog::create([
-                'user_name' => 'Administrator', // nanti: auth()->user()->name
+                'user_name' => 'Administrator', 
                 'action' => 'Menambah Laboran',
                 'description' => "{$laboran->Nama_Laboran} ({$laboran->Role_User}) - {$labNames} - UserID: {$userId}",
                 'ip_address' => request()->ip(),
@@ -172,13 +172,13 @@ class TambahLaboranController extends Controller
                 ? $this->generateUserId($request->Role_User)
                 : $laboran->UserID;
 
-            // Ambil nama laboratorium pertama untuk backward compatibility (kolom Laboratorium)
+            
             $firstLab = DaftarLab::find($request->laboratorium_ids[0]);
             $firstLabName = $firstLab ? $firstLab->Nama_Laboratorium : '';
 
-            // 1. Update tabel daftar_laboran_laboratoriums
+            
             $laboran->update([
-                'Laboratorium' => $firstLabName, // Backward compatibility
+                'Laboratorium' => $firstLabName, 
                 'Nama_Laboran' => $request->Nama_Laboran,
                 'UserID' => $userId,
                 'Phone' => $request->Phone,
@@ -186,10 +186,10 @@ class TambahLaboranController extends Controller
                 'Role_User' => $request->Role_User,
             ]);
 
-            // 2. Update relasi many-to-many ke tabel pivot
+            
             $laboran->laboratoriums()->sync($request->laboratorium_ids);
 
-            // 3. Update tabel daftar_users (termasuk Account Linking)
+            
             $user = DaftarUser::where('UserID', $laboran->UserID)->first();
             if ($user) {
                 $isPrimary = ! $request->filled('link_to_parent');
@@ -211,7 +211,7 @@ class TambahLaboranController extends Controller
                 $user->update($userData);
             }
 
-            // LOG EDIT LABORAN
+            
             $labNames = DaftarLab::whereIn('id', $request->laboratorium_ids)->pluck('Nama_Laboratorium')->implode(', ');
             ActivityLog::create([
                 'user_name' => 'Administrator',
@@ -238,16 +238,16 @@ class TambahLaboranController extends Controller
             $labNames = $laboran->laboratoriums->pluck('Nama_Laboratorium')->implode(', ') ?: $laboran->Laboratorium;
             $userId = $laboran->UserID;
 
-            // 1. Hapus relasi many-to-many dari tabel pivot
+            
             $laboran->laboratoriums()->detach();
 
-            // 2. Hapus dari daftar_laboran_laboratoriums
+            
             $laboran->delete();
 
-            // 3. Hapus dari daftar_users
+            
             DaftarUser::where('UserID', $userId)->delete();
 
-            // LOG HAPUS LABORAN
+            
             ActivityLog::create([
                 'user_name' => 'Administrator',
                 'action' => 'Menghapus Laboran',
@@ -297,12 +297,12 @@ class TambahLaboranController extends Controller
                 $prefix = 'USR';
         }
 
-        // Generate unique ID dengan timestamp + random
-        $timestamp = now()->format('ymd'); // Format: YYMMDD
+        
+        $timestamp = now()->format('ymd'); 
         $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
         $userId = "{$prefix}-{$timestamp}{$random}";
 
-        // Cek apakah UserID sudah ada di KEDUA tabel
+        
         while (DaftarLaboranLaboratorium::where('UserID', $userId)->exists()
         || DaftarUser::where('UserID', $userId)->exists()) {
             $random = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);

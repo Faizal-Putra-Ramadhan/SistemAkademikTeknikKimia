@@ -101,7 +101,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>📢 Buat Pengumuman Baru</h1>
+        <h1> Buat Pengumuman Baru</h1>
         <p class="subtitle">Buat pengumuman untuk mahasiswa dan pengguna laboratorium</p>
 
         @if($errors->any())

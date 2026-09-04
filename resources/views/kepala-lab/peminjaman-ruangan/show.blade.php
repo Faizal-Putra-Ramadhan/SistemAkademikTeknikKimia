@@ -74,7 +74,7 @@
 
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700;">📋 Detail Peminjaman Ruangan</h2>
+        <h2 style="font-size: 1.5rem; font-weight: 700;"> Detail Peminjaman Ruangan</h2>
         <a href="{{ route('kepala-lab.peminjaman-ruangan.index') }}" class="btn btn-secondary">
             ← Kembali ke Daftar
         </a>
@@ -95,13 +95,13 @@
                             ⏳ Menunggu Persetujuan
                             @break
                         @case('disetujui_laboran')
-                            📋 Disetujui Laboran
+                             Disetujui Laboran
                             @break
                         @case('disetujui')
-                            ✅ Disetujui
+                             Disetujui
                             @break
                         @case('ditolak')
-                            ❌ Ditolak
+                             Ditolak
                             @break
                         @default
                             {{ $peminjaman->status }}
@@ -109,22 +109,22 @@
                 </span>
             </div>
 
-            <div class="section-title">📝 Informasi Peminjaman</div>
+            <div class="section-title"> Informasi Peminjaman</div>
             <div class="info-grid">
                 <div class="info-item">
-                    <span class="info-label">👤 Nama Peminjam</span>
+                    <span class="info-label"> Nama Peminjam</span>
                     <span class="info-value">{{ $peminjaman->user_nama ?? 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">📧 Email</span>
-                    <span class="info-value">{{ $peminjaman->user->Email ?? 'N/A' }}</span>
+                    <span class="info-label"> Email</span>
+                    <span class="info-value">{{ $peminjaman->user?->Email ?? 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">🏢 Laboratorium</span>
+                    <span class="info-label"> Laboratorium</span>
                     <span class="info-value">{{ $peminjaman->daftarLab->Nama_Laboratorium ?? 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">📅 Tanggal Peminjaman</span>
+                    <span class="info-label"> Tanggal Peminjaman</span>
                     <span class="info-value">{{ $peminjaman->tanggal ? date('d/m/Y', strtotime($peminjaman->tanggal)) : 'N/A' }}</span>
                 </div>
                 <div class="info-item">
@@ -138,7 +138,7 @@
             </div>
 
             <div class="info-item">
-                <span class="info-label">📝 Keperluan Peminjaman</span>
+                <span class="info-label"> Keperluan Peminjaman</span>
                 <span class="info-value">{{ $peminjaman->keperluan ?? 'Tidak ada deskripsi' }}</span>
             </div>
         </div>
@@ -147,23 +147,23 @@
     <!-- Laboran Approval Info -->
     <div class="card" style="margin-bottom: 1.5rem;">
         <div class="card-body">
-            <div class="section-title">📋 Persetujuan Laboran</div>
+            <div class="section-title"> Persetujuan Laboran</div>
             
             @if ($peminjaman->laboran)
                 <div class="info-grid">
                     <div class="info-item">
-                        <span class="info-label">✍️ Laboran</span>
+                        <span class="info-label"> Laboran</span>
                         <span class="info-value">{{ $peminjaman->laboran->Nama ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">✅ Status Persetujuan</span>
+                        <span class="info-label"> Status Persetujuan</span>
                         <span class="info-value" style="color: {{ $peminjaman->persetujuan_laboran ? '#10b981' : '#ef4444' }};">
-                            {{ $peminjaman->persetujuan_laboran ? '✅ Disetujui' : '❌ Ditolak / Belum Diproses' }}
+                            {{ $peminjaman->persetujuan_laboran ? ' Disetujui' : ' Ditolak / Belum Diproses' }}
                         </span>
                     </div>
                     @if ($peminjaman->tanggal_persetujuan_laboran)
                         <div class="info-item">
-                            <span class="info-label">📅 Tanggal Persetujuan</span>
+                            <span class="info-label"> Tanggal Persetujuan</span>
                             <span class="info-value">{{ date('d/m/Y H:i', strtotime($peminjaman->tanggal_persetujuan_laboran)) }}</span>
                         </div>
                     @endif
@@ -171,7 +171,7 @@
 
                 @if ($peminjaman->catatan_laboran)
                     <div class="info-item" style="margin-top: 1rem;">
-                        <span class="info-label">💬 Catatan Laboran</span>
+                        <span class="info-label"> Catatan Laboran</span>
                         <span class="info-value">{{ $peminjaman->catatan_laboran }}</span>
                     </div>
                 @endif
@@ -187,22 +187,22 @@
     @if (in_array($peminjaman->status, ['disetujui_laboran', 'menunggu_kepala_lab']))
         <div class="card" style="margin-bottom: 1.5rem;">
             <div class="card-body">
-                <div class="section-title">✅ Persetujuan Kepala Laboratorium</div>
+                <div class="section-title"> Persetujuan Kepala Laboratorium</div>
 
                 <div class="approval-section">
                     <div class="approval-info">
-                        🔔 Silakan review informasi peminjaman di atas dan memberikan keputusan Anda
+                         Silakan review informasi peminjaman di atas dan memberikan keputusan Anda
                     </div>
 
                     <!-- Approve Form -->
                     <form action="{{ route('kepala-lab.peminjaman-ruangan.approve', $peminjaman->id) }}" method="POST" style="display: inline;">
                         @csrf
                         <div class="form-group">
-                            <label class="form-label">💭 Catatan (Opsional)</label>
+                            <label class="form-label"> Catatan (Opsional)</label>
                             <textarea name="catatan" class="text-area" placeholder="Tuliskan catatan tambahan jika diperlukan..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-success" onclick="return confirm('Anda yakin ingin menyetujui peminjaman ini?')">
-                            ✅ Setujui Peminjaman
+                             Setujui Peminjaman
                         </button>
                     </form>
 
@@ -213,7 +213,7 @@
                             <textarea id="reject-reason" name="catatan" class="text-area" placeholder="Alasan penolakan (wajib diisi)..." style="display: none;"></textarea>
                         </div>
                         <button type="button" class="btn btn-danger" onclick="showRejectForm()">
-                            ❌ Tolak Peminjaman
+                             Tolak Peminjaman
                         </button>
                     </form>
                 </div>
@@ -221,7 +221,7 @@
                 <!-- Hidden Reject Form -->
                 <div id="reject-form" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
                     <div class="form-group">
-                        <label class="form-label" style="color: #991b1b;">⚠️ Alasan Penolakan (Wajib Diisi)</label>
+                        <label class="form-label" style="color: #991b1b;"> Alasan Penolakan (Wajib Diisi)</label>
                         <textarea id="reject-reason-input" class="text-area" style="border-color: #fecaca;" placeholder="Tuliskan alasan mengapa peminjaman ditolak..."></textarea>
                     </div>
                     <div class="action-buttons">
@@ -229,10 +229,10 @@
                             @csrf
                             <input type="hidden" name="catatan" id="catatan-input">
                             <button type="button" class="btn btn-danger" onclick="submitReject()">
-                                ✅ Konfirmasi Penolakan
+                                 Konfirmasi Penolakan
                             </button>
                             <button type="button" class="btn btn-secondary" onclick="hideRejectForm()" style="margin-left: 0.5rem;">
-                                ❌ Batal
+                                 Batal
                             </button>
                         </form>
                     </div>
@@ -242,9 +242,9 @@
     @elseif ($peminjaman->status == 'disetujui')
         <div class="card" style="margin-bottom: 1.5rem;">
             <div class="card-body">
-                <div class="section-title">✅ Sudah Disetujui</div>
+                <div class="section-title"> Sudah Disetujui</div>
                 <div class="approval-info" style="background: #d1fae5; color: #065f46;">
-                    <strong>✅ Status: DISETUJUI</strong>
+                    <strong> Status: DISETUJUI</strong>
                     Peminjaman ruangan telah disetujui oleh Kepala Laboratorium.
                     @if ($peminjaman->catatan_kepala_lab)
                         <strong style="display: block; margin-top: 0.5rem;">Catatan:</strong>
@@ -256,9 +256,9 @@
     @elseif ($peminjaman->status == 'ditolak')
         <div class="card" style="margin-bottom: 1.5rem;">
             <div class="card-body">
-                <div class="section-title">❌ Sudah Ditolak</div>
+                <div class="section-title"> Sudah Ditolak</div>
                 <div class="approval-info" style="background: #fee2e2; color: #991b1b;">
-                    <strong>❌ Status: DITOLAK</strong>
+                    <strong> Status: DITOLAK</strong>
                     Peminjaman ruangan telah ditolak oleh Kepala Laboratorium.
                     @if ($peminjaman->catatan_kepala_lab)
                         <strong style="display: block; margin-top: 0.5rem;">Alasan:</strong>

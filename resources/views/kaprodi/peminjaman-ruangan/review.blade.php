@@ -26,11 +26,7 @@ body { background-color: #f4f7f6; }
             <h2 class="font-weight-bold text-dark">Review Detail Peminjaman</h2>
         </div>
 
-        @if(session('error'))
-            <div class="alert alert-danger shadow-sm border-0 mb-4">
-                <i class="fas fa-exclamation-triangle mr-2"></i> {{ session('error') }}
-            </div>
-        @endif
+        
 
         <div class="card card-detail bg-white">
             <div class="header-gradient">
@@ -65,7 +61,7 @@ body { background-color: #f4f7f6; }
                 <div class="row mb-5">
                     <div class="col-md-6 mb-3 mb-md-0">
                         <div class="info-box bg-white border">
-                            <p class="text-muted small font-weight-bold mb-2 uppercase text-primary">📅 Periode Tanggal</p>
+                            <p class="text-muted small font-weight-bold mb-2 uppercase text-primary"> Periode Tanggal</p>
                             <div class="d-flex align-items-center">
                                 <div class="text-center bg-primary text-white rounded p-2 mr-3" style="min-width: 60px;">
                                     <span class="d-block h4 mb-0 font-weight-bold">{{ \Carbon\Carbon::parse($peminjaman->tanggal)->format('d') }}</span>
@@ -80,7 +76,7 @@ body { background-color: #f4f7f6; }
                     </div>
                     <div class="col-md-6">
                         <div class="info-box bg-white border">
-                            <p class="text-muted small font-weight-bold mb-2 uppercase text-success">🕐 Slot Waktu</p>
+                            <p class="text-muted small font-weight-bold mb-2 uppercase text-success"> Slot Waktu</p>
                             <div class="h5 font-weight-bold text-dark mb-1">
                                 {{ \Carbon\Carbon::parse($peminjaman->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($peminjaman->jam_selesai)->format('H:i') }}
                             </div>
@@ -117,7 +113,7 @@ body { background-color: #f4f7f6; }
 
                 
                 <div class="border-top pt-5">
-                    <h4 class="font-weight-bold mb-4 text-center">📋 Status Permohonan</h4>
+                    <h4 class="font-weight-bold mb-4 text-center"> Status Permohonan</h4>
                     
                     <div class="alert alert-info border-0 rounded-lg p-4 mb-4">
                         <div class="d-flex align-items-center">

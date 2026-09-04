@@ -20,7 +20,6 @@ class AlatLabController extends Controller
 
     public function create()
     {
-        // Ambil data unik floor dan lab_type untuk dropdown
         $floors = DaftarLab::select('floor')->distinct()->pluck('floor');
         $labTypes = ['penelitian', 'pendidikan'];
         $daftarLabs = DaftarLab::orderBy('Nama_Laboratorium')->get();
@@ -28,7 +27,6 @@ class AlatLabController extends Controller
         return view('admin.alat-lab.create', compact('floors', 'labTypes', 'daftarLabs'));
     }
 
-    // STORE
     public function store(Request $request)
     {
         $request->validate([
@@ -111,7 +109,6 @@ class AlatLabController extends Controller
         return back()->with('success', 'Alat lab berhasil dihapus!');
     }
 
-    // UPDATE
     public function update(Request $request, AlatLab $alat)
     {
         $request->validate([
@@ -151,7 +148,6 @@ class AlatLabController extends Controller
             $file->move(public_path('uploads/'), $filename);
             $data['foto'] = $filename;
 
-            // Hapus foto lama jika ada
             if ($alat->foto && file_exists(public_path('uploads/' . $alat->foto))) {
                 unlink(public_path('uploads/' . $alat->foto));
             }

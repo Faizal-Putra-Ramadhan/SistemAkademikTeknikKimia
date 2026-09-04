@@ -77,12 +77,12 @@
 <body>
     <div class="email-container">
         <div class="email-header">
-            <h1>🎓 Sistem RegLab UAD</h1>
+            <h1> Sistem RegLab UAD</h1>
             <p>Verifikasi Email Registrasi</p>
         </div>
         
         <div class="email-body">
-            <h2>Halo, {{ $nama }}! 👋</h2>
+            <h2>Halo, {{ $nama }}! </h2>
             
             <p>Terima kasih telah mendaftar di Sistem Registrasi Laboratorium Universitas Ahmad Dahlan.</p>
             
@@ -90,12 +90,12 @@
             
             <div style="text-align: center;">
                 <a href="{{ $verificationUrl }}" class="verify-button">
-                    ✅ Verifikasi Email Saya
+                     Verifikasi Email Saya
                 </a>
             </div>
             
             <div class="info-box">
-                <p><strong>⚠️ Penting:</strong></p>
+                <p><strong> Penting:</strong></p>
                 <p>• Link verifikasi ini berlaku selama <strong>24 jam</strong></p>
                 <p>• Setelah verifikasi berhasil, Anda akan mendapatkan User ID untuk login</p>
                 <p>• Jika Anda tidak merasa mendaftar, abaikan email ini</p>

@@ -185,12 +185,8 @@
             <a href="{{ route('laboran.bebas-lab', $lab->id) }}" class="back-link">&larr; Kembali</a>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-error">{{ session('error') }}</div>
-        @endif
+        
+        
 
         @php
             $isApproved = $approval && $approval->status === 'disetujui';

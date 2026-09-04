@@ -108,10 +108,7 @@ class KaprodiController extends Controller
         return view('kaprodi.risk-assessment.review', compact('riskAssessment', 'labs', 'user'));
     }
 
-    /**
-     * Final Approval dari Kaprodi (dengan pengaturan durasi peminjaman)
-     * FIXED: Type casting untuk durasi_batas_peminjaman
-     */
+
     public function approve(Request $request, $id)
     {
         $request->validate([
@@ -145,15 +142,13 @@ class KaprodiController extends Controller
                 'status' => $disetujui ? 'disetujui' : 'ditolak',
             ];
 
-            // ✅ FIX: Cast ke integer dengan (int) atau intval()
             if ($disetujui) {
-                $durasi = (int)$request->durasi_batas_peminjaman; // Cast ke integer
+                $durasi = (int)$request->durasi_batas_peminjaman; 
                 $updateData['durasi_batas_peminjaman'] = $durasi;
             }
 
             $riskAssessment->update($updateData);
 
-            // Otomatis set batas waktu peminjaman jika disetujui
             if ($disetujui) {
                 $riskAssessment->updateBatasWaktuPeminjaman();
 
@@ -165,7 +160,6 @@ class KaprodiController extends Controller
                 ]);
             }
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => Auth::user()->Nama,
                 'action' => $disetujui ? 'Menyetujui Risk Assessment' : 'Menolak Risk Assessment',
@@ -218,7 +212,6 @@ class KaprodiController extends Controller
                 'status' => 'draft',
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => Auth::user()->Nama,
                 'action' => 'Meminta Revisi Risk Assessment',
@@ -255,7 +248,6 @@ class KaprodiController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // Filter berdasarkan periode
         if ($request->filled(['start_date', 'end_date'])) {
             $query->whereBetween('created_at', [
                 $request->start_date,
@@ -263,12 +255,10 @@ class KaprodiController extends Controller
             ]);
         }
 
-        // Filter berdasarkan status
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
-        // Filter berdasarkan lab
         if ($request->filled('lab_id') && $request->lab_id !== 'all') {
             $query->where('daftar_lab_id', $request->lab_id);
         }
@@ -277,10 +267,6 @@ class KaprodiController extends Controller
 
         return view('kaprodi.risk-assessment.report', compact('riskAssessments', 'user', 'labs'));
     }
-
-    // =====================================================================
-    // PENGUMUMAN
-    // =====================================================================
 
     public function pengumuman()
     {
@@ -425,17 +411,12 @@ class KaprodiController extends Controller
         }
     }
 
-    // Tambahkan di dalam class KaprodiController
 
-    /**
-     * Approve/Reject Perpanjangan Risk Assessment oleh Kaprodi
-     */
     public function indexPerpanjangan()
     {
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // Pengajuan perpanjangan yang menunggu
         $pengajuanPerpanjangan = RiskAssessment::with([
             'user',
             'daftarLab',
@@ -448,7 +429,6 @@ class KaprodiController extends Controller
             ->latest('tanggal_pengajuan_perpanjangan')
             ->paginate(10);
 
-        // Riwayat perpanjangan yang sudah diproses
         $riwayatPerpanjangan = RiskAssessment::with([
             'user',
             'daftarLab',
@@ -464,9 +444,6 @@ class KaprodiController extends Controller
         return view('kaprodi.perpanjangan.index', compact('pengajuanPerpanjangan', 'riwayatPerpanjangan', 'user', 'labs'));
     }
 
-    /**
-     * Detail Pengajuan Perpanjangan untuk review
-     */
     public function showPerpanjangan($id)
     {
         $labs = DaftarLab::all();
@@ -485,7 +462,6 @@ class KaprodiController extends Controller
             'pernyataanMahasiswa',
         ])->findOrFail($id);
 
-        // Pastikan memang ada pengajuan perpanjangan
         if (!$riskAssessment->pengajuan_perpanjangan) {
             return redirect()
                 ->route('kaprodi.perpanjangan.index')
@@ -504,7 +480,6 @@ class KaprodiController extends Controller
 
         $riskAssessment = RiskAssessment::findOrFail($id);
 
-        // Pastikan memang ada pengajuan perpanjangan
         if (!$riskAssessment->pengajuan_perpanjangan) {
             return back()->with('error', 'Tidak ada pengajuan perpanjangan untuk RA ini.');
         }
@@ -517,11 +492,10 @@ class KaprodiController extends Controller
                 'persetujuan_perpanjangan_kaprodi' => $disetujui,
                 'catatan_perpanjangan_kaprodi' => $request->catatan,
                 'tanggal_persetujuan_perpanjangan' => now(),
-                'pengajuan_perpanjangan' => false, // Reset status pengajuan
+                'pengajuan_perpanjangan' => false, 
             ];
 
             if ($disetujui) {
-                // Logika menambah masa berlaku: Tanggal saat ini + durasi yang diminta
                 $durasi = (int)$riskAssessment->durasi_perpanjangan_diminta;
                 $riskAssessment->batas_waktu_peminjaman = now()->addMonths($durasi);
                 $riskAssessment->durasi_perpanjangan_disetujui = $durasi;
@@ -531,7 +505,6 @@ class KaprodiController extends Controller
 
             $riskAssessment->update($updateData);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => Auth::user()->Nama,
                 'action' => $disetujui ? 'Menyetujui Perpanjangan RA' : 'Menolak Perpanjangan RA',
@@ -541,7 +514,6 @@ class KaprodiController extends Controller
 
             DB::commit();
 
-            // KIRIM EMAIL KE MAHASISWA
             Mail::to($riskAssessment->user->Email)->send(
                 new RiskAssessmentMail($riskAssessment, 'hasil_perpanjangan', $request->catatan)
             );
@@ -561,8 +533,6 @@ class KaprodiController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // Kaprodi melihat semua peminjaman yang sedang aktif/berjalan (untuk monitoring)
-        // Status: menunggu, disetujui_laboran, menunggu_kepala_lab, menunggu_kaprodi
         $peminjamanRuangans = PeminjamanRuangan::with(['daftarLab', 'laboran'])
             ->whereIn('status', ['menunggu', 'disetujui_laboran', 'menunggu_kepala_lab', 'menunggu_kaprodi'])
             ->latest()
@@ -576,9 +546,7 @@ class KaprodiController extends Controller
         return view('kaprodi.peminjaman-ruangan.index', compact('peminjamanRuangans', 'riwayat', 'user', 'labs'));
     }
 
-    /**
-     * Detail Peminjaman Ruangan untuk review
-     */
+
     public function peminjamanRuanganShow($id)
     {
         $labs = DaftarLab::all();
@@ -618,7 +586,6 @@ class KaprodiController extends Controller
                 'status' => $disetujui ? 'disetujui' : 'ditolak',
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => Auth::user()->Nama,
                 'action' => $disetujui ? 'Menyetujui Peminjaman Ruangan' : 'Menolak Peminjaman Ruangan',
@@ -626,7 +593,6 @@ class KaprodiController extends Controller
                 'ip_address' => $request->ip(),
             ]);
 
-            // ✅ KIRIM EMAIL KE MAHASISWA/DOSEN (hasil final)
             $peminjam = DaftarUser::where('Nama', $peminjaman->user_nama)->first();
             if ($peminjam && $peminjam->Email) {
                 try {
@@ -683,6 +649,7 @@ class KaprodiController extends Controller
             'Phone' => 'required|string|max:20',
             'Email' => 'required|email|unique:daftar_users,Email,' . $user->id,
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ttd' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -693,22 +660,30 @@ class KaprodiController extends Controller
                 'Email' => $request->Email,
             ];
 
-            // Upload foto jika ada
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $filename = time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile'), $filename);
                 $data['foto'] = $filename;
 
-                // Hapus foto lama jika ada
                 if ($user->foto && file_exists(public_path('uploads/profile/' . $user->foto))) {
                     unlink(public_path('uploads/profile/' . $user->foto));
                 }
             }
 
+            if ($request->hasFile('ttd')) {
+                $file = $request->file('ttd');
+                $filename = time() . '_ttd.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ttd'), $filename);
+                $data['ttd'] = $filename;
+
+                if ($user->ttd && file_exists(public_path('uploads/ttd/' . $user->ttd))) {
+                    unlink(public_path('uploads/ttd/' . $user->ttd));
+                }
+            }
+
             $user->update($data);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Update Profil',

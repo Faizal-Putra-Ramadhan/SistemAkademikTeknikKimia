@@ -247,13 +247,9 @@
             <a href="{{ route('kaprodi.dashboard') }}" class="profile-back">← Kembali ke Dashboard</a>
         </div>
 
-        @if(session('success'))
-            <div class="profile-alert success">{{ session('success') }}</div>
-        @endif
+        
 
-        @if(session('error'))
-            <div class="profile-alert error">{{ session('error') }}</div>
-        @endif
+        
 
         <div class="profile-shell">
             <div class="profile-hero">
@@ -261,7 +257,7 @@
                     @if($user->foto)
                         <img src="{{ asset('uploads/profile/' . $user->foto) }}" alt="Foto Profil">
                     @else
-                        👨‍💼
+                        ‍
                     @endif
                 </div>
                 <div>
@@ -315,6 +311,21 @@
                                 <div class="form-error">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="form-field full">
+                            <label class="profile-label" for="ttd">Foto Tanda Tangan (TTD)</label>
+                            @if($user->ttd)
+                                <div style="margin-bottom: 10px;">
+                                    <img src="{{ asset('uploads/ttd/' . $user->ttd) }}" alt="Tanda Tangan" style="max-height: 100px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                </div>
+                            @endif
+                            <input type="file" class="profile-input" id="ttd" name="ttd" accept="image/jpeg,image/png,image/jpg">
+                            <div class="profile-help">Format: JPG, JPEG, PNG (Max: 2MB)</div>
+                            @error('ttd')
+                                <div class="form-error">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                     </div>
 
                     <div class="profile-actions">

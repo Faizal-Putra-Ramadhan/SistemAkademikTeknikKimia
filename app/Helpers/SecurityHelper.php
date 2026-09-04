@@ -82,7 +82,6 @@ class SecurityHelper
             return null;
         }
 
-        // Remove tags, trim, remove multiple spaces
         $sanitized = trim(strip_tags($name));
         $sanitized = preg_replace('/\s+/', ' ', $sanitized);
 
@@ -98,7 +97,6 @@ class SecurityHelper
             return null;
         }
 
-        // Remove tags, trim, lowercase
         $sanitized = strtolower(trim(strip_tags($email)));
 
         return filter_var($sanitized, FILTER_SANITIZE_EMAIL);
@@ -113,10 +111,8 @@ class SecurityHelper
             return null;
         }
 
-        // Remove tags, trim
         $sanitized = trim(strip_tags($phone));
 
-        // Keep only allowed characters
         $sanitized = preg_replace('/[^\d\s\+\-\(\)]/', '', $sanitized);
 
         return $sanitized;
@@ -131,10 +127,8 @@ class SecurityHelper
             return null;
         }
 
-        // Remove tags, trim, uppercase
         $sanitized = strtoupper(trim(strip_tags($number)));
 
-        // Keep only alphanumeric, dash, dot
         $sanitized = preg_replace('/[^a-zA-Z0-9\-\.]/', '', $sanitized);
 
         return $sanitized;
@@ -248,12 +242,10 @@ class SecurityHelper
             return $errors;
         }
 
-        // Check file size
         if ($file->getSize() > ($maxSizeKB * 1024)) {
             $errors[] = "Ukuran file maksimal {$maxSizeKB}KB";
         }
 
-        // Check extension
         if (! empty($allowedExtensions)) {
             $extension = strtolower($file->getClientOriginalExtension());
             if (! in_array($extension, $allowedExtensions)) {

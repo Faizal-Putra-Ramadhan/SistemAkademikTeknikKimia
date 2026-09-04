@@ -205,42 +205,42 @@
     <!-- Flash Messages -->
             @if ($message = Session::get('success'))
                 <div class="alert alert-success">
-                    <strong>✅ Sukses:</strong> {{ $message }}
+                    <strong> Sukses:</strong> {{ $message }}
                 </div>
             @endif
     
             @if ($message = Session::get('error'))
                 <div class="alert alert-error">
-                    <strong>❌ Error:</strong> {{ $message }}
+                    <strong> Error:</strong> {{ $message }}
                 </div>
             @endif
     
             @forelse($pendingSchedules as $riskAssessment)
             <!-- Risk Assessment Info -->
             <div class="card">
-                <div class="section-title">📋 Informasi Risk Assessment</div>
+                <div class="section-title"> Informasi Risk Assessment</div>
                 <div class="info-grid">
                     <div class="info-item">
-                        <span class="info-label">📝 Judul</span>
+                        <span class="info-label"> Judul</span>
                         <span class="info-value">{{ $riskAssessment->topik_judul ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">👤 Dosen Pembimbing</span>
+                        <span class="info-label"> Dosen Pembimbing</span>
                         <span class="info-value">{{ $riskAssessment->dosenPembimbing->Nama ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">🏢 Laboratorium</span>
+                        <span class="info-label"> Laboratorium</span>
                         <span class="info-value">{{ $riskAssessment->daftarLab->Nama_Laboratorium ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">👮 Safety Officer</span>
+                        <span class="info-label"> Safety Officer</span>
                         <span class="info-value">{{ $riskAssessment->safetyOfficer->Nama ?? 'N/A' }}</span>
                     </div>
                 </div>
     
                 @if ($riskAssessment->catatan_safety_officer)
                     <div class="info-item">
-                        <span class="info-label">📌 Catatan dari Safety Officer</span>
+                        <span class="info-label"> Catatan dari Safety Officer</span>
                         <span class="info-value">{{ $riskAssessment->catatan_safety_officer }}</span>
                     </div>
                 @endif
@@ -249,7 +249,7 @@
             <!-- Schedule Selection Form -->
             @if ($riskAssessment->jadwal_wawancara_options && count($riskAssessment->jadwal_wawancara_options) > 0)
                 <div class="card">
-                    <div class="section-title">📅 Pilih Jadwal Wawancara</div>
+                    <div class="section-title"> Pilih Jadwal Wawancara</div>
     
                     <div class="deadline-info">
                         ⏰ Silakan pilih salah satu jadwal di bawah ini sebelum batas waktu berakhir
@@ -270,19 +270,19 @@
     
                                     <div class="schedule-info">
                                         <div class="schedule-date">
-                                            📅 {{ \Carbon\Carbon::parse($option['jadwal'])->format('l, d F Y') }}
+                                             {{ \Carbon\Carbon::parse($option['jadwal'])->format('l, d F Y') }}
                                         </div>
                                         <div class="schedule-time">
-                                            🕐 {{ $option['waktu'] ?? \Carbon\Carbon::parse($option['jadwal'])->format('H:i') }}
+                                             {{ $option['waktu'] ?? \Carbon\Carbon::parse($option['jadwal'])->format('H:i') }}
                                         </div>
                                         <div class="schedule-location">
-                                            📍 {{ $option['tempat'] ?? 'N/A' }}
+                                             {{ $option['tempat'] ?? 'N/A' }}
                                         </div>
                                     </div>
     
                                     @if ($riskAssessment->jadwal_wawancara && \Carbon\Carbon::parse($riskAssessment->jadwal_wawancara)->format('Y-m-d H:i') === \Carbon\Carbon::parse($option['jadwal'])->format('Y-m-d H:i'))
                                         <div style="position: absolute; bottom: 1rem; right: 1rem; color: #10b981; font-weight: 600;">
-                                            ✅ Dipilih
+                                             Dipilih
                                         </div>
                                     @endif
                                 </label>
@@ -297,13 +297,13 @@
     
                         <div class="button-group">
                             <button type="submit" class="btn-submit" id="submit-btn-{{ $riskAssessment->id }}" disabled>
-                                ✅ Konfirmasi Jadwal
+                                 Konfirmasi Jadwal
                             </button>
                             <a href="{{ route('mahasiswa.risk-assessment.index') }}" 
                                style="display: inline-flex; align-items: center; padding: 0.75rem 2rem; background: #6b7280; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.3s;"
                                onmouseover="this.style.background='#4b5563'" 
                                onmouseout="this.style.background='#6b7280'">
-                                ❌ Batal
+                                 Batal
                             </a>
                         </div>
                     </form>
@@ -311,7 +311,7 @@
             @else
                 <div class="card">
                     <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
+                        <div class="empty-state-icon"></div>
                         <p>Belum ada jadwal wawancara yang tersedia. Mohon hubungi Safety Officer.</p>
                     </div>
                 </div>
@@ -320,13 +320,13 @@
             <!-- Already Selected -->
             @if ($riskAssessment->jadwal_wawancara_dipilih_at)
                 <div class="card">
-                    <div class="section-title">✅ Jadwal Wawancara Terpilih</div>
+                    <div class="section-title"> Jadwal Wawancara Terpilih</div>
                     <div class="alert alert-success">
-                        <strong>✅ Status: Sudah Dipilih pada {{ $riskAssessment->jadwal_wawancara_dipilih_at->format('d M Y, H:i') }}</strong>
+                        <strong> Status: Sudah Dipilih pada {{ $riskAssessment->jadwal_wawancara_dipilih_at->format('d M Y, H:i') }}</strong>
                         <div style="margin-top: 1rem;">
-                            📅 {{ \Carbon\Carbon::parse($riskAssessment->jadwal_wawancara)->format('l, d F Y') }}<br>
-                            🕐 {{ $riskAssessment->jadwal_wawancara->format('H:i') }} WIB<br>
-                            📍 {{ $riskAssessment->tempat_wawancara ?? 'Lokasi tidak tersedia' }}
+                             {{ \Carbon\Carbon::parse($riskAssessment->jadwal_wawancara)->format('l, d F Y') }}<br>
+                             {{ $riskAssessment->jadwal_wawancara->format('H:i') }} WIB<br>
+                             {{ $riskAssessment->tempat_wawancara ?? 'Lokasi tidak tersedia' }}
                         </div>
                     </div>
                 </div>
@@ -334,7 +334,7 @@
             @empty
                 <div class="card">
                     <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
+                        <div class="empty-state-icon"></div>
                         <p>Tidak ada jadwal wawancara yang menunggu pilihan Anda.</p>
                     </div>
                 </div>

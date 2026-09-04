@@ -12,11 +12,7 @@
     </div>
 
     <!-- Notifikasi Sukses / Error -->
-    @if(session('success'))
-        <div class="bg-green-100 border-l-8 border-green-600 text-green-800 p-6 rounded-xl mb-8 text-center text-2xl font-bold shadow-lg">
-            {{ session('success') }}
-        </div>
-    @endif
+    
 
     <!-- Notifikasi Pengajuan Baru -->
     @if($pengajuanBaru->count() > 0)

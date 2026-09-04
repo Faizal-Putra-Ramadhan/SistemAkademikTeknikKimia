@@ -33,7 +33,7 @@ class PeminjamanAlatController extends Controller
 
         $labs = DaftarLab::penelitian()->get();
 
-        // Kalau belum ada lab sama sekali
+        
         if ($labs->isEmpty()) {
             return view('mahasiswa.pinjam-alat', [
                 'lab' => null,
@@ -49,7 +49,7 @@ class PeminjamanAlatController extends Controller
             ]);
         }
 
-        // Jangan pakai findOrFail
+        
         $lab = DaftarLab::with('alatLabs')->find($lab_id);
 
         if (!$lab) {
@@ -69,14 +69,14 @@ class PeminjamanAlatController extends Controller
             ->whereIn('status', ['disetujui', 'disetujui_final'])
             ->get();
 
-        // Generate ID RA untuk yang belum punya
+        
         foreach ($riskAssessments as $ra) {
             if (!$ra->id_ra) {
                 $ra->generateIdRa();
             }
         }
 
-        // Pilih Risk Assessment utama untuk pesan (prioritaskan yang masih berlaku)
+        
         $validRiskAssessments = $riskAssessments->filter(function ($ra) {
             return $ra->isMasihBerlaku();
         });
@@ -84,13 +84,13 @@ class PeminjamanAlatController extends Controller
         $riskAssessment = $validRiskAssessments->sortByDesc('batas_waktu_peminjaman')->first()
             ?? $riskAssessments->sortByDesc('batas_waktu_peminjaman')->first();
 
-        // Validasi batas waktu peminjaman
+        
         $masihBerlaku = false;
         $pesanBatasWaktu = null;
         $sisaWaktu = null;
 
         if ($riskAssessment) {
-            // Cek apakah masih dalam periode pengajuan (4 bulan dari persetujuan)
+            
             $masihBerlaku = $validRiskAssessments->isNotEmpty();
 
             if (!$masihBerlaku) {
@@ -101,7 +101,7 @@ class PeminjamanAlatController extends Controller
             else {
                 $sisaWaktu = $riskAssessment->getSisaWaktuPeminjaman();
 
-                // Warning jika hampir expired (kurang dari 30 hari)
+                
                 if ($riskAssessment->isHampirExpired()) {
                     $pesanBatasWaktu = 'Perhatian: Batas waktu pengajuan peminjaman akan berakhir dalam ' . $sisaWaktu
                         . '. Segera ajukan peminjaman jika Anda membutuhkan alat.';
@@ -113,14 +113,14 @@ class PeminjamanAlatController extends Controller
                 . 'Silakan buat Risk Assessment terlebih dahulu sebelum mengajukan peminjaman alat.';
         }
 
-        // Get peminjaman history
+        
         $peminjaman_alats = PeminjamanAlat::with('alatLab', 'riskAssessment')
             ->where('user_nama', $user->Nama)
             ->latest()
             ->get();
 
-        // Get RA IDs that have active bebas lab (for cancel confirmation)
-        // Format: {risk_assessment_id: bebas_lab_request_id}
+        
+        
         $bebasLabByRa = (object)BebasLabRequest::where('user_id', $user->id)
             ->where('is_active', true)
             ->pluck('id', 'risk_assessment_id')
@@ -151,7 +151,7 @@ class PeminjamanAlatController extends Controller
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
         }
 
-        // VALIDASI 1: Validasi input form (termasuk risk_assessment_id)
+        
         $request->validate([
             'risk_assessment_id' => 'required|exists:risk_assessments,id',
             'alat_lab_id' => 'required|exists:alat_labs,id',
@@ -170,7 +170,7 @@ class PeminjamanAlatController extends Controller
             'tanggal_kembali.after_or_equal' => 'Tanggal kembali harus setelah atau sama dengan tanggal pinjam',
         ]);
 
-        // VALIDASI 2: Cek Risk Assessment (tidak perlu sama lab-nya)
+        
         $lab = DaftarLab::findOrFail($lab_id);
         if (!$lab->stock_group_id) {
             return back()->with('error', 'Lab belum memiliki grup stok. Hubungi admin untuk melengkapi data lantai dan jenis lab.');
@@ -189,13 +189,13 @@ class PeminjamanAlatController extends Controller
             return back()->with('error', 'Risk Assessment tidak valid atau belum disetujui.');
         }
 
-        // VALIDASI 2B: Cek apakah RA diajukan untuk grup stok yang sama
+        
         $raLab = $riskAssessment->daftarLab;
         if ($raLab->stock_group_id != $lab->stock_group_id) {
             return back()->with('error', 'Risk Assessment tersebut diajukan untuk Lab ' . $raLab->floor . '.');
         }
 
-        // VALIDASI 3: Cek batas waktu PENGAJUAN peminjaman
+        
         if (!$riskAssessment->isMasihBerlaku()) {
             return back()->with('error',
                 'Maaf, batas waktu untuk PENGAJUAN peminjaman alat sudah berakhir ('
@@ -204,7 +204,7 @@ class PeminjamanAlatController extends Controller
             );
         }
 
-        // VALIDASI 3B: Cek deadline peminjaman (batas_waktu_peminjaman)
+        
         if ($riskAssessment->batas_waktu_peminjaman &&
         Carbon::parse($riskAssessment->batas_waktu_peminjaman)->isPast()) {
             return back()->with('error',
@@ -220,12 +220,12 @@ class PeminjamanAlatController extends Controller
             return back()->with('error', 'Alat tidak valid untuk grup stok laboratorium ini.');
         }
 
-        // VALIDASI 3C: Cek apakah alat spesifik untuk lab lain
+        
         if ($alat->daftar_lab_id && (int)$alat->daftar_lab_id !== (int)$lab->id) {
             return back()->with('error', 'Alat ini hanya tersedia di ' . $alat->daftarLab->Nama_Laboratorium . '.');
         }
 
-        // VALIDASI 4: Cek ketersediaan stok
+        
         if ($alat->jumlah_tersedia < $request->jumlah) {
             return back()->with('error',
                 'Maaf, stok alat "' . $alat->nama_alat . '" tidak mencukupi!'
@@ -234,7 +234,7 @@ class PeminjamanAlatController extends Controller
 
         \DB::beginTransaction();
         try {
-            // Nonaktifkan bebas lab yang aktif jika ada (untuk RA yang sama)
+            
             $activeBebasLab = BebasLabRequest::where('user_id', $user->id)
                 ->where('risk_assessment_id', $request->risk_assessment_id)
                 ->where('is_active', true)
@@ -247,7 +247,7 @@ class PeminjamanAlatController extends Controller
                 ]);
             }
 
-            // Simpan peminjaman
+            
             $peminjaman = PeminjamanAlat::create([
                 'user_nama' => $user->Nama,
                 'risk_assessment_id' => $request->risk_assessment_id,
@@ -259,7 +259,7 @@ class PeminjamanAlatController extends Controller
                 'status' => 'menunggu',
             ]);
 
-            // Catat ke aktivitas mahasiswa
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $user->Nama,
                 'daftar_lab_id' => $lab_id,
@@ -269,7 +269,7 @@ class PeminjamanAlatController extends Controller
                 'waktu' => now(),
             ]);
 
-            // ✅ KIRIM EMAIL KE LABORAN (mendukung multi-role & multiple labs scheme)
+            
             $laborans = DaftarUser::laboranForLab($lab)->get();
 
             foreach ($laborans as $laboran) {
@@ -318,7 +318,7 @@ class PeminjamanAlatController extends Controller
 
         $labs = DaftarLab::all();
 
-        // Get all peminjaman
+        
         $peminjaman_alats = PeminjamanAlat::with(['alatLab.daftarLab'])
             ->where('user_nama', $user->Nama)
             ->orderBy('created_at', 'desc')
@@ -340,17 +340,17 @@ class PeminjamanAlatController extends Controller
 
         $peminjaman = PeminjamanAlat::findOrFail($id);
 
-        // Validasi: hanya peminjam yang bisa mengajukan pengembalian
+        
         if ($peminjaman->user_nama !== $user->Nama) {
             return back()->with('error', 'Anda tidak berhak mengajukan pengembalian untuk peminjaman ini.');
         }
 
-        // Validasi: peminjaman harus sudah disetujui
+        
         if ($peminjaman->status !== 'disetujui') {
             return back()->with('error', 'Hanya peminjaman yang sudah disetujui yang bisa dikembalikan.');
         }
 
-        // Validasi: belum pernah mengajukan pengembalian
+        
         if ($peminjaman->pengajuan_pengembalian) {
             return back()->with('error', 'Anda sudah mengajukan pengembalian untuk alat ini.');
         }
@@ -365,7 +365,7 @@ class PeminjamanAlatController extends Controller
 
         \DB::beginTransaction();
         try {
-            // Update data pengajuan pengembalian
+            
             $peminjaman->update([
                 'pengajuan_pengembalian' => true,
                 'tanggal_pengajuan_pengembalian' => now(),
@@ -373,7 +373,7 @@ class PeminjamanAlatController extends Controller
                 'kondisi_barang' => $request->kondisi_barang,
             ]);
 
-            // Catat ke aktivitas mahasiswa
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $user->Nama,
                 'daftar_lab_id' => $peminjaman->alatLab->daftar_lab_id,

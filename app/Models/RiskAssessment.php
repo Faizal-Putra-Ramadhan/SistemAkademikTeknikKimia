@@ -170,7 +170,7 @@ class RiskAssessment extends Model
      * XX = nomor urut risk assessment (2 digit)
      * NNN = 3 digit terakhir NIM
      */
-    public function generateIdRa()
+        public function generateIdRa()
     {
         if ($this->id_ra) {
             return $this->id_ra; // Jika sudah ada, return yang lama

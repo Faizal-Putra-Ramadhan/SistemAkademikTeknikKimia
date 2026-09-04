@@ -132,12 +132,7 @@
 <div class="so-page">
 
     {{-- Alert --}}
-    @if(session('success'))
-    <div class="so-alert success">
-        <i class="fas fa-check-circle"></i>
-        {{ session('success') }}
-    </div>
-    @endif
+    
 
     {{-- Welcome Banner --}}
     <div class="so-welcome">
@@ -257,10 +252,10 @@
 
                                     $roomStatusLabel = match($item->status) {
                                         'menunggu' => '⏳ Menunggu Laboran',
-                                        'disetujui_laboran', 'menunggu_kepala_lab' => '📋 Menunggu Kepala Lab',
-                                        'disetujui' => '✅ Disetujui',
-                                        'dikembalikan' => '📥 Dikembalikan',
-                                        'ditolak' => '❌ Ditolak',
+                                        'disetujui_laboran', 'menunggu_kepala_lab' => ' Menunggu Kepala Lab',
+                                        'disetujui' => ' Disetujui',
+                                        'dikembalikan' => ' Dikembalikan',
+                                        'ditolak' => ' Ditolak',
                                         default => ucfirst($item->status)
                                     };
                                 @endphp
@@ -321,9 +316,9 @@
 
                                     $alatStatusLabel = match($item->status) {
                                         'menunggu' => '⏳ Menunggu Laboran',
-                                        'disetujui' => '✅ Disetujui',
-                                        'dikembalikan' => '📥 Dikembalikan',
-                                        'ditolak' => '❌ Ditolak',
+                                        'disetujui' => ' Disetujui',
+                                        'dikembalikan' => ' Dikembalikan',
+                                        'ditolak' => ' Ditolak',
                                         default => ucfirst($item->status)
                                     };
                                 @endphp

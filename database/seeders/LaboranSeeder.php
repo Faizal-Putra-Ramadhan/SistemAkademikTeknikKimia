@@ -76,8 +76,8 @@ class LaboranSeeder extends Seeder
             'Role_User' => 'Laboran',
         ]);
 
-        echo "✅ Seeder Laboran berhasil dijalankan!\n";
-        echo "📝 Data Login Laboran:\n\n";
+        echo " Seeder Laboran berhasil dijalankan!\n";
+        echo " Data Login Laboran:\n\n";
         echo "1. LAB TEKIM\n";
         echo "   UserID: LAB-2511280001\n";
         echo "   Password: laboran123\n\n";

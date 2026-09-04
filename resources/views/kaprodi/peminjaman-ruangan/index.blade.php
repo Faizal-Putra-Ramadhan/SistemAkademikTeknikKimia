@@ -38,18 +38,13 @@ body { background-color: #f8f9fa; }
 <header class="mb-5">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="h3 font-weight-bold text-dark">📋 Monitoring Peminjaman Ruangan</h1>
+                    <h1 class="h3 font-weight-bold text-dark"> Monitoring Peminjaman Ruangan</h1>
                     <p class="text-muted">Pantau dan tinjau permintaan peminjaman laboratorium (View Only)</p>
                 </div>
             </div>
         </header>
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
-        @endif
+        
 
         <div class="bg-white rounded shadow-sm mb-4">
             <nav class="nav nav-justified border-bottom">
@@ -153,11 +148,11 @@ body { background-color: #f8f9fa; }
                                 <td class="align-middle">
                                     <span class="badge status-badge badge-{{ $peminjaman->getStatusColor() }} text-white">
                                         @if(in_array($peminjaman->status, ['disetujui', 'disetujui_final']))
-                                            ✅ Disetujui
+                                             Disetujui
                                         @elseif($peminjaman->status === 'ditolak')
-                                            ❌ Ditolak
+                                             Ditolak
                                         @elseif($peminjaman->status === 'dikembalikan')
-                                            🔄 Selesai
+                                             Selesai
                                         @else
                                             {{ $peminjaman->getStatusLabel() }}
                                         @endif

@@ -31,14 +31,7 @@ body { background-color: #f4f7f6; color: #333; }
             </div>
         </header>
 
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
+        
 
         <div class="row">
             <div class="col-lg-8">
@@ -104,7 +97,7 @@ body { background-color: #f4f7f6; color: #333; }
                                         </td>
                                         <td class="align-middle">
                                             @if($bahan->msds_file)
-                                                <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary">📄 Lihat MSDS</a>
+                                                <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary"> Lihat MSDS</a>
                                             @else
                                                 <span class="text-muted small">-</span>
                                             @endif
@@ -183,8 +176,8 @@ body { background-color: #f4f7f6; color: #333; }
                                     <label class="font-weight-bold small uppercase">Keputusan <span class="text-danger">*</span></label>
                                     <select name="persetujuan" id="persetujuan" class="form-control form-control-lg" required>
                                         <option value="">-- Pilih --</option>
-                                        <option value="setuju">✓ Setujui</option>
-                                        <option value="tolak">✗ Tolak</option>
+                                        <option value="setuju"> Setujui</option>
+                                        <option value="tolak"> Tolak</option>
                                     </select>
                                 </div>
 

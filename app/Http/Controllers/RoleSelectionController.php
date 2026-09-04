@@ -23,18 +23,18 @@ class RoleSelectionController extends Controller
 
         $selectedRole = $request->input('role');
 
-        // Pastikan role yang diminta memang dimiliki user
+        
         if (!$user->hasRole($selectedRole)) {
             return back()->with('error', 'Anda tidak memiliki role tersebut.');
         }
 
-        // Ambil semua role names milik user
+        
         $allRoles = $user->roleNames;
 
-        // Set primary role ke role yang dipilih
+        
         $user->syncRoles($allRoles, $selectedRole);
 
-        // Redirect ke dashboard sesuai role yang dipilih
+        
         return match ($selectedRole) {
                 'Admin' => redirect()->route('admin.dashboard')->with('success', "Berhasil mengganti role aktif ke {$selectedRole}."),
                 'Dosen' => redirect()->route('dosen.dashboard')->with('success', "Berhasil mengganti role aktif ke {$selectedRole}."),

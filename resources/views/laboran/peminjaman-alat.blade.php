@@ -75,7 +75,7 @@
                                     <p class="text-xs text-gray-500 mt-2">Kosongkan jika menggunakan tanggal yang diminta</p>
                                 </div>
                                 <button type="submit" class="btn btn-success btn-sm w-full">
-                                    ✓ Setujui Peminjaman
+                                     Setujui Peminjaman
                                 </button>
                             </form>
                             
@@ -84,7 +84,7 @@
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="btn btn-danger btn-sm w-full">
-                                    ✕ Tolak
+                                     Tolak
                                 </button>
                             </form>
                         </div>
@@ -93,7 +93,7 @@
                             @csrf
                             @method('PUT')
                             <button type="submit" class="btn btn-info btn-sm w-full">
-                                ✓ Tandai Dikembalikan
+                                 Tandai Dikembalikan
                             </button>
                         </form>
                         @else

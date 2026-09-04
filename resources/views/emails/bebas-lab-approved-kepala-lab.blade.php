@@ -8,7 +8,7 @@
 <body style="font-family: Arial, sans-serif; background-color: #f7fafc; color: #2d3748; padding: 24px;">
     <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 24px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
         <div style="text-align: center; margin-bottom: 24px;">
-            <h2 style="margin: 0; color: #3b82f6;">📋 Notifikasi Bebas Lab</h2>
+            <h2 style="margin: 0; color: #3b82f6;"> Notifikasi Bebas Lab</h2>
         </div>
         
         <p>Yth. Kepala Laboratorium,</p>
@@ -57,7 +57,7 @@
         <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 20px 0; border-radius: 4px;">
             <h3 style="margin-top: 0; color: #f59e0b;">Status Persetujuan</h3>
             <p style="margin: 0;">
-                <strong>Status:</strong> <span style="color: #059669;">✓ Disetujui oleh semua laboran</span>
+                <strong>Status:</strong> <span style="color: #059669;"> Disetujui oleh semua laboran</span>
             </p>
             <p style="margin: 8px 0 0 0;">
                 <strong>Tanggal Persetujuan:</strong> {{ $bebasLabRequest->kepala_lab_approved_at ? $bebasLabRequest->kepala_lab_approved_at->format('d/m/Y H:i') : now()->format('d/m/Y H:i') }}

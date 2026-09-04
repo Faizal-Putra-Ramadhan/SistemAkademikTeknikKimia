@@ -306,41 +306,31 @@
 @section('content')
     <!-- BREADCRUMB -->
                 <div class="breadcrumb">
-                    <span>📊</span>
+                    <span></span>
                     <span>Dashboard</span>
                     <span>/</span>
                     <span>Risk Assessment</span>
                 </div>
     
                 <!-- ALERTS -->
-                @if(session('success'))
-                <div class="alert alert-success">
-                    <span>✅</span>
-                    <div>{{ session('success') }}</div>
-                </div>
-                @endif
+                <!-- 
     
-                @if(session('error'))
-                <div class="alert alert-danger">
-                    <span>❌</span>
-                    <div>{{ session('error') }}</div>
-                </div>
-                @endif
+                 -->
     
                 <!-- STATS OVERVIEW -->
                 @if($riskAssessments->count() > 0)
                 <div class="stats-container">
                     <div class="stat-card">
                         <div class="stat-number">{{ $riskAssessments->where('status', 'draft')->count() }}</div>
-                        <div class="stat-label">📝 Draft</div>
+                        <div class="stat-label"> Draft</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number">{{ $riskAssessments->where('status', 'disetujui')->count() }}</div>
-                        <div class="stat-label">✅ Disetujui</div>
+                        <div class="stat-label"> Disetujui</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number">{{ $riskAssessments->where('status', 'ditolak')->count() }}</div>
-                        <div class="stat-label">❌ Ditolak</div>
+                        <div class="stat-label"> Ditolak</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number">{{ $riskAssessments->where('status', 'menunggu_dosen')->count() }}</div>
@@ -364,29 +354,19 @@
                 <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb;">
                     <button onclick="switchTab('daftar-ra')" id="tab-btn-daftar-ra" 
                             style="padding: 1rem 1.5rem; background: none; border: none; font-size: 1rem; font-weight: 600; color: #667eea; border-bottom: 3px solid #667eea; cursor: pointer; transition: all 0.3s;">
-                        📋 Daftar Risk Assessment
+                         Daftar Risk Assessment
                     </button>
                     <button onclick="switchTab('pilih-jadwal')" id="tab-btn-pilih-jadwal"
                             style="padding: 1rem 1.5rem; background: none; border: none; font-size: 1rem; font-weight: 600; color: #9ca3af; cursor: pointer; transition: all 0.3s;">
-                        📅 Pilih Jadwal Wawancara
+                         Pilih Jadwal Wawancara
                     </button>
                 </div>
     
                 <!-- TAB CONTENT: DAFTAR RA -->
                 <div id="tab-content-daftar-ra" style="display: block;">
-                    @if(session('success'))
-                    <div class="alert alert-success">
-                        <span>✅</span>
-                        <div>{{ session('success') }}</div>
-                    </div>
-                    @endif
+                    
     
-                    @if(session('error'))
-                    <div class="alert alert-danger">
-                        <span>❌</span>
-                        <div>{{ session('error') }}</div>
-                    </div>
-                    @endif
+                    
     
                 <!-- PENDING SCHEDULES WARNING -->
                 @php
@@ -423,24 +403,24 @@
     
                         <div class="ra-meta">
                             <div class="meta-item">
-                                <span class="meta-label">🏫 Laboratorium</span>
+                                <span class="meta-label"> Laboratorium</span>
                                 <span class="meta-value">{{ $ra->daftarLab->Nama_Laboratorium }}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-label">📋 Jenis</span>
+                                <span class="meta-label"> Jenis</span>
                                 <span class="meta-value">{{ $ra->jenis_ra }}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-label">👨‍🏫 Dosen Pembimbing</span>
+                                <span class="meta-label">‍ Dosen Pembimbing</span>
                                 <span class="meta-value">{{ $ra->dosen_pembimbing_nama }}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-label">📅 Tanggal Dibuat</span>
+                                <span class="meta-label"> Tanggal Dibuat</span>
                                 <span class="meta-value">{{ $ra->created_at->format('d M Y') }}</span>
                             </div>
                             @if($ra->kategori_resiko_dosen)
                             <div class="meta-item">
-                                <span class="meta-label">⚠️ Kategori Resiko</span>
+                                <span class="meta-label"> Kategori Resiko</span>
                                 <span class="meta-value">{{ $ra->getKategoriResikoLabel() }}</span>
                             </div>
                             @endif
@@ -459,7 +439,7 @@
                         {{-- Notice jika sudah expired --}}
                         @if($ra->status === 'disetujui' && !$ra->isMasihBerlaku() && !$ra->hasPendingPerpanjangan())
                         <div class="expired-notice">
-                            <strong style="color: #991b1b;">⚠️ Batas Waktu Peminjaman Sudah Berakhir!</strong>
+                            <strong style="color: #991b1b;"> Batas Waktu Peminjaman Sudah Berakhir!</strong>
                             <p style="margin-top: 0.5rem; color: #7f1d1d;">
                                 Batas waktu peminjaman alat untuk Risk Assessment ini sudah melewati batas. Anda dapat mengajukan perpanjangan jika masih memerlukan akses laboratorium.
                             </p>
@@ -479,7 +459,7 @@
                         {{-- Info pengajuan perpanjangan --}}
                         @if($ra->hasPendingPerpanjangan())
                         <div class="perpanjangan-info">
-                            <strong style="color: #1e40af;">📝 Pengajuan Perpanjangan</strong>
+                            <strong style="color: #1e40af;"> Pengajuan Perpanjangan</strong>
                             <p style="margin-top: 0.5rem; color: #1e3a8a;">
                                 Status: Menunggu persetujuan Kaprodi<br>
                                 Durasi diminta: {{ $ra->durasi_perpanjangan_diminta }} bulan<br>
@@ -490,16 +470,16 @@
     
                         @if($ra->catatan_dosen || $ra->catatan_safety_officer || $ra->catatan_kepala_lab)
                         <div class="catatan-section">
-                            <strong>📝 Catatan Reviewer:</strong>
+                            <strong> Catatan Reviewer:</strong>
                             <div style="margin-top: 0.75rem;">
                                 @if($ra->catatan_dosen)
-                                    <p><strong>👨‍🏫 Dosen:</strong> {{ $ra->catatan_dosen }}</p>
+                                    <p><strong>‍ Dosen:</strong> {{ $ra->catatan_dosen }}</p>
                                 @endif
                                 @if($ra->catatan_safety_officer)
-                                    <p><strong>🛡️ Safety Officer:</strong> {{ $ra->catatan_safety_officer }}</p>
+                                    <p><strong> Safety Officer:</strong> {{ $ra->catatan_safety_officer }}</p>
                                 @endif
                                 @if($ra->catatan_kepala_lab)
-                                    <p><strong>🏫 Kepala Lab:</strong> {{ $ra->catatan_kepala_lab }}</p>
+                                    <p><strong> Kepala Lab:</strong> {{ $ra->catatan_kepala_lab }}</p>
                                 @endif
                             </div>
                         </div>
@@ -507,11 +487,11 @@
     
                         @if($ra->jadwal_wawancara)
                         <div class="perpanjangan-info">
-                            <strong>📅 Jadwal Wawancara dengan Safety Officer</strong>
+                            <strong> Jadwal Wawancara dengan Safety Officer</strong>
                             <p style="margin-top: 0.75rem; margin-bottom: 0;">
-                                📍 <strong>{{ \Carbon\Carbon::parse($ra->jadwal_wawancara)->format('d M Y, H:i') }} WIB</strong>
+                                 <strong>{{ \Carbon\Carbon::parse($ra->jadwal_wawancara)->format('d M Y, H:i') }} WIB</strong>
                                 @if($ra->tempat_wawancara)
-                                    <br>📌 Tempat: {{ $ra->tempat_wawancara }}
+                                    <br> Tempat: {{ $ra->tempat_wawancara }}
                                 @endif
                             </p>
                         </div>
@@ -530,12 +510,12 @@
     
                         <div class="ra-actions">
                             <a href="{{ route('mahasiswa.risk-assessment.show', $ra->id) }}" class="btn btn-primary">
-                                👁️ Lihat Detail
+                                 Lihat Detail
                             </a>
                             
                             @if($ra->status === 'draft')
                             <a href="{{ route('mahasiswa.risk-assessment.edit', $ra->id) }}" class="btn btn-secondary">
-                                ✏️ Edit
+                                 Edit
                             </a>
                             @endif
     
@@ -544,20 +524,20 @@
                         <form action="{{ route('mahasiswa.risk-assessment.ajukan-kaprodi', $ra->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Apakah Anda yakin ingin mengajukan Risk Assessment ini ke Kaprodi untuk persetujuan final?')">
                             @csrf
                             <button type="submit" class="btn btn-success">
-                                📤 Ajukan ke Kaprodi
+                                 Ajukan ke Kaprodi
                             </button>
                         </form>
                         @endif
     
                             @if($ra->status === 'disetujui')
                             <a href="{{ route('mahasiswa.risk-assessment.download-pdf', $ra->id) }}" class="btn btn-success">
-                                📄 Download PDF
+                                 Download PDF
                             </a>
     
                             {{-- Tombol Ajukan Perpanjangan --}}
                             @if($ra->bisaAjukanPerpanjangan())
                             <a href="{{ route('mahasiswa.risk-assessment.perpanjangan', $ra->id) }}" class="btn btn-warning">
-                                🔄 Ajukan Perpanjangan
+                                 Ajukan Perpanjangan
                             </a>
                             @endif
     
@@ -567,7 +547,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">
-                                    ❌ Batalkan Perpanjangan
+                                     Batalkan Perpanjangan
                                 </button>
                             </form>
                             @endif
@@ -599,25 +579,15 @@
     
                 <!-- TAB CONTENT: PILIH JADWAL WAWANCARA -->
                 <div id="tab-content-pilih-jadwal" style="display: none;">
-                    @if(session('success'))
-                    <div class="alert alert-success">
-                        <span>✅</span>
-                        <div>{{ session('success') }}</div>
-                    </div>
-                    @endif
+                    
     
-                    @if(session('error'))
-                    <div class="alert alert-danger">
-                        <span>❌</span>
-                        <div>{{ session('error') }}</div>
-                    </div>
-                    @endif
+                    
     
                     @if($pendingSchedules->count() > 0)
                         @foreach($pendingSchedules as $ra)
                         <div class="ra-card" style="border-left-color: #f59e0b; background: linear-gradient(to right, rgba(245,158,11,0.03), transparent);">
                             <div class="ra-header">
-                                <h3 class="ra-title">📅 Pilih Jadwal Wawancara: {{ $ra->topik_judul }}</h3>
+                                <h3 class="ra-title"> Pilih Jadwal Wawancara: {{ $ra->topik_judul }}</h3>
                             </div>
     
                             <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
@@ -637,10 +607,10 @@
                                                    style="position: absolute; top: 1rem; right: 1rem; width: 20px; height: 20px; cursor: pointer;">
     
                                             <div>
-                                                <div style="font-weight: 700; color: #1f2937; margin-bottom: 0.75rem;">🕐 Opsi {{ $index + 1 }}</div>
+                                                <div style="font-weight: 700; color: #1f2937; margin-bottom: 0.75rem;"> Opsi {{ $index + 1 }}</div>
                                                 <table style="width: 100%; font-size: 0.9rem;">
                                                     <tr>
-                                                        <td style="color: #6b7280; padding: 4px 0;">📅 Tanggal:</td>
+                                                        <td style="color: #6b7280; padding: 4px 0;"> Tanggal:</td>
                                                         <td style="color: #1f2937; font-weight: 600; padding: 4px 0;">{{ \Carbon\Carbon::parse($option['jadwal'])->format('l, d M Y') }}</td>
                                                     </tr>
                                                     <tr>
@@ -648,7 +618,7 @@
                                                         <td style="color: #1f2937; font-weight: 600; padding: 4px 0;">{{ $option['waktu'] }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="color: #6b7280; padding: 4px 0;">📍 Lokasi:</td>
+                                                        <td style="color: #6b7280; padding: 4px 0;"> Lokasi:</td>
                                                         <td style="color: #1f2937; font-weight: 600; padding: 4px 0;">{{ $option['tempat'] }}</td>
                                                     </tr>
                                                 </table>
@@ -659,14 +629,14 @@
     
                                 @if ($errors->has('schedule_index'))
                                 <div style="background: #fee2e2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #ef4444;">
-                                    ❌ {{ $errors->first('schedule_index') }}
+                                     {{ $errors->first('schedule_index') }}
                                 </div>
                                 @endif
     
                                 <div style="display: flex; gap: 1rem;">
                                     <button type="submit" id="btn-confirm-{{ $ra->id }}" disabled
                                             style="padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; opacity: 0.5; transition: all 0.3s;">
-                                        ✅ Konfirmasi Jadwal
+                                         Konfirmasi Jadwal
                                     </button>
                                 </div>
                             </form>

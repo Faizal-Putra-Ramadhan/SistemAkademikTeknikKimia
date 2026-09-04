@@ -6,11 +6,7 @@
 <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-3xl mx-auto">
     <h1 class="text-4xl font-bold text-indigo-800 mb-8 text-center">PROFIL DOSEN</h1>
 
-    @if(session('success'))
-        <div class="bg-green-100 border-l-8 border-green-600 text-green-800 p-6 rounded-lg mb-8 text-center text-xl font-bold">
-            {{ session('success') }}
-        </div>
-    @endif
+    
 
     <div class="text-center mb-10">
         <img src="{{ Auth::user()->foto ? asset('storage/foto/' . Auth::user()->foto) : asset('img/default.jpg') }}"

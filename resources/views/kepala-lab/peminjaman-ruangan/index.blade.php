@@ -95,7 +95,7 @@
 
 @section('content')
     <div style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700;">📋 Persetujuan Peminjaman Ruangan</h2>
+        <h2 style="font-size: 1.5rem; font-weight: 700;"> Persetujuan Peminjaman Ruangan</h2>
     </div>
 
     <!-- Tabs -->
@@ -104,7 +104,7 @@
             ⏳ Menunggu Persetujuan ({{ $peminjamanMenunggu->total() ?? 0 }})
         </button>
         <button class="tab-button" onclick="showTab('processed')">
-            ✅ Sudah Diproses ({{ $peminjamanDiproses->total() ?? 0 }})
+             Sudah Diproses ({{ $peminjamanDiproses->total() ?? 0 }})
         </button>
     </div>
 
@@ -122,7 +122,7 @@
                                 ⏳ Menunggu Persetujuan
                                 @break
                             @case('disetujui_laboran')
-                                📋 Disetujui Laboran
+                                 Disetujui Laboran
                                 @break
                             @default
                                 {{ $peminjaman->status }}
@@ -132,11 +132,11 @@
 
                 <div class="rental-info">
                     <div class="info-item">
-                        <span class="info-label">👤 Peminjam</span>
+                        <span class="info-label"> Peminjam</span>
                         <span class="info-value">{{ $peminjaman->user_nama ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">📅 Tanggal Peminjaman</span>
+                        <span class="info-label"> Tanggal Peminjaman</span>
                         <span class="info-value">{{ $peminjaman->tanggal ? date('d/m/Y', strtotime($peminjaman->tanggal)) : 'N/A' }}</span>
                     </div>
                     <div class="info-item">
@@ -144,27 +144,27 @@
                         <span class="info-value">{{ $peminjaman->jam_mulai ?? 'N/A' }} - {{ $peminjaman->jam_selesai ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">📝 Keperluan</span>
+                        <span class="info-label"> Keperluan</span>
                         <span class="info-value">{{ $peminjaman->keperluan ?? 'N/A' }}</span>
                     </div>
                 </div>
 
                 @if ($peminjaman->catatan_laboran)
                     <div class="info-item" style="margin-bottom: 1rem;">
-                        <span class="info-label">📌 Catatan Laboran</span>
+                        <span class="info-label"> Catatan Laboran</span>
                         <span class="info-value">{{ $peminjaman->catatan_laboran }}</span>
                     </div>
                 @endif
 
                 <div class="action-buttons">
                     <a href="{{ route('kepala-lab.peminjaman-ruangan.show', $peminjaman->id) }}" class="btn btn-primary btn-sm">
-                        👁️ Lihat Detail
+                         Lihat Detail
                     </a>
                 </div>
             </div>
         @empty
             <div class="empty-state">
-                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-icon"></div>
                 <p>Tidak ada peminjaman ruangan yang menunggu persetujuan Anda</p>
             </div>
         @endforelse
@@ -189,13 +189,13 @@
                         @switch($peminjaman->status)
                             @case('disetujui')
                             @case('disetujui_final')
-                                ✅ Disetujui
+                                 Disetujui
                                 @break
                             @case('dikembalikan')
-                                🔄 Selesai
+                                 Selesai
                                 @break
                             @case('ditolak')
-                                ❌ Ditolak
+                                 Ditolak
                                 @break
                             @default
                                 {{ $peminjaman->status }}
@@ -205,11 +205,11 @@
 
                 <div class="rental-info">
                     <div class="info-item">
-                        <span class="info-label">👤 Peminjam</span>
+                        <span class="info-label"> Peminjam</span>
                         <span class="info-value">{{ $peminjaman->user_nama ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">📅 Tanggal Peminjaman</span>
+                        <span class="info-label"> Tanggal Peminjaman</span>
                         <span class="info-value">{{ $peminjaman->tanggal ? date('d/m/Y', strtotime($peminjaman->tanggal)) : 'N/A' }}</span>
                     </div>
                     <div class="info-item">
@@ -217,27 +217,27 @@
                         <span class="info-value">{{ $peminjaman->jam_mulai ?? 'N/A' }} - {{ $peminjaman->jam_selesai ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">📝 Keperluan</span>
+                        <span class="info-label"> Keperluan</span>
                         <span class="info-value">{{ $peminjaman->keperluan ?? 'N/A' }}</span>
                     </div>
                 </div>
 
                 @if ($peminjaman->catatan_kepala_lab)
                     <div class="info-item" style="margin-bottom: 1rem;">
-                        <span class="info-label">📌 Catatan Kepala Lab</span>
+                        <span class="info-label"> Catatan Kepala Lab</span>
                         <span class="info-value">{{ $peminjaman->catatan_kepala_lab }}</span>
                     </div>
                 @endif
 
                 <div class="action-buttons">
                     <a href="{{ route('kepala-lab.peminjaman-ruangan.show', $peminjaman->id) }}" class="btn btn-primary btn-sm">
-                        👁️ Lihat Detail
+                         Lihat Detail
                     </a>
                 </div>
             </div>
         @empty
             <div class="empty-state">
-                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-icon"></div>
                 <p>Tidak ada peminjaman ruangan yang sudah diproses</p>
             </div>
         @endforelse

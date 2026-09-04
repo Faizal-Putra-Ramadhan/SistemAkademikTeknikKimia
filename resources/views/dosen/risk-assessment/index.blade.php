@@ -177,11 +177,7 @@
 @endpush
 
 @section('content')
-    @if(session('success'))
-    <div style="padding: 1rem; background: #d1fae5; color: #065f46; border-radius: 6px; margin-bottom: 1.5rem; border-left: 4px solid #10b981;">
-        ✅ {{ session('success') }}
-    </div>
-    @endif
+
 
     <!-- Statistics Cards -->
     <div class="stats-grid">
@@ -195,7 +191,7 @@
                     ->where('persetujuan_dosen', true)
                     ->count() }}
             </div>
-            <div class="stat-label">✅ Disetujui</div>
+            <div class="stat-label"> Disetujui</div>
         </div>
         <div class="stat-card rejected">
             <div class="stat-value">
@@ -203,13 +199,13 @@
                     ->where('persetujuan_dosen', false)
                     ->count() }}
             </div>
-            <div class="stat-label">❌ Ditolak</div>
+            <div class="stat-label"> Ditolak</div>
         </div>
         <div class="stat-card total">
             <div class="stat-value">
                 {{ App\Models\RiskAssessment::where('dosen_pembimbing_id', Auth::user()->id)->count() }}
             </div>
-            <div class="stat-label">📊 Total Pengajuan</div>
+            <div class="stat-label"> Total Pengajuan</div>
         </div>
     </div>
 
@@ -242,26 +238,26 @@
 
                     <div class="ra-meta">
                         <div class="meta-item">
-                            <span class="meta-label">👤 Mahasiswa</span>
+                            <span class="meta-label"> Mahasiswa</span>
                             <span class="meta-value">{{ $ra->nama }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">🎓 NIM</span>
+                            <span class="meta-label"> NIM</span>
                             <span class="meta-value">{{ $ra->nim }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">🏫 Laboratorium</span>
+                            <span class="meta-label"> Laboratorium</span>
                             <span class="meta-value">{{ $ra->daftarLab->Nama_Laboratorium ?? 'N/A' }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">📅 Tanggal Diajukan</span>
+                            <span class="meta-label"> Tanggal Diajukan</span>
                             <span class="meta-value">{{ $ra->created_at->format('d M Y') }}</span>
                         </div>
                     </div>
 
                     <div style="padding-top: 1rem; border-top: 1px solid #e5e7eb; display: flex; gap: 0.75rem;">
                         <a href="{{ route('dosen.risk-assessment.show', $ra->id) }}" class="btn-ra btn-ra-primary">
-                            👁️ Review & Approve
+                             Review & Approve
                         </a>
                     </div>
                 </div>
@@ -273,7 +269,7 @@
                 </div>
             @else
                 <div class="empty-state">
-                    <div class="empty-icon">📭</div>
+                    <div class="empty-icon"></div>
                     <p style="font-size: 1.1rem; font-weight: 500;">Tidak ada Risk Assessment yang menunggu review</p>
                     <p style="margin-top: 0.5rem;">Semua pengajuan sudah diproses</p>
                 </div>
@@ -285,7 +281,7 @@
     <div class="section-card">
         <div class="section-header">
             <h2 class="section-title">
-                <span>📚</span>
+                <span></span>
                 <span>Riwayat Risk Assessment</span>
             </h2>
             <p style="color: #6b7280; font-size: 0.9rem; margin-top: 0.5rem;">
@@ -315,9 +311,9 @@
                             @if($ra->persetujuan_dosen !== null)
                             <div style="margin-top: 0.5rem; font-size: 0.9rem;">
                                 @if($ra->persetujuan_dosen)
-                                    <span style="color: #10b981; font-weight: 600;">✅ Anda Setujui</span>
+                                    <span style="color: #10b981; font-weight: 600;"> Anda Setujui</span>
                                 @else
-                                    <span style="color: #ef4444; font-weight: 600;">❌ Anda Tolak</span>
+                                    <span style="color: #ef4444; font-weight: 600;"> Anda Tolak</span>
                                 @endif
                             </div>
                             @endif
@@ -326,21 +322,21 @@
 
                     <div class="ra-meta">
                         <div class="meta-item">
-                            <span class="meta-label">🏫 Laboratorium</span>
+                            <span class="meta-label"> Laboratorium</span>
                             <span class="meta-value">{{ $ra->daftarLab->Nama_Laboratorium }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">📋 Jenis</span>
+                            <span class="meta-label"> Jenis</span>
                             <span class="meta-value">{{ $ra->jenis_ra }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">📅 Tanggal Review</span>
+                            <span class="meta-label"> Tanggal Review</span>
                             <span class="meta-value">
                                 {{ $ra->tanggal_persetujuan_dosen ? $ra->tanggal_persetujuan_dosen->format('d M Y') : '-' }}
                             </span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">⚡ Status Saat Ini</span>
+                            <span class="meta-label"> Status Saat Ini</span>
                             <span class="meta-value">
                                 @switch($ra->status)
                                     @case('menunggu_safety_officer')
@@ -350,10 +346,10 @@
                                         Di Kepala Lab
                                         @break
                                     @case('disetujui')
-                                        <span style="color: #10b981;">Disetujui ✅</span>
+                                        <span style="color: #10b981;">Disetujui </span>
                                         @break
                                     @case('ditolak')
-                                        <span style="color: #ef4444;">Ditolak ❌</span>
+                                        <span style="color: #ef4444;">Ditolak </span>
                                         @break
                                     @default
                                         {{ $ra->status }}
@@ -364,7 +360,7 @@
 
                     @if($ra->catatan_dosen)
                     <div style="margin-top: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #667eea;">
-                        <strong style="color: #374151;">📝 Catatan Anda:</strong>
+                        <strong style="color: #374151;"> Catatan Anda:</strong>
                         <div style="margin-top: 0.5rem; color: #4b5563;">
                             {{ $ra->catatan_dosen }}
                         </div>
@@ -373,7 +369,7 @@
 
                     <div style="padding-top: 1rem; border-top: 1px solid #e5e7eb;">
                         <a href="{{ route('dosen.risk-assessment.show', $ra->id) }}" class="btn-ra btn-ra-secondary">
-                            👁️ Lihat Detail
+                             Lihat Detail
                         </a>
                     </div>
                 </div>
@@ -385,7 +381,7 @@
                 </div>
             @else
                 <div class="empty-state">
-                    <div class="empty-icon">📂</div>
+                    <div class="empty-icon"></div>
                     <p style="font-size: 1.1rem; font-weight: 500;">Belum ada riwayat review</p>
                     <p style="margin-top: 0.5rem;">Risk Assessment yang sudah Anda review akan muncul di sini</p>
                 </div>

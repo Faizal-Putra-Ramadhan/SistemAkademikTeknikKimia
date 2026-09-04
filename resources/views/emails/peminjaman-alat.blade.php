@@ -10,7 +10,7 @@
         <!-- Header -->
         <tr>
             <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center;">
-                <h1 style="margin: 0; font-size: 24px;">🔬 LIMS - Peminjaman Alat</h1>
+                <h1 style="margin: 0; font-size: 24px;"> LIMS - Peminjaman Alat</h1>
             </td>
         </tr>
 
@@ -37,7 +37,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin-top: 0; color: #667eea;">📋 Detail Peminjaman</h3>
+                            <h3 style="margin-top: 0; color: #667eea;"> Detail Peminjaman</h3>
                             
                             <table width="100%" cellpadding="8" cellspacing="0">
                                 <tr style="border-bottom: 1px solid #eee;">
@@ -85,7 +85,7 @@
 
                 @if($catatan)
                 <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 4px;">
-                    <strong>💬 Catatan dari Laboran:</strong>
+                    <strong> Catatan dari Laboran:</strong>
                     <p style="margin: 10px 0 0 0;">{{ $catatan }}</p>
                 </div>
                 @endif

@@ -81,7 +81,7 @@
                 {{-- Lab Selection --}}
                 <div class="card" style="margin-bottom: 1.5rem;">
                     <div class="card-header">
-                        <h3>🏢 Pilih Laboratorium</h3>
+                        <h3> Pilih Laboratorium</h3>
                     </div>
                     <div class="card-body">
                         <p style="color: #666; margin-bottom: 1.5rem;">Pilih laboratorium yang ingin Anda gunakan</p>
@@ -105,7 +105,7 @@
                 <div id="lab-container">
                     <div class="card">
                         <div class="card-header">
-                            <h3>📋 Informasi Laboratorium</h3>
+                            <h3> Informasi Laboratorium</h3>
                         </div>
                         <div class="card-body">
                             <p style="color: #666; margin-bottom: 1.5rem;">Klik card untuk mengajukan peminjaman ruangan</p>
@@ -115,24 +115,24 @@
                                      onclick="openModal({{ $labItem->id }}, '{{ addslashes($labItem->Nama_Laboratorium) }}', '{{ addslashes($labItem->Kepala_Labolatorium) }}', '{{ addslashes($labItem->email_lab ?? '') }}')"
                                      data-lab-id="{{ $labItem->id }}"
                                      style="display: none;">
-                                    <div class="lab-image">🧪</div>
+                                    <div class="lab-image"></div>
                                     <div class="lab-body">
                                         <h3>{{ $labItem->Nama_Laboratorium }} - {{ $labItem->floor }}</h3>
                                         <div class="lab-info">
-                                            <span>👨‍🔬</span>
+                                            <span>‍</span>
                                             <span>{{ $labItem->Kepala_Labolatorium }}</span>
                                         </div>
                                         <div class="lab-info">
-                                            <span>📧</span>
+                                            <span></span>
                                             <span>{{ $labItem->email_lab }}</span>
                                         </div>
-                                        <span class="lab-badge">📅 Reservasi Tersedia</span>
+                                        <span class="lab-badge"> Reservasi Tersedia</span>
 
                                         @if(isset($peminjaman_aktif_per_lab[$labItem->id]) && $peminjaman_aktif_per_lab[$labItem->id]->count() > 0)
                                             <div class="info-box" style="margin-top:1rem;">
-                                                <strong>⚠️ Jadwal Terpakai ({{ $peminjaman_aktif_per_lab[$labItem->id]->count() }} booking)</strong>
+                                                <strong> Jadwal Terpakai ({{ $peminjaman_aktif_per_lab[$labItem->id]->count() }} booking)</strong>
                                                 @foreach($peminjaman_aktif_per_lab[$labItem->id] as $aktif)
-                                                <p>👤 {{ $aktif->user_nama }} — 📅 {{ \Carbon\Carbon::parse($aktif->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($aktif->tanggal_selesai)->format('d M Y') }}, 🕐 {{ \Carbon\Carbon::parse($aktif->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($aktif->jam_selesai)->format('H:i') }}</p>
+                                                <p> {{ $aktif->user_nama }} —  {{ \Carbon\Carbon::parse($aktif->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($aktif->tanggal_selesai)->format('d M Y') }},  {{ \Carbon\Carbon::parse($aktif->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($aktif->jam_selesai)->format('H:i') }}</p>
                                                 @endforeach
                                             </div>
                                         @endif
@@ -150,7 +150,7 @@
                 <div class="card history-card">
                     <div class="card-body">
                         <div class="history-header">
-                            <div class="history-icon">🕒</div>
+                            
                             <h3>Riwayat Peminjaman</h3>
                         </div>
 
@@ -159,8 +159,8 @@
                                 <div class="history-item status-{{ $peminjaman->status }}">
                                     <div class="history-lab-name">{{ $peminjaman->daftarLab->Nama_Laboratorium ?? 'N/A' }}</div>
                                     <div class="history-meta">
-                                        <span>📅 {{ \Carbon\Carbon::parse($peminjaman->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($peminjaman->tanggal_selesai ?? $peminjaman->tanggal)->format('d M Y') }}</span>
-                                        <span>🕐 {{ \Carbon\Carbon::parse($peminjaman->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($peminjaman->jam_selesai)->format('H:i') }}</span>
+                                        <span> {{ \Carbon\Carbon::parse($peminjaman->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($peminjaman->tanggal_selesai ?? $peminjaman->tanggal)->format('d M Y') }}</span>
+                                        <span> {{ \Carbon\Carbon::parse($peminjaman->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($peminjaman->jam_selesai)->format('H:i') }}</span>
                                     </div>
                                     <div class="history-purpose">
                                         "{{ Str::limit($peminjaman->keperluan, 80) }}"
@@ -169,19 +169,19 @@
                                         @if($peminjaman->status === 'menunggu')
                                             ⏳ Menunggu Laboran
                                         @elseif($peminjaman->status === 'disetujui_laboran' || $peminjaman->status === 'menunggu_kepala_lab')
-                                            📋 Menunggu Kepala Lab
+                                             Menunggu Kepala Lab
                                         @elseif($peminjaman->status === 'disetujui')
-                                            ✅ Disetujui
+                                             Disetujui
                                         @elseif($peminjaman->status === 'dikembalikan')
-                                            📥 Dikembalikan
+                                             Dikembalikan
                                         @else
-                                            ❌ Ditolak
+                                             Ditolak
                                         @endif
                                     </span>
                                 </div>
                             @empty
                                 <div class="empty-history">
-                                    <div class="empty-history-icon">🗓️</div>
+                                    
                                     <p>Belum ada riwayat peminjaman</p>
                                 </div>
                             @endforelse
@@ -196,7 +196,7 @@
     <div id="modal-peminjaman" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2>📋 Form Peminjaman Ruangan</h2>
+                <h2> Form Peminjaman Ruangan</h2>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -214,33 +214,33 @@
 
                         <div class="date-range-group" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                             <div class="form-group">
-                                <label class="form-label" for="modal_tanggal">📅 Tanggal Mulai *</label>
+                                <label class="form-label" for="modal_tanggal"> Tanggal Mulai *</label>
                                 <input type="date" class="form-control" id="modal_tanggal" name="tanggal" required min="{{ date('Y-m-d') }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="modal_tanggal_selesai">📅 Tanggal Selesai *</label>
+                                <label class="form-label" for="modal_tanggal_selesai"> Tanggal Selesai *</label>
                                 <input type="date" class="form-control" id="modal_tanggal_selesai" name="tanggal_selesai" required min="{{ date('Y-m-d') }}">
                             </div>
                         </div>
 
                         <div class="time-group">
                             <div class="form-group">
-                                <label class="form-label" for="modal_jam_mulai">🕐 Jam Mulai *</label>
+                                <label class="form-label" for="modal_jam_mulai"> Jam Mulai *</label>
                                 <input type="time" class="form-control" id="modal_jam_mulai" name="jam_mulai" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="modal_jam_selesai">🕐 Jam Selesai *</label>
+                                <label class="form-label" for="modal_jam_selesai"> Jam Selesai *</label>
                                 <input type="time" class="form-control" id="modal_jam_selesai" name="jam_selesai" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="modal_keperluan">📝 Keperluan / Tujuan Penggunaan *</label>
+                            <label class="form-label" for="modal_keperluan"> Keperluan / Tujuan Penggunaan *</label>
                             <textarea class="form-control" id="modal_keperluan" name="keperluan" required placeholder="Jelaskan keperluan penggunaan ruangan laboratorium..." style="min-height:100px;resize:vertical;"></textarea>
                         </div>
 
                         <div class="info-box">
-                            <strong>📝 Catatan Penting:</strong>
+                            <strong> Catatan Penting:</strong>
                             <p>• Peminjaman ruangan harus diajukan minimal 1 hari sebelum penggunaan</p>
                             <p>• Pastikan ruangan dikembalikan dalam kondisi bersih dan rapi</p>
                             <p>• Jaga fasilitas laboratorium dengan baik</p>
@@ -359,7 +359,7 @@
         if (!jamMulaiInput.value || !jamSelesaiInput.value) return;
         const sameDate = tanggalMulaiInput && tanggalSelesaiInput && tanggalMulaiInput.value === tanggalSelesaiInput.value;
         if (sameDate && jamSelesaiInput.value < jamMulaiInput.value) {
-            alert('⚠️ Jam selesai tidak boleh lebih kecil dari jam mulai jika tanggal sama!');
+            alert(' Jam selesai tidak boleh lebih kecil dari jam mulai jika tanggal sama!');
             jamSelesaiInput.value = '';
         }
     };

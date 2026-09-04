@@ -70,10 +70,10 @@
                                     </label>
                                     <select name="status" class="form-control rounded-lg @error('status') is-invalid @enderror" required>
                                         <option value="publish" {{ old('status', $pengumuman->status) == 'publish' ? 'selected' : '' }}>
-                                            📢 Publish (Tampilkan ke publik)
+                                             Publish (Tampilkan ke publik)
                                         </option>
                                         <option value="draft" {{ old('status', $pengumuman->status) == 'draft' ? 'selected' : '' }}>
-                                            📝 Draft (Simpan sebagai arsip/draft)
+                                             Draft (Simpan sebagai arsip/draft)
                                         </option>
                                     </select>
                                     @error('status')

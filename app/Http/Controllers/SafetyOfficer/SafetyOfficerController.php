@@ -1,9 +1,5 @@
 <?php
 
-// ============================================================================
-// FILE: app/Http/Controllers/SafetyOfficer/SafetyOfficerController.php
-// ============================================================================
-
 namespace App\Http\Controllers\SafetyOfficer;
 
 use App\Http\Controllers\Controller;
@@ -26,10 +22,10 @@ class SafetyOfficerController extends Controller
     {
         $user = Auth::user();
 
-        // Satu Safety Officer untuk semua laboratorium
+        
         $labs = DaftarLab::orderBy('Nama_Laboratorium')->get();
 
-        // Statistik
+        
         $pending = RiskAssessment::where('status', 'menunggu_safety_officer')->count();
         $scheduled = RiskAssessment::where('safety_officer_id', $user->id)
             ->whereNotNull('jadwal_wawancara')
@@ -60,13 +56,13 @@ class SafetyOfficerController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // RA yang menunggu review
+        
         $riskAssessments = RiskAssessment::with(['user', 'daftarLab', 'dosenPembimbing'])
             ->where('status', 'menunggu_safety_officer')
             ->latest()
             ->paginate(10);
 
-        // Riwayat RA yang sudah di-review
+        
         $riwayat = RiskAssessment::with(['user', 'daftarLab', 'dosenPembimbing'])
             ->where('safety_officer_id', $user->id)
             ->whereNotIn('status', ['menunggu_safety_officer'])
@@ -106,13 +102,13 @@ class SafetyOfficerController extends Controller
     {
         $request->validate([
             'jadwal_wawancara' => 'required|date|after:yesterday',
-            'tempat_wawancara' => 'nullable|string|max:255', // BARU: validasi untuk tempat wawancara
+            'tempat_wawancara' => 'nullable|string|max:255', 
             'catatan' => 'nullable|string|max:1000',
         ], [
             'jadwal_wawancara.required' => 'Jadwal wawancara wajib diisi',
             'jadwal_wawancara.date' => 'Format jadwal tidak valid',
             'jadwal_wawancara.after' => 'Jadwal harus hari ini atau nanti',
-            'tempat_wawancara.max' => 'Tempat wawancara maksimal 255 karakter', // BARU
+            'tempat_wawancara.max' => 'Tempat wawancara maksimal 255 karakter', 
             'catatan.max' => 'Catatan maksimal 1000 karakter',
         ]);
 
@@ -127,11 +123,11 @@ class SafetyOfficerController extends Controller
             'safety_officer_nama' => Auth::user()->Nama,
             'nomor_identitas_safety_officer' => Auth::user()->nomor_identitas,
             'jadwal_wawancara' => $request->jadwal_wawancara,
-            'tempat_wawancara' => $request->tempat_wawancara, // BARU: simpan tempat wawancara
+            'tempat_wawancara' => $request->tempat_wawancara, 
             'catatan_safety_officer' => $request->catatan,
         ]);
 
-        // BARU: Log dengan info tempat jika ada
+        
         $logDescription = "Jadwal wawancara untuk RA ID: {$id} - {$riskAssessment->nama}";
         if ($request->tempat_wawancara) {
             $logDescription .= " di {$request->tempat_wawancara}";
@@ -169,7 +165,7 @@ class SafetyOfficerController extends Controller
 
         $disetujui = $request->persetujuan === 'setuju';
 
-        // Gunakan Transaction untuk memastikan data aman
+        
         DB::beginTransaction();
         try {
             $riskAssessment->update([
@@ -183,13 +179,13 @@ class SafetyOfficerController extends Controller
             ]);
 
             if ($disetujui) {
-                // KIRIM EMAIL KE MAHASISWA
+                
                 if ($riskAssessment->user && $riskAssessment->user->Email) {
                     \Mail::to($riskAssessment->user->Email)
                         ->send(new \App\Mail\RiskAssessmentMail($riskAssessment, 'approved_safety_officer'));
                 }
 
-                // AMBIL SEMUA USER DENGAN ROLE 'Kepala Lab'
+                
                 $kepalaLabs = \App\Models\DaftarUser::where('Role_User', 'Kepala Laboratorium')->get();
 
                 foreach ($kepalaLabs as $kalab) {
@@ -199,7 +195,7 @@ class SafetyOfficerController extends Controller
                 }
             }
             else {
-                // KIRIM EMAIL KE MAHASISWA JIKA DITOLAK
+                
                 if ($riskAssessment->user && $riskAssessment->user->Email) {
                     \Mail::to($riskAssessment->user->Email)
                         ->send(new \App\Mail\RiskAssessmentMail($riskAssessment, 'rejected_safety_officer'));
@@ -238,10 +234,10 @@ class SafetyOfficerController extends Controller
             'safety_officer_id' => Auth::user()->id,
             'safety_officer_nama' => Auth::user()->Nama,
             'catatan_safety_officer' => $request->catatan_revisi,
-            'status' => 'draft', // Kembalikan ke draft agar mahasiswa bisa edit
+            'status' => 'draft', 
         ]);
 
-        // Log aktivitas
+        
         ActivityLog::create([
             'user_name' => Auth::user()->Nama,
             'action' => 'Request Revisi Risk Assessment',
@@ -299,7 +295,7 @@ class SafetyOfficerController extends Controller
 
         $riskAssessment = RiskAssessment::findOrFail($id);
 
-        // Pastikan yang mengupdate adalah safety officer yang bersangkutan
+        
         if ($riskAssessment->safety_officer_id !== Auth::user()->id) {
             return back()->withErrors(['error' => 'Anda tidak memiliki akses untuk mengupdate jadwal ini.']);
         }
@@ -310,7 +306,7 @@ class SafetyOfficerController extends Controller
             'catatan_safety_officer' => $request->catatan,
         ]);
 
-        // Log aktivitas
+        
         $logDescription = "Update jadwal wawancara untuk RA ID: {$id} - {$riskAssessment->nama}";
         if ($request->tempat_wawancara) {
             $logDescription .= " di {$request->tempat_wawancara}";
@@ -328,9 +324,9 @@ class SafetyOfficerController extends Controller
             ->with('success', 'Jadwal wawancara berhasil diupdate.');
     }
 
-    // ========================================================================
-    // PENGUMUMAN SECTION
-    // ========================================================================
+    
+    
+    
 
     /**
      * Tampilkan daftar pengumuman
@@ -367,6 +363,7 @@ class SafetyOfficerController extends Controller
             'Phone' => 'required|string|max:20',
             'Email' => 'required|email|unique:daftar_users,Email,' . $user->id,
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ttd' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -377,22 +374,33 @@ class SafetyOfficerController extends Controller
                 'Email' => $request->Email,
             ];
 
-            // Upload foto jika ada
+            
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $filename = time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile'), $filename);
                 $data['foto'] = $filename;
 
-                // Hapus foto lama jika ada
+                
                 if ($user->foto && file_exists(public_path('uploads/profile/' . $user->foto))) {
                     unlink(public_path('uploads/profile/' . $user->foto));
                 }
             }
 
+            if ($request->hasFile('ttd')) {
+                $file = $request->file('ttd');
+                $filename = time() . '_ttd.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ttd'), $filename);
+                $data['ttd'] = $filename;
+
+                if ($user->ttd && file_exists(public_path('uploads/ttd/' . $user->ttd))) {
+                    unlink(public_path('uploads/ttd/' . $user->ttd));
+                }
+            }
+
             $user->update($data);
 
-            // Log aktivitas
+            
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Update Profil',
@@ -411,9 +419,9 @@ class SafetyOfficerController extends Controller
         }
     }
 
-    // ========================================================================
-    // NEW: INTERVIEW SCHEDULE OPTIONS METHODS
-    // ========================================================================
+    
+    
+    
 
     /**
      * Tampilkan form untuk membuat multiple jadwal wawancara options
@@ -423,7 +431,7 @@ class SafetyOfficerController extends Controller
         $riskAssessment = RiskAssessment::findOrFail($id);
         $user = Auth::user();
 
-        // Pastikan status masih menunggu safety officer
+        
         if ($riskAssessment->status !== 'menunggu_safety_officer') {
             return back()->withErrors(['error' => 'Risk Assessment sudah diproses.']);
         }
@@ -459,7 +467,7 @@ class SafetyOfficerController extends Controller
             return back()->withErrors(['error' => 'Risk Assessment sudah diproses.']);
         }
 
-        // Format schedule options
+        
         $scheduleOptions = [];
         foreach ($request->schedule_options as $option) {
             $scheduleOptions[] = [
@@ -470,7 +478,7 @@ class SafetyOfficerController extends Controller
             ];
         }
 
-        // Update Risk Assessment
+        
         $riskAssessment->update([
             'safety_officer_id' => Auth::user()->id,
             'safety_officer_nama' => Auth::user()->Nama,
@@ -479,7 +487,7 @@ class SafetyOfficerController extends Controller
             'catatan_safety_officer' => $request->catatan,
         ]);
 
-        // Log aktivitas
+        
         ActivityLog::create([
             'user_name' => Auth::user()->Nama,
             'action' => 'Membuat Opsi Jadwal Wawancara',
@@ -487,7 +495,7 @@ class SafetyOfficerController extends Controller
             'ip_address' => request()->ip(),
         ]);
 
-        // Kirim email ke mahasiswa dengan opsi jadwal
+        
         Mail::to($riskAssessment->user->Email)->send(new RiskAssessmentMail($riskAssessment, 'jadwal_options_so'));
 
         return redirect()
@@ -506,12 +514,12 @@ class SafetyOfficerController extends Controller
 
         $riskAssessment = RiskAssessment::findOrFail($id);
 
-        // Validasi bahwa user adalah mahasiswa yang membuat RA
+        
         if ($riskAssessment->user_id !== Auth::user()->id) {
             return back()->withErrors(['error' => 'Unauthorized']);
         }
 
-        // Validasi bahwa ada jadwal_wawancara_options
+        
         if (!$riskAssessment->jadwal_wawancara_options || empty($riskAssessment->jadwal_wawancara_options)) {
             return back()->withErrors(['schedule_index' => 'Belum ada opsi jadwal yang dibuat']);
         }
@@ -525,19 +533,19 @@ class SafetyOfficerController extends Controller
 
         $selectedSchedule = $options[$scheduleIndex];
 
-        // Gabungkan jadwal (tanggal) dengan waktu (jam) menjadi datetime lengkap
+        
         $jadwalLengkap = \Carbon\Carbon::createFromFormat('Y-m-d H:i',
             \Carbon\Carbon::parse($selectedSchedule['jadwal'])->format('Y-m-d') . ' ' . $selectedSchedule['waktu']
         );
 
-        // Update jadwal yang dipilih
+        
         $riskAssessment->update([
             'jadwal_wawancara' => $jadwalLengkap,
             'tempat_wawancara' => $selectedSchedule['tempat'],
             'jadwal_wawancara_dipilih_at' => now(),
         ]);
 
-        // Log aktivitas
+        
         ActivityLog::create([
             'user_name' => Auth::user()->Nama,
             'action' => 'Memilih Jadwal Wawancara',
@@ -545,7 +553,7 @@ class SafetyOfficerController extends Controller
             'ip_address' => request()->ip(),
         ]);
 
-        // Send email to Safety Officer (async - jangan block)
+        
         if ($riskAssessment->safetyOfficer && $riskAssessment->safetyOfficer->Email) {
             try {
                 Mail::to($riskAssessment->safetyOfficer->Email)
@@ -558,7 +566,7 @@ class SafetyOfficerController extends Controller
 
         return redirect()
             ->route('mahasiswa.risk-assessment.index')
-            ->with('success', '✅ Jadwal wawancara berhasil dipilih! Safety Officer telah diberitahu melalui email.');
+            ->with('success', ' Jadwal wawancara berhasil dipilih! Safety Officer telah diberitahu melalui email.');
     }
 
     /**
@@ -568,7 +576,7 @@ class SafetyOfficerController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil RA yang punya jadwal_wawancara_options namun belum dipilih
+        
         $pendingSchedules = RiskAssessment::where('user_id', $user->id)
             ->whereNotNull('jadwal_wawancara_options')
             ->whereNull('jadwal_wawancara_dipilih_at')

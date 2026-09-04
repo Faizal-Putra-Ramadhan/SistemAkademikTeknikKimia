@@ -89,7 +89,7 @@
     <!-- Data Table -->
     <div class="card">
         <div class="card-header">
-            <h3>📊 Data Risk Assessment</h3>
+            <h3> Data Risk Assessment</h3>
         </div>
         <div class="card-body">
             @if($riskAssessments->count() > 0)
@@ -122,7 +122,7 @@
                                     {{ $ra->topik_judul }}
                                 </div>
                             </td>
-                            <td>{{ $ra->daftarLab->nama_lab }}</td>
+                            <td>{{ $ra->daftarLab->Nama_Laboratorium }}</td>
                             <td>
                                 <span style="font-size: 0.85rem; color: #6b7280;">
                                     {{ $ra->jenis_ra }}
@@ -157,7 +157,7 @@
                             </td>
                             <td>
                                 <a href="{{ route('kepala-lab.risk-assessment.show', $ra->id) }}" class="btn btn-primary btn-sm">
-                                    👁️ Detail
+                                     Detail
                                 </a>
                             </td>
                         </tr>
@@ -172,7 +172,7 @@
             </div>
             @else
             <div class="empty-state">
-                <div class="empty-icon">📭</div>
+                <div class="empty-icon"></div>
                 <p style="font-size: 1.1rem; font-weight: 500;">Tidak ada data yang sesuai dengan filter</p>
                 <p style="margin-top: 0.5rem;">Coba ubah kriteria filter atau reset filter</p>
             </div>

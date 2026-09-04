@@ -87,7 +87,7 @@ class PenelitiEksternalController extends Controller
                 'Email' => $request->Email,
             ];
 
-            // Handle foto upload
+            
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $filename = time().'.'.$file->getClientOriginalExtension();
@@ -125,20 +125,20 @@ class PenelitiEksternalController extends Controller
             return back()->with('error', 'Lab belum memiliki grup stok. Hubungi admin untuk melengkapi data lantai dan jenis lab.');
         }
 
-        // Ambil SEMUA Risk Assessment yang disetujui (tidak difilter berdasarkan lab)
-        // karena peneliti eksternal bisa pinjam alat dari lab manapun
+        
+        
         $riskAssessments = RiskAssessment::where('user_id', $user->id)
             ->where('status', 'disetujui')
             ->get();
 
-        // Generate ID RA untuk yang belum punya
+        
         foreach ($riskAssessments as $ra) {
             if ($ra instanceof RiskAssessment && ! $ra->id_ra) {
                 $ra->generateIdRa();
             }
         }
 
-        // Pilih Risk Assessment utama untuk pesan (prioritaskan yang masih berlaku)
+        
         $validRiskAssessments = $riskAssessments->filter(function ($ra) {
             return $ra->isMasihBerlaku();
         });
@@ -146,7 +146,7 @@ class PenelitiEksternalController extends Controller
         $riskAssessment = $validRiskAssessments->sortByDesc('batas_waktu_peminjaman')->first()
             ?? $riskAssessments->sortByDesc('batas_waktu_peminjaman')->first();
 
-        // Validasi batas waktu peminjaman
+        
         $masihBerlaku = false;
         $pesanBatasWaktu = null;
         $sisaWaktu = null;
@@ -161,7 +161,7 @@ class PenelitiEksternalController extends Controller
             } else {
                 $sisaWaktu = $riskAssessment->getSisaWaktuPeminjaman();
 
-                // Warning jika hampir expired (kurang dari 30 hari)
+                
                 if ($riskAssessment->isHampirExpired()) {
                     $pesanBatasWaktu = 'Perhatian: Batas waktu pengajuan peminjaman akan berakhir dalam '.$sisaWaktu
                         .'. Segera ajukan peminjaman jika Anda membutuhkan alat.';
@@ -172,7 +172,7 @@ class PenelitiEksternalController extends Controller
                 .'Silakan buat Risk Assessment terlebih dahulu sebelum mengajukan peminjaman alat.';
         }
 
-        // Get peminjaman history
+        
         $peminjaman_alats = PeminjamanAlat::with('alatLab', 'riskAssessment', 'daftarLab')
             ->where('user_nama', $user->Nama)
             ->latest()
@@ -198,7 +198,7 @@ class PenelitiEksternalController extends Controller
     {
         $user = Auth::user();
 
-        // VALIDASI 1: Validasi input form (termasuk risk_assessment_id)
+        
         $request->validate([
             'risk_assessment_id' => 'required|exists:risk_assessments,id',
             'alat_lab_id' => 'required|exists:alat_labs,id',
@@ -218,7 +218,7 @@ class PenelitiEksternalController extends Controller
             'tanggal_kembali.after_or_equal' => 'Tanggal kembali harus setelah atau sama dengan tanggal pinjam',
         ]);
 
-        // VALIDASI 2: Cek Risk Assessment (bisa dari lab manapun)
+        
         $riskAssessment = RiskAssessment::where('id', $request->risk_assessment_id)
             ->where('user_id', $user->id)
             ->where('status', 'disetujui')
@@ -230,7 +230,7 @@ class PenelitiEksternalController extends Controller
             );
         }
 
-        // VALIDASI 3: Cek batas waktu PENGAJUAN peminjaman
+        
         if (! $riskAssessment->isMasihBerlaku()) {
             return back()->with('error',
                 'Maaf, batas waktu untuk PENGAJUAN peminjaman alat sudah berakhir ('
@@ -239,7 +239,7 @@ class PenelitiEksternalController extends Controller
             );
         }
 
-        // VALIDASI 3B: Cek deadline peminjaman (batas_waktu_peminjaman)
+        
         if ($riskAssessment->batas_waktu_peminjaman &&
             Carbon::parse($riskAssessment->batas_waktu_peminjaman)->isPast()) {
             return back()->with('error',
@@ -260,7 +260,7 @@ class PenelitiEksternalController extends Controller
             return back()->with('error', 'Alat tidak valid untuk grup stok laboratorium ini.');
         }
 
-        // VALIDASI 4: Cek ketersediaan stok
+        
         if ($alat->jumlah_tersedia <= 0) {
             return back()->with('error',
                 'Maaf, alat "'.$alat->nama_alat.'" sedang tidak tersedia (stok habis)!'
@@ -269,7 +269,7 @@ class PenelitiEksternalController extends Controller
 
         DB::beginTransaction();
         try {
-            // ✅ DEACTIVATE BEBAS LAB - Hanya deactivate bebas lab untuk RA yang sama
+            
             $activeBebasLabs = BebasLabRequest::where('user_id', $user->id)
                 ->where('risk_assessment_id', $request->risk_assessment_id)
                 ->where('is_active', true)
@@ -290,7 +290,7 @@ class PenelitiEksternalController extends Controller
                 'status' => 'menunggu',
             ]);
 
-            // Catat ke aktivitas
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $user->Nama,
                 'daftar_lab_id' => $id,
@@ -302,7 +302,7 @@ class PenelitiEksternalController extends Controller
 
             $lab = DaftarLab::findOrFail($id);
 
-            // Cari laboran untuk lab ini (mendukung multi-role)
+            
             $laborans = DaftarUser::withLaboranRole()
                 ->whereHas('laborans', function ($q) use ($lab) {
                     $q->where('Laboratorium', $lab->Nama_Laboratorium);
@@ -349,17 +349,17 @@ class PenelitiEksternalController extends Controller
 
         $peminjaman = PeminjamanAlat::findOrFail($id);
 
-        // Validasi: hanya peminjam yang bisa mengajukan pengembalian
+        
         if ($peminjaman->user_nama !== $user->Nama) {
             return back()->with('error', 'Anda tidak berhak mengajukan pengembalian untuk peminjaman ini.');
         }
 
-        // Validasi: peminjaman harus sudah disetujui
+        
         if ($peminjaman->status !== 'disetujui') {
             return back()->with('error', 'Hanya peminjaman yang sudah disetujui yang bisa dikembalikan.');
         }
 
-        // Validasi: belum pernah mengajukan pengembalian
+        
         if ($peminjaman->pengajuan_pengembalian) {
             return back()->with('error', 'Anda sudah mengajukan pengembalian untuk alat ini.');
         }
@@ -374,7 +374,7 @@ class PenelitiEksternalController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update data pengajuan pengembalian
+            
             $peminjaman->update([
                 'pengajuan_pengembalian' => true,
                 'tanggal_pengajuan_pengembalian' => now(),
@@ -382,7 +382,7 @@ class PenelitiEksternalController extends Controller
                 'kondisi_barang' => $request->kondisi_barang,
             ]);
 
-            // Catat ke aktivitas mahasiswa
+            
             AktivitasMahasiswa::create([
                 'user_nama' => $user->Nama,
                 'daftar_lab_id' => $peminjaman->alatLab->daftar_lab_id,
@@ -418,7 +418,7 @@ class PenelitiEksternalController extends Controller
         $labs = DaftarLab::penelitian()->get();
 
         if (! $lab) {
-            // Lab tidak ditemukan, tampilkan view dengan pesan user-friendly
+            
             return view('peneliti-eksternal.aktivitas', [
                 'lab' => null,
                 'user' => $user,
@@ -467,7 +467,7 @@ class PenelitiEksternalController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::penelitian()->get();
 
-        // Determine which RA IDs should be excluded from the bebas lab dropdown
+        
         $allBebasLabRaIds = BebasLabRequest::where('user_id', $user->id)
             ->pluck('risk_assessment_id')
             ->unique()
@@ -498,28 +498,28 @@ class PenelitiEksternalController extends Controller
             }
         }
 
-        // Get approved risk assessments (exclude filtered RAs)
+        
         $riskAssessments = RiskAssessment::where('user_id', $user->id)
             ->where('status', 'disetujui')
             ->whereNotIn('id', $excludeRaIds)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Ambil SEMUA bebas lab aktif (bisa lebih dari 1, satu per RA)
+        
         $bebasLabRequests = BebasLabRequest::with(['approvals.lab', 'riskAssessment.daftarLab'])
             ->where('user_id', $user->id)
             ->where('is_active', true)
             ->latest()
             ->get();
 
-        // Auto-deactivate yang sudah disetujui tapi ada peminjaman aktif
+        
         foreach ($bebasLabRequests as $key => $blr) {
             if ($blr->status === 'disetujui' && $blr->hasPeminjamanAktif()) {
                 $blr->deactivate();
                 $bebasLabRequests->forget($key);
             }
         }
-        $bebasLabRequests = $bebasLabRequests->values(); // re-index
+        $bebasLabRequests = $bebasLabRequests->values(); 
 
         $peminjamanAlats = PeminjamanAlat::with('alatLab.daftarLab')
             ->where('user_nama', $user->Nama)
@@ -542,19 +542,19 @@ class PenelitiEksternalController extends Controller
     {
         $user = Auth::user();
 
-        // Validate risk assessment
+        
         $request->validate([
             'risk_assessment_id' => 'required|integer|exists:risk_assessments,id',
         ]);
 
         $riskAssessment = RiskAssessment::findOrFail($request->risk_assessment_id);
 
-        // Make sure the RA belongs to this user and is approved
+        
         if ($riskAssessment->user_id !== $user->id || $riskAssessment->status !== 'disetujui') {
             return redirect()->back()->with('error', 'Risk Assessment tidak valid atau belum disetujui.');
         }
 
-        // Cek apakah sudah ada bebas lab AKTIF untuk RA ini
+        
         $existingActive = BebasLabRequest::where('user_id', $user->id)
             ->where('risk_assessment_id', $request->risk_assessment_id)
             ->where('is_active', true)
@@ -564,7 +564,7 @@ class PenelitiEksternalController extends Controller
             return redirect()->back()->with('error', 'Risk Assessment ini sudah memiliki pengajuan Bebas Lab yang masih aktif.');
         }
 
-        // Hitung periode (jumlah pengajuan sebelumnya + 1)
+        
         $previousCount = BebasLabRequest::where('user_id', $user->id)
             ->where('risk_assessment_id', $request->risk_assessment_id)
             ->count();
@@ -581,9 +581,9 @@ class PenelitiEksternalController extends Controller
 
         $laborans = DaftarLaboranLaboratorium::with(['laboratoriums', 'daftarLab'])->get();
 
-        // Buat approval untuk setiap pasangan (laboran, lab)
+        
         foreach ($laborans as $laboran) {
-            // Skema baru: banyak lab via pivot `laboratoriums`
+            
             if ($laboran->laboratoriums && $laboran->laboratoriums->isNotEmpty()) {
                 foreach ($laboran->laboratoriums as $lab) {
                     BebasLabApproval::create([
@@ -595,7 +595,7 @@ class PenelitiEksternalController extends Controller
                     ]);
                 }
             }
-            // Backward compatibility: skema lama 1 laboran = 1 lab via kolom `Laboratorium`
+            
             elseif ($laboran->daftarLab) {
                 BebasLabApproval::create([
                     'bebas_lab_request_id' => $bebasLabRequest->id,
@@ -627,17 +627,17 @@ class PenelitiEksternalController extends Controller
             ->where('user_id', $user->id)
             ->findOrFail($id);
 
-        // Cek apakah SEMUA laboran sudah menyetujui
+        
         if (! $bebasLabRequest->isFullyApproved()) {
             return redirect()->back()->with('error', 'Pengajuan Bebas Lab belum disetujui oleh semua laboran.');
         }
 
-        // Cek apakah bebas lab masih aktif dan berlaku
+        
         if (! $bebasLabRequest->is_active || ! $bebasLabRequest->isMasihBerlaku()) {
             return redirect()->back()->with('error', 'Bebas Lab Anda sudah tidak aktif atau masa berlakunya habis. Silakan ajukan ulang.');
         }
 
-        // Cek apakah ada peminjaman aktif
+        
         if ($bebasLabRequest->hasPeminjamanAktif()) {
             return redirect()->back()->with('error', 'Anda memiliki peminjaman aktif. Bebas Lab harus diajukan ulang setelah peminjaman selesai.');
         }
@@ -647,19 +647,19 @@ class PenelitiEksternalController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Path template
+        
         $templatePath = storage_path('app/templates/bebas_lab.docx');
 
         App::setLocale('id');
         Carbon::setLocale('id');
         Carbon::setLocale('id');
-        // Load template
+        
         $phpWord = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
 
         $current_time = Carbon::now('Asia/Jakarta')->translatedFormat(('d F Y'));
         $formatDate = fn ($value) => $value ? Carbon::parse($value)->translatedFormat('d F Y') : '-';
 
-        // Isi nilai
+        
         $phpWord->setValues([
             'NAMA_MAHASISWA' => $bebasLabRequest->user_nama,
             'NIM' => $bebasLabRequest->user?->Nomor_Identitas ?? '-',
@@ -668,38 +668,38 @@ class PenelitiEksternalController extends Controller
 
         ]);
 
-        // Tabel Lab, Laboran, dan Persetujuan - Dinamis dengan Nomor
-        // Template Word: Buat 1 baris dengan 4 kolom berisi: ${NOMOR} | ${LAB_NAME} | ${LABORAN_NAME} | ${PERSETUJUAN}
+        
+        
         $approvals = $bebasLabRequest->approvals;
 
         if ($approvals->isEmpty()) {
-            // Jika tidak ada data approval - set nilai default
+            
             $phpWord->setValue('NOMOR', '-');
             $phpWord->setValue('LAB_NAME', '-');
             $phpWord->setValue('LABORAN_NAME', '-');
             $phpWord->setValue('PERSETUJUAN', '-');
         } else {
-            // Clone baris berdasarkan NOMOR untuk memastikan nomor urut ter-clone juga
+            
             $phpWord->cloneRow('NOMOR', $approvals->count());
 
             foreach ($approvals as $index => $approval) {
-                $rowNumber = $index + 1; // 1, 2, 3, dst
+                $rowNumber = $index + 1; 
 
                 Log::info("Setting row {$rowNumber}");
 
-                // Nomor urut - PENTING: set sebagai string
+                
                 $phpWord->setValue('NOMOR#'.$rowNumber, (string) $rowNumber);
 
-                // Nama Lab
+                
                 $phpWord->setValue('LAB_NAME#'.$rowNumber, $approval->lab->Nama_Laboratorium ?? '-');
 
-                // Nama Laboran
+                
                 $phpWord->setValue('LABORAN_NAME#'.$rowNumber, $approval->laboran_nama ?? '-');
 
-                // Status Persetujuan dengan tanggal
+                
                 if ($approval->status === 'disetujui') {
                     $tanggal = $approval->approved_at ? $approval->approved_at->format('d/m/Y') : '';
-                    $persetujuan = '✓ Disetujui'.($tanggal ? " ({$tanggal})" : '');
+                    $persetujuan = ' Disetujui'.($tanggal ? " ({$tanggal})" : '');
                 } else {
                     $persetujuan = 'Menunggu';
                 }
@@ -709,7 +709,7 @@ class PenelitiEksternalController extends Controller
             }
         }
 
-        // Kepala lab - dengan logging detail (mendukung multi-role)
+        
         $kepalaLabs = DaftarUser::where(function ($query) {
             $query->where('Role_User', 'Kepala Laboratorium')
                 ->orWhereHas('roles', fn ($q) => $q->where('name', 'Kepala Laboratorium'));
@@ -719,13 +719,13 @@ class PenelitiEksternalController extends Controller
         Log::info('Jumlah Kepala Lab ditemukan: '.$kepalaLabs->count());
 
         if ($kepalaLabs->count() === 0) {
-            // Coba cari dengan role lain jika tidak ketemu
+            
             Log::warning('Tidak ada Kepala Laboratorium, coba cek semua role:');
             $allRoles = DaftarUser::select('Role_User')->distinct()->get();
             Log::info('Semua Role yang ada: '.json_encode($allRoles->pluck('Role')));
         }
 
-        // Set nilai untuk KEPALA_LAB_1 dan KEPALA_LAB_2
+        
         for ($i = 1; $i <= 2; $i++) {
             if ($kepalaLabs->count() >= $i) {
                 $kepalaLab = $kepalaLabs[$i - 1];
@@ -740,7 +740,7 @@ class PenelitiEksternalController extends Controller
                 Log::info("KEPALA_LAB_{$i} = {$nama}");
                 Log::info("NO_IDENTITAS_{$i} = {$noIdentitas}");
             } else {
-                // Jika tidak ada data, set dengan tanda strip
+                
                 $phpWord->setValue('KEPALA_LAB_'.$i, '-');
                 $phpWord->setValue('NO_IDENTITAS_'.$i, '-');
                 $phpWord->setValue('PERSETUJUAN_KEPALA_LAB_'.$i, '-');
@@ -748,15 +748,15 @@ class PenelitiEksternalController extends Controller
             }
         }
 
-        // Nama file final
+        
         $fileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.docx';
 
-        // Simpan sementara di storage
+        
         $savePath = storage_path('app/public/'.$fileName);
 
         $phpWord->saveAs($savePath);
 
-        // Download lalu hapus setelah terkirim
+        
         return response()->download($savePath)->deleteFileAfterSend(true);
     }
 

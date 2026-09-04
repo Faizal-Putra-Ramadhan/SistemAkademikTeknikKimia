@@ -33,7 +33,7 @@
     <div class="form-container">
         <div class="card">
             <div class="card-body">
-                <h2 style="margin-bottom: 0.5rem;">📢 Buat Pengumuman Baru</h2>
+                <h2 style="margin-bottom: 0.5rem;"> Buat Pengumuman Baru</h2>
                 <p class="subtitle">Buat pengumuman untuk mahasiswa dan pengguna laboratorium</p>
 
                 @if($errors->any())

@@ -302,7 +302,7 @@
                 <div>
                     <div class="form-card">
                         <div class="form-header">
-                            <div class="form-icon">🔬</div>
+                            <div class="form-icon"></div>
                             <div class="form-header-text">
                                 <h2>Ajukan Penelitian Baru</h2>
                                 <p>Lengkapi formulir di bawah untuk mengajukan penelitian</p>
@@ -311,7 +311,7 @@
 
                         <!-- Lab Selection -->
                         <div class="lab-selection-card">
-                            <h3>📍 Pilih Laboratorium</h3>
+                            <h3> Pilih Laboratorium</h3>
                             <select id="lab_select" onchange="selectLab()" required>
                                 <option value="">-- Pilih Laboratorium untuk Penelitian --</option>
                                 @foreach($labs as $labItem)
@@ -332,7 +332,7 @@
                                 <!-- Info Box -->
                                 <div class="info-box">
                                     <div class="info-box-title">
-                                        <span>ℹ️</span>
+                                        <span>ℹ</span>
                                         <span>Informasi Penting</span>
                                     </div>
                                     <div class="info-box-content">
@@ -347,7 +347,7 @@
                                 <!-- Judul Penelitian -->
                                 <div class="form-group">
                                     <label class="form-label">
-                                        <span>📝</span>
+                                        <span></span>
                                         <span>Judul Penelitian <span class="required">*</span></span>
                                     </label>
                                     <input type="text" 
@@ -360,7 +360,7 @@
                                 <!-- Deskripsi -->
                                 <div class="form-group">
                                     <label class="form-label">
-                                        <span>📄</span>
+                                        <span></span>
                                         <span>Deskripsi Penelitian <span class="required">*</span></span>
                                     </label>
                                     <textarea name="deskripsi" 
@@ -373,7 +373,7 @@
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label class="form-label">
-                                            <span>📅</span>
+                                            <span></span>
                                             <span>Tanggal Mulai <span class="required">*</span></span>
                                         </label>
                                         <input type="date" 
@@ -385,7 +385,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">
-                                            <span>📅</span>
+                                            <span></span>
                                             <span>Tanggal Selesai <span class="required">*</span></span>
                                         </label>
                                         <input type="date" 
@@ -399,7 +399,7 @@
                                 <!-- Dosen Pembimbing -->
                                 <div class="form-group">
                                     <label class="form-label">
-                                        <span>👨‍🏫</span>
+                                        <span>‍</span>
                                         <span>Dosen Pembimbing <span class="required">*</span></span>
                                     </label>
                                     <select name="dosen_pembimbing" class="form-select" required>
@@ -420,7 +420,7 @@
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="btn-submit">
-                                    🚀 Ajukan Penelitian
+                                     Ajukan Penelitian
                                 </button>
                             </form>
                         </div>
@@ -431,7 +431,7 @@
                 <div>
                     <div class="history-card">
                         <div class="history-header">
-                            <div class="history-icon">📋</div>
+                            
                             <h3>Riwayat Pengajuan</h3>
                         </div>
 
@@ -440,23 +440,23 @@
                                 <div class="history-item status-{{ $penelitian->status }}">
                                     <div class="history-title">{{ $penelitian->judul_penelitian }}</div>
                                     <div class="history-meta">
-                                        <span>🏢 {{ $penelitian->daftarLab->Nama_Laboratorium ?? 'N/A' }}</span>
-                                        <span>👨‍🏫 {{ $penelitian->dosen_pembimbing }}</span>
-                                        <span>📅 {{ \Carbon\Carbon::parse($penelitian->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($penelitian->tanggal_selesai)->format('d M Y') }}</span>
+                                        <span> {{ $penelitian->daftarLab->Nama_Laboratorium ?? 'N/A' }}</span>
+                                        <span>‍ {{ $penelitian->dosen_pembimbing }}</span>
+                                        <span> {{ \Carbon\Carbon::parse($penelitian->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($penelitian->tanggal_selesai)->format('d M Y') }}</span>
                                     </div>
                                     <span class="history-status status-{{ $penelitian->status }}">
                                         @if($penelitian->status === 'menunggu')
                                             ⏳ Menunggu Persetujuan
                                         @elseif($penelitian->status === 'disetujui')
-                                            ✅ Disetujui
+                                             Disetujui
                                         @else
-                                            ❌ Ditolak
+                                             Ditolak
                                         @endif
                                     </span>
                                 </div>
                             @empty
                                 <div class="empty-history">
-                                    <div class="empty-history-icon">📭</div>
+                                    
                                     <p>Belum ada pengajuan penelitian</p>
                                 </div>
                             @endforelse
@@ -508,7 +508,7 @@
         const tanggalSelesai = this.value;
         
         if (tanggalMulai && tanggalSelesai < tanggalMulai) {
-            alert('⚠️ Tanggal selesai harus lebih besar dari tanggal mulai!');
+            alert(' Tanggal selesai harus lebih besar dari tanggal mulai!');
             this.value = '';
         }
     });

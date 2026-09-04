@@ -10,16 +10,8 @@
         {{ $lab->Nama_Laboratorium }}
     </h2>
 
-    @if(session('success'))
-        <div style="background:#d4edda; color:#155724; padding:18px; border-radius:16px; text-align:center; margin-bottom:30px; font-weight:600;">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div style="background:#f8d7da; color:#721c24; padding:18px; border-radius:16px; text-align:center; margin-bottom:30px; font-weight:600;">
-            {{ session('error') }}
-        </div>
-    @endif
+    
+    
 
     <div class="card" style="background:white; border-radius:24px; padding:40px; box-shadow:0 10px 40px rgba(0,0,0,0.1);">
         <form action="{{ route('mahasiswa.pinjam-ruangan.store', $lab->id) }}" method="POST">

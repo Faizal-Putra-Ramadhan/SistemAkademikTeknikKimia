@@ -44,6 +44,11 @@ class PeminjamanRuangan extends Model
         'tanggal_kembali' => 'datetime',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(DaftarUser::class, 'user_id');
+    }
+
     public function daftarLab()
     {
         return $this->belongsTo(DaftarLab::class , 'daftar_lab_id');

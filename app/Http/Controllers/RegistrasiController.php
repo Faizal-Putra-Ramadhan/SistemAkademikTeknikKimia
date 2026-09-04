@@ -1,6 +1,6 @@
 <?php
 
-// app/Http/Controllers/RegistrasiController.php
+
 
 namespace App\Http\Controllers;
 
@@ -21,7 +21,7 @@ class RegistrasiController extends Controller
      */
     public function index()
     {
-        // Statistik dinamis
+        
         $stats = [
             'mahasiswa' => \App\Models\DaftarUser::where('Role_User', 'Mahasiswa')->count(),
             'alat_lab' => \App\Models\AlatLab::count(),
@@ -36,11 +36,7 @@ class RegistrasiController extends Controller
      */
     private function validateUADEmail($email)
     {
-        // Pattern: YYXXXPPNNN@webmail.uad.ac.id
-        // YY = Angkatan (2 digit)
-        // XXX = Jenis mahasiswa (000 = reguler)
-        // PP = Kode Prodi (18 = Teknik Kimia)
-        // NNN = Nomor mahasiswa (3 digit)
+        
 
         $pattern = '/^(\d{2})(\d{3})(18)(\d{3})@webmail\.uad\.ac\.id$/';
 
@@ -56,7 +52,7 @@ class RegistrasiController extends Controller
         $kodeProdi = $matches[3];
         $nomorMahasiswa = $matches[4];
 
-        // Validasi kode prodi harus 18 (Teknik Kimia)
+        
         if ($kodeProdi !== '18') {
             return [
                 'valid' => false,
@@ -64,7 +60,7 @@ class RegistrasiController extends Controller
             ];
         }
 
-        // Validasi angkatan (harus >= 20 dan <= tahun sekarang)
+        
         $currentYear = (int) date('y');
         $angkatanInt = (int) $angkatan;
 
@@ -89,7 +85,7 @@ class RegistrasiController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input dasar
+        
         $request->validate([
             'nama' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
@@ -103,7 +99,7 @@ class RegistrasiController extends Controller
             'password.min' => 'Password minimal 8 karakter',
         ]);
 
-        // Validasi email UAD Teknik Kimia
+        
         $emailValidation = $this->validateUADEmail($request->email);
 
         if (! $emailValidation['valid']) {
@@ -112,51 +108,51 @@ class RegistrasiController extends Controller
                 ->withErrors(['email' => $emailValidation['message']]);
         }
 
-        // Cek apakah email sudah terdaftar
+        
         if (DaftarUser::where('Email', $request->email)->exists()) {
             return back()
                 ->withInput()
                 ->withErrors(['email' => 'Email sudah terdaftar. Silakan login atau gunakan email lain.']);
         }
 
-        // Cek apakah ada pending registration untuk email ini
+        
         $existingPending = PendingRegistration::where('email', $request->email)->first();
 
         if ($existingPending) {
-            // Jika sudah verified tapi belum dipindahkan, hapus dulu
+            
             if ($existingPending->is_verified) {
                 $existingPending->delete();
             }
-            // Jika belum verified dan token masih valid
+            
             elseif ($existingPending->token_expires_at > Carbon::now()) {
                 return back()
                     ->withInput()
                     ->withErrors(['email' => 'Email sedang menunggu verifikasi. Silakan cek inbox Anda atau tunggu hingga token kadaluarsa.']);
             }
-            // Jika token sudah expired, hapus dan buat baru
+            
             else {
                 $existingPending->delete();
             }
         }
 
-        // Generate verification token
+        
         $verificationToken = Str::random(64);
 
-        // Create pending registration
+        
         $pending = PendingRegistration::create([
             'nama' => $request->nama,
             'phone' => $request->phone,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'verification_token' => $verificationToken,
-            'token_expires_at' => Carbon::now()->addHours(24), // Token berlaku 24 jam
+            'token_expires_at' => Carbon::now()->addHours(24), 
             'is_verified' => false,
         ]);
 
-        // Generate verification URL
+        
         $verificationUrl = route('registrasi.verify', ['token' => $verificationToken]);
 
-        // Send verification email
+        
         try {
             Mail::to($request->email)->send(new VerificationEmail($request->nama, $verificationUrl));
 
@@ -164,7 +160,7 @@ class RegistrasiController extends Controller
                 ->with('email', $request->email)
                 ->with('success', 'Registrasi berhasil! Silakan cek email Anda untuk verifikasi.');
         } catch (\Exception $e) {
-            // Jika gagal kirim email, hapus pending registration
+            
             $pending->delete();
 
             return back()
@@ -190,10 +186,10 @@ class RegistrasiController extends Controller
      */
     public function verify($token)
     {
-        // Cari pending registration berdasarkan token
+        
         $pending = PendingRegistration::where('verification_token', $token)->first();
 
-        // Validasi token
+        
         if (! $pending) {
             return redirect()->route('login')
                 ->with('error', 'Token verifikasi tidak valid.');
@@ -209,7 +205,7 @@ class RegistrasiController extends Controller
                 ->with('error', 'Token verifikasi sudah kadaluarsa. Silakan daftar ulang.');
         }
 
-        // Validasi ulang email (double check)
+        
         $emailValidation = $this->validateUADEmail($pending->email);
         if (! $emailValidation['valid']) {
             $pending->delete();
@@ -218,25 +214,25 @@ class RegistrasiController extends Controller
                 ->with('error', 'Email tidak valid untuk registrasi.');
         }
 
-        // Generate UserID untuk Mahasiswa dengan format berdasarkan email
+        
         $userID = $this->generateMahasiswaUserID($pending->email, $emailValidation);
 
-        // Create user di database utama
+        
         try {
             $user = DaftarUser::create([
                 'Nama' => $pending->nama,
                 'Phone' => $pending->phone,
                 'Email' => $pending->email,
                 'UserID' => $userID,
-                'Password' => $pending->password, // Already hashed
+                'Password' => $pending->password, 
                 'Role_User' => 'Mahasiswa',
                 'foto' => null,
             ]);
 
-            // Mark pending as verified
+            
             $pending->update(['is_verified' => true]);
 
-            // Log aktivitas
+            
             ActivityLog::create([
                 'user_name' => 'System',
                 'action' => 'Registrasi Mahasiswa',
@@ -244,7 +240,7 @@ class RegistrasiController extends Controller
                 'ip_address' => request()->ip(),
             ]);
 
-            // Redirect ke halaman sukses dengan UserID
+            
             return redirect()->route('registrasi.success')
                 ->with('userID', $userID)
                 ->with('nama', $pending->nama)
@@ -278,7 +274,7 @@ class RegistrasiController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Validasi email UAD Teknik Kimia
+        
         $emailValidation = $this->validateUADEmail($request->email);
 
         if (! $emailValidation['valid']) {
@@ -293,17 +289,17 @@ class RegistrasiController extends Controller
             return back()->with('error', 'Email tidak ditemukan atau sudah diverifikasi.');
         }
 
-        // Update token dan expiry time
+        
         $verificationToken = Str::random(64);
         $pending->update([
             'verification_token' => $verificationToken,
             'token_expires_at' => Carbon::now()->addHours(24),
         ]);
 
-        // Generate verification URL
+        
         $verificationUrl = route('registrasi.verify', ['token' => $verificationToken]);
 
-        // Resend email
+        
         try {
             Mail::to($pending->email)->send(new VerificationEmail($pending->nama, $verificationUrl));
 
@@ -318,14 +314,14 @@ class RegistrasiController extends Controller
      */
     private function generateMahasiswaUserID($email, $emailData)
     {
-        // Format: TEKIM-ANGKATAN-NOMORURUT
-        // Contoh: TEKIM-23-199
+        
+        
         $angkatan = $emailData['angkatan'];
         $nomorMahasiswa = $emailData['nomor_mahasiswa'];
 
         $userID = "TEKIM-{$angkatan}-{$nomorMahasiswa}";
 
-        // Jika sudah ada, tambahkan suffix
+        
         $suffix = 1;
         $originalUserID = $userID;
         while (DaftarUser::where('UserID', $userID)->exists()) {

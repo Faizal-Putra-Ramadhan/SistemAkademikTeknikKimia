@@ -28,7 +28,7 @@ class CheckSecurePassword
         if ($request->has('password')) {
             $password = $request->input('password');
 
-            // Check password complexity
+            
             $validator = Validator::make(['password' => $password], [
                 'password' => [
                     'required',
@@ -46,14 +46,14 @@ class CheckSecurePassword
                     ->withInput($request->except('password', 'password_confirmation'));
             }
 
-            // Check common passwords
+            
             if (in_array(strtolower($password), $this->commonPasswords)) {
                 return redirect()->back()
                     ->withErrors(['password' => 'Password terlalu umum. Pilih password yang lebih kuat.'])
                     ->withInput($request->except('password', 'password_confirmation'));
             }
 
-            // Check if password contains username/email
+            
             if ($request->has('email')) {
                 $emailPrefix = explode('@', $request->input('email'))[0];
                 if (stripos($password, $emailPrefix) !== false) {

@@ -2,7 +2,7 @@
 <div id="modalPengembalianRuangan" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">
-            <h2>🏢 Ajukan Pengembalian Ruangan</h2>
+            <h2> Ajukan Pengembalian Ruangan</h2>
             <button class="modal-close" onclick="closePengembalianRuanganModal()">&times;</button>
         </div>
         <div class="modal-body">
@@ -19,9 +19,9 @@
                     </label>
                     <select id="kondisi_ruangan" name="kondisi_ruangan" required>
                         <option value="">-- Pilih Kondisi --</option>
-                        <option value="baik">✅ Baik (Bersih dan rapi)</option>
-                        <option value="perlu pembersihan">🧹 Perlu Pembersihan</option>
-                        <option value="rusak">❌ Ada Kerusakan</option>
+                        <option value="baik"> Baik (Bersih dan rapi)</option>
+                        <option value="perlu pembersihan"> Perlu Pembersihan</option>
+                        <option value="rusak"> Ada Kerusakan</option>
                     </select>
                 </div>
 
@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="alert alert-info" style="background: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 5px; margin-top: 1rem;">
-                    <strong>ℹ️ Perhatian:</strong>
+                    <strong>ℹ Perhatian:</strong>
                     <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
                         <li>Pastikan ruangan dalam kondisi bersih dan rapi</li>
                         <li>Matikan semua peralatan elektronik</li>
@@ -51,7 +51,7 @@
                         Batal
                     </button>
                     <button type="submit" class="btn" style="background: #17a2b8; color: white;">
-                        🏢 Ajukan Pengembalian
+                         Ajukan Pengembalian
                     </button>
                 </div>
             </form>
@@ -69,7 +69,7 @@ function openPengembalianRuanganModal(peminjamanId, namaRuangan, tanggalMulai, t
     document.getElementById('pengembalianRuanganInfo').innerHTML = `
         <h3 style="color: #17a2b8;">${namaRuangan}</h3>
         <p><strong>Periode Peminjaman:</strong></p>
-        <p>📅 ${tanggalMulai} s/d ${tanggalSelesai}</p>
+        <p> ${tanggalMulai} s/d ${tanggalSelesai}</p>
         <p style="color: #666; margin-top: 0.5rem;">
             Silakan isi formulir di bawah untuk mengajukan pengembalian ruangan ini.
         </p>

@@ -247,13 +247,9 @@
             <a href="{{ route('peneliti-eksternal.dashboard') }}" class="profile-back">← Kembali ke Dashboard</a>
         </div>
 
-        @if(session('success'))
-            <div class="profile-alert success">{{ session('success') }}</div>
-        @endif
+        
 
-        @if(session('error'))
-            <div class="profile-alert error">{{ session('error') }}</div>
-        @endif
+        
 
         <div class="profile-shell">
             <div class="profile-hero">
@@ -261,7 +257,7 @@
                     @if($user->foto)
                         <img src="{{ asset('uploads/profile/' . $user->foto) }}" alt="Foto Profil">
                     @else
-                        👨‍🏫
+                        ‍
                     @endif
                 </div>
                 <div>

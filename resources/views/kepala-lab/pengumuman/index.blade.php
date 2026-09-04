@@ -79,8 +79,8 @@
                 <div class="pengumuman-title">
                     <h3>{{ $item->judul }}</h3>
                     <div class="pengumuman-meta">
-                        <span>👤 {{ $item->author }}</span>
-                        <span>📅 {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</span>
+                        <span> {{ $item->author }}</span>
+                        <span> {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</span>
                         <span class="badge {{ $item->status == 'publish' ? 'badge-success' : 'badge-warning' }}">
                             {{ ucfirst($item->status) }}
                         </span>
@@ -94,13 +94,13 @@
             @if($item->author === $user->Nama)
             <div class="pengumuman-actions">
                 <a href="{{ route('kepala-lab.pengumuman.edit', $item->id) }}" class="btn btn-warning btn-sm">
-                    ✏️ Edit
+                     Edit
                 </a>
                 <form action="{{ route('kepala-lab.pengumuman.destroy', $item->id) }}" method="POST" style="display: inline;">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus pengumuman ini?')">
-                        🗑️ Hapus
+                         Hapus
                     </button>
                 </form>
             </div>

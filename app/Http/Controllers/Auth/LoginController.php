@@ -14,14 +14,11 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        // JANGAN redirect jika sudah login di showLoginForm
-        // Biarkan user lihat form login
         $pengumuman = \App\Models\Pengumuman::where('status', 'publish')
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
-        // Statistik dinamis (mendukung multi-role: 1 email bisa punya banyak role)
         $stats = [
             'mahasiswa' => \App\Models\DaftarUser::where(function ($q) {
                 $q->where('Role_User', 'Mahasiswa')
@@ -52,7 +49,6 @@ class LoginController extends Controller
         
         $throttleKey = 'login-attempts:' . strtolower($request->email);
 
-        // 1. Cek apakah akun sedang terkunci
         if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
             return back()->withErrors([
@@ -60,17 +56,13 @@ class LoginController extends Controller
             ])->withInput($request->only('email'));
         }
 
-        // 2. Percobaan authentikasi
         if (Auth::attempt($credentials)) {
-            // Login Berhasil
             \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
             
             $request->session()->regenerate();
 
-            // Redirect berdasarkan role
             $user = Auth::user();
 
-            // Ambil primary role (jika ada) atau fallback ke Role_User lama
             $primaryRole = $user->primaryRole();
             $roleToUse = $primaryRole?->name ?? ($user->Role_User ?? 'Admin');
 
@@ -87,8 +79,7 @@ class LoginController extends Controller
             };
         }
 
-        // 3. Login Gagal - Tambah hitungan percobaan
-        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 60); // Kunci selama 60 detik jika limit tercapai
+        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 60); 
 
         return back()->withErrors([
             'email' => 'Email atau password salah.',

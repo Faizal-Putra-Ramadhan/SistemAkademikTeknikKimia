@@ -98,11 +98,7 @@
             </div>
         </div>
         <div class="card-body">
-            @if(session('success'))
-            <div style="padding: 1rem; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 1rem;">
-                {{ session('success') }}
-            </div>
-            @endif
+            
 
             @if($pengumuman->count() > 0)
             <div class="pengumuman-grid">

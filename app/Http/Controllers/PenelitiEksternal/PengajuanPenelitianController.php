@@ -52,7 +52,7 @@ class PengajuanPenelitianController extends Controller
 
             DB::commit();
 
-            return redirect()->route('peneliti-eksternal.dashboard')
+            return redirect()->route('peneliti-eksternal.aktivitas', ['id' => $id])
                 ->with('success', 'Pengajuan penelitian berhasil diajukan');
         } catch (\Exception $e) {
             DB::rollBack();

@@ -74,14 +74,14 @@
             <p>Akun Anda telah berhasil dibuat di Sistem RegLab (Regulasi Laboratorium) UAD. Berikut adalah informasi akun Anda:</p>
             
             <div class="info-box">
-                <p><strong>📋 Informasi Login</strong></p>
+                <p><strong> Informasi Login</strong></p>
                 <p><strong>User ID:</strong> {{ $userId }}</p>
                 <p><strong>Email:</strong> {{ $email }}</p>
                 <p><strong>Password:</strong> {{ $password }}</p>
             </div>
             
             <div class="warning">
-                <p><strong>⚠️ Penting:</strong> Silakan ubah password Anda setelah login pertama kali untuk keamanan akun.</p>
+                <p><strong> Penting:</strong> Silakan ubah password Anda setelah login pertama kali untuk keamanan akun.</p>
             </div>
             
             <center>

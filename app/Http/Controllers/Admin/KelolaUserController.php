@@ -22,7 +22,6 @@ class KelolaUserController extends Controller
     {
         $query = DaftarUser::query()->with('roles');
 
-        // Filter by role (mendukung multi-role: cek Role_User atau tabel user_roles)
         if ($request->filled('role')) {
             $roleFilter = $request->role;
             $query->where(function ($q) use ($roleFilter) {
@@ -31,14 +30,13 @@ class KelolaUserController extends Controller
             });
         }
 
-        // Search by name, email, UserID, or nomor_identitas (UPDATED)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('Nama', 'like', "%{$search}%")
                     ->orWhere('Email', 'like', "%{$search}%")
                     ->orWhere('UserID', 'like', "%{$search}%")
-                    ->orWhere('nomor_identitas', 'like', "%{$search}%"); // BARU: pencarian berdasarkan NIM/NIY
+                    ->orWhere('nomor_identitas', 'like', "%{$search}%"); 
             });
         }
 
@@ -63,7 +61,6 @@ class KelolaUserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Defensive: Validate ID format
         if (! is_numeric($id) || $id <= 0) {
             Log::warning('Invalid user ID in update attempt', [
                 'id' => $id,
@@ -75,7 +72,6 @@ class KelolaUserController extends Controller
                 ->with('error', 'ID user tidak valid.');
         }
 
-        // Defensive: Find user with null check
         $user = DaftarUser::find($id);
         if (! $user) {
             Log::warning('User not found in update attempt', [
@@ -87,14 +83,13 @@ class KelolaUserController extends Controller
                 ->with('error', 'User tidak ditemukan.');
         }
 
-        // Defensive: Enhanced validation with regex and security checks
         try {
             $validated = $request->validate([
                 'nama' => [
                     'required',
                     'string',
                     'max:255',
-                    'regex:/^[a-zA-Z\s\'.,-]+$/u', // Only allow letters, spaces, and common name characters
+                    'regex:/^[a-zA-Z\s\'.,-]+$/u',
                 ],
                 'email' => [
                     'required',
@@ -106,8 +101,9 @@ class KelolaUserController extends Controller
                     'required',
                     'string',
                     'max:20',
-                    'regex:/^[\d\s\+\-\(\)]+$/', // Only allow digits and phone characters
+                    'regex:/^[\d\s\+\-\(\)]+$/',
                 ],
+
                 'roles' => [
                     'required',
                     'array',
@@ -124,7 +120,7 @@ class KelolaUserController extends Controller
                     'nullable',
                     'string',
                     'max:50',
-                    'regex:/^[a-zA-Z0-9\-\.]+$/', // Alphanumeric with dash and dot only
+                    'regex:/^[a-zA-Z0-9\-\.]+$/', 
                 ],
             ], [
                 'nama.required' => 'Nama wajib diisi',
@@ -147,7 +143,6 @@ class KelolaUserController extends Controller
                 ->withInput();
         }
 
-        // Defensive: Sanitize input
         $sanitizedNama = trim(strip_tags($validated['nama']));
         $sanitizedEmail = strtolower(trim(strip_tags($validated['email'])));
         $sanitizedPhone = trim(strip_tags($validated['Phone']));
@@ -155,11 +150,9 @@ class KelolaUserController extends Controller
             ? trim(strip_tags($validated['nomor_identitas']))
             : null;
 
-        // Get primary role (first role if not specified)
         $primaryRole = $validated['primary_role'] ?? $validated['roles'][0] ?? null;
 
-        // Defensive: Check for actual changes to avoid unnecessary DB operations
-        $user->load('roles'); // Reload roles relationship
+        $user->load('roles');
         $currentRoles = $user->roleNames;
         $rolesChanged = array_diff($currentRoles, $validated['roles']) || array_diff($validated['roles'], $currentRoles);
 
@@ -179,23 +172,19 @@ class KelolaUserController extends Controller
         try {
             $oldData = $user->toArray();
 
-            // Defensive: Update with sanitized data
             $user->update([
                 'Nama' => $sanitizedNama,
                 'Email' => $sanitizedEmail,
                 'Phone' => $sanitizedPhone,
-                'Role_User' => $primaryRole, // Keep for backward compatibility
+                'Role_User' => $primaryRole,
                 'nomor_identitas' => $sanitizedNomorIdentitas,
             ]);
 
-            // Sync roles
             $user->syncRoles($validated['roles'], $primaryRole);
 
-            // Reload user to get updated roles
             $user->refresh();
             $user->load('roles');
 
-            // Defensive: Build detailed log description
             $changes = [];
             if ($oldData['Nama'] !== $sanitizedNama) {
                 $changes[] = "Nama: {$oldData['Nama']} → {$sanitizedNama}";
@@ -204,7 +193,6 @@ class KelolaUserController extends Controller
                 $changes[] = "Email: {$oldData['Email']} → {$sanitizedEmail}";
             }
 
-            // Log role changes
             $oldRoles = $currentRoles;
             $newRoles = $validated['roles'];
             if ($rolesChanged) {
@@ -222,7 +210,6 @@ class KelolaUserController extends Controller
 
             $logDescription = "Update user {$sanitizedNama} (UserID: {$user->UserID}). Perubahan: ".implode(', ', $changes);
 
-            // Defensive: Null-safe activity logging
             $logUserName = auth()->check() && auth()->user()
                 ? auth()->user()->Nama
                 : 'Administrator';
@@ -275,7 +262,6 @@ class KelolaUserController extends Controller
      */
     public function resetPassword(Request $request, $id)
     {
-        // Defensive: Validate ID format
         if (! is_numeric($id) || $id <= 0) {
             Log::warning('Invalid user ID in password reset attempt', [
                 'id' => $id,
@@ -286,7 +272,6 @@ class KelolaUserController extends Controller
                 ->with('error', 'ID user tidak valid.');
         }
 
-        // Defensive: Find user with null check
         $user = DaftarUser::find($id);
         if (! $user) {
             Log::warning('User not found in password reset attempt', [
@@ -298,7 +283,6 @@ class KelolaUserController extends Controller
                 ->with('error', 'User tidak ditemukan.');
         }
 
-        // Defensive: Prevent resetting own password via this method (should use profile)
         if (auth()->check() && auth()->user()->id == $id) {
             Log::warning('Admin attempted to reset own password via admin panel', [
                 'user_id' => $id,
@@ -309,7 +293,6 @@ class KelolaUserController extends Controller
                 ->with('error', 'Gunakan menu profil untuk mengubah password Anda sendiri.');
         }
 
-        // Defensive: Enhanced password validation
         try {
             $validated = $request->validate([
                 'password' => [
@@ -330,7 +313,6 @@ class KelolaUserController extends Controller
                 ->withErrors($e->validator);
         }
 
-        // Defensive: Check for common passwords
         $commonPasswords = [
             'password', '12345678', 'qwerty123', 'abc12345', 'Password1!',
             'Welcome1!', 'Admin123!', 'Letmein1!', 'Password123!',
@@ -342,14 +324,12 @@ class KelolaUserController extends Controller
 
         DB::beginTransaction();
         try {
-            // Defensive: Hash password securely
             $hashedPassword = Hash::make($validated['password']);
 
             $user->update([
                 'Password' => $hashedPassword,
             ]);
 
-            // Defensive: Null-safe activity logging
             $logUserName = auth()->check() && auth()->user()
                 ? auth()->user()->Nama
                 : 'Administrator';
@@ -389,7 +369,6 @@ class KelolaUserController extends Controller
      */
     public function destroy($id)
     {
-        // Defensive: Validate ID format
         if (! is_numeric($id) || $id <= 0) {
             Log::warning('Invalid user ID in delete attempt', [
                 'id' => $id,
@@ -400,7 +379,6 @@ class KelolaUserController extends Controller
                 ->with('error', 'ID user tidak valid.');
         }
 
-        // Defensive: Find user with null check
         $user = DaftarUser::find($id);
         if (! $user) {
             Log::warning('User not found in delete attempt', [
@@ -412,7 +390,6 @@ class KelolaUserController extends Controller
                 ->with('error', 'User tidak ditemukan.');
         }
 
-        // Defensive: Prevent deleting own account
         if (auth()->check() && auth()->user()->id == $id) {
             Log::warning('Admin attempted to delete own account', [
                 'user_id' => $id,
@@ -423,7 +400,6 @@ class KelolaUserController extends Controller
                 ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri!');
         }
 
-        // Defensive: Prevent deleting super admin or critical accounts
         if ($user->Role_User === 'Admin' && DaftarUser::where('Role_User', 'Admin')->count() <= 1) {
             Log::warning('Attempted to delete last admin account', [
                 'user_id' => $id,
@@ -440,11 +416,8 @@ class KelolaUserController extends Controller
             $userID = $user->UserID;
             $userRole = $user->Role_User;
 
-            // Defensive: Check for related data before deletion
-            // You might want to add cascade delete or prevent deletion if user has data
             $relatedDataCount = 0;
 
-            // Example checks (adjust based on your actual relationships):
             if (method_exists($user, 'peminjamanAlat')) {
                 $relatedDataCount += $user->peminjamanAlat()->count();
             }
@@ -462,12 +435,10 @@ class KelolaUserController extends Controller
                     ->with('error', "User memiliki {$relatedDataCount} data terkait. Silakan hapus data terkait terlebih dahulu.");
             }
 
-            // Cascade: hapus juga dari daftar_laboran_laboratoriums jika ada
             DaftarLaboranLaboratorium::where('UserID', $userID)->delete();
 
             $user->delete();
 
-            // Defensive: Null-safe activity logging
             $logUserName = auth()->check() && auth()->user()
                 ? auth()->user()->Nama
                 : 'Administrator';
@@ -511,12 +482,9 @@ class KelolaUserController extends Controller
         try {
             $user = DaftarUser::findOrFail($id);
 
-            // Assuming you have a 'status' column in your database
-            // If not, you'll need to add it via migration
             $newStatus = $user->status == 'active' ? 'inactive' : 'active';
             $user->update(['status' => $newStatus]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => auth()->user()->Nama ?? 'Administrator',
                 'action' => 'Toggle Status User',

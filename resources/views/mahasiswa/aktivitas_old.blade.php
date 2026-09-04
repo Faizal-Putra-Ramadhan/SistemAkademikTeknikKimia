@@ -143,7 +143,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>📊 Aktivitas Saya - {{ $lab->Nama_Laboratorium }}</h1>
+        <h1> Aktivitas Saya - {{ $lab->Nama_Laboratorium }}</h1>
     </div>
 
     <div class="container">
@@ -157,7 +157,7 @@
 
         <!-- Peminjaman Ruangan -->
         <div class="section">
-            <h2>📅 Peminjaman Ruangan</h2>
+            <h2> Peminjaman Ruangan</h2>
             @if($peminjamanRuangan->count() > 0)
             <table>
                 <thead>
@@ -190,7 +190,7 @@
 
         <!-- Peminjaman Alat -->
         <div class="section">
-            <h2>🔧 Peminjaman Alat</h2>
+            <h2> Peminjaman Alat</h2>
             @if($peminjamanAlat->count() > 0)
             <table>
                 <thead>
@@ -223,7 +223,7 @@
 
         <!-- Pengajuan Penelitian -->
         <div class="section">
-            <h2>🔬 Pengajuan Penelitian</h2>
+            <h2> Pengajuan Penelitian</h2>
             @if($pengajuanPenelitian->count() > 0)
             <table>
                 <thead>
@@ -259,7 +259,7 @@
 
         <!-- Timeline Aktivitas -->
         <div class="section">
-            <h2>📜 Riwayat Aktivitas</h2>
+            <h2> Riwayat Aktivitas</h2>
             @if($aktivitas->count() > 0)
             <div class="timeline">
                 @foreach($aktivitas as $item)

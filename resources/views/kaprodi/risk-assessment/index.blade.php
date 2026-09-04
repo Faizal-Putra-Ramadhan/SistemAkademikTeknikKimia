@@ -16,11 +16,7 @@
 @endpush
 
 @section('content')
-@if(session('success'))
-                <div class="alert alert-success border-0 shadow-sm mb-4" role="alert">
-                    <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-                </div>
-            @endif
+
 
             <ul class="nav nav-tabs mb-4" id="raTabs" role="tablist">
                 <li class="nav-item">

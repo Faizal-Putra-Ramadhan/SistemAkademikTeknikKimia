@@ -377,7 +377,6 @@ class DosenController extends Controller
         $user = Auth::user();
         $lab = DaftarLab::findOrFail($labId);
 
-        // Cek ketersediaan ruangan
         $konflik = $this->cekKetersediaanRuangan(
             $labId,
             $request->tanggal,
@@ -405,7 +404,6 @@ class DosenController extends Controller
                 'status' => 'menunggu',
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Mengajukan Peminjaman Ruangan',
@@ -413,7 +411,6 @@ class DosenController extends Controller
                 'ip_address' => $request->ip(),
             ]);
 
-            // ✅ KIRIM EMAIL KE LABORAN (mendukung multi-role)
             $laborans = DaftarUser::withLaboranRole()
                 ->whereHas('laborans', function ($q) use ($lab) {
                 $q->where('Laboratorium', $lab->Nama_Laboratorium);
@@ -436,7 +433,7 @@ class DosenController extends Controller
 
             DB::commit();
 
-            return redirect()->route('dosen.dashboard')
+            return redirect()->route('dosen.pinjam-ruangan', ['id' => $labId])
                 ->with('success', 'Peminjaman ruangan berhasil diajukan! Email notifikasi telah dikirim ke laboran.');
         }
         catch (\Exception $e) {
@@ -459,12 +456,11 @@ class DosenController extends Controller
 
     public function formPeminjamanAlat($labId)
     {
-        $lab = DaftarLab::with('alatLabs')->find($labId); // Jangan pakai findOrFail
+        $lab = DaftarLab::with('alatLabs')->find($labId); 
         $user = Auth::user();
         $labs = DaftarLab::all();
 
         if (!$lab) {
-            // Jika lab tidak ditemukan, tampilkan view dengan data kosong dan pesan user-friendly
             return view('dosen.pinjam-alat', [
                 'lab' => null,
                 'user' => $user,
@@ -488,12 +484,10 @@ class DosenController extends Controller
             ]);
         }
 
-        // Ambil SEMUA Risk Assessment yang disetujui (tidak difilter berdasarkan lab)
         $riskAssessments = RiskAssessment::where('user_id', $user->id)
             ->where('status', 'disetujui')
             ->get();
 
-        // Generate ID RA untuk yang belum punya
         foreach ($riskAssessments as $ra) {
             if (!$ra->id_ra) {
                 $ra->generateIdRa();
@@ -559,7 +553,6 @@ class DosenController extends Controller
     {
         $user = Auth::user();
 
-        // VALIDASI: Hanya alat dan tanggal
         $request->validate([
             'alat_lab_id' => 'required|exists:alat_labs,id',
             'jumlah' => 'required|integer|min:1',
@@ -578,7 +571,6 @@ class DosenController extends Controller
             return back()->with('error', 'Alat tidak valid untuk grup stok laboratorium ini.');
         }
 
-        // VALIDASI: Cek apakah alat spesifik untuk lab lain
         if ($alat->daftar_lab_id && (int)$alat->daftar_lab_id !== (int)$lab->id) {
             return back()->with('error', 'Alat ini hanya tersedia di ' . ($alat->daftarLab->Nama_Laboratorium ?? 'lab lain') . '.');
         }
@@ -598,7 +590,6 @@ class DosenController extends Controller
                 'status' => 'menunggu',
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Mengajukan Peminjaman Alat',
@@ -606,7 +597,6 @@ class DosenController extends Controller
                 'ip_address' => $request->ip(),
             ]);
 
-            // ✅ KIRIM EMAIL KE LABORAN (mendukung multi-role)
             $laborans = DaftarUser::withLaboranRole()
                 ->whereHas('laborans', function ($q) use ($lab) {
                 $q->where('Laboratorium', $lab->Nama_Laboratorium);
@@ -629,7 +619,7 @@ class DosenController extends Controller
 
             DB::commit();
 
-            return redirect()->route('dosen.dashboard')
+            return redirect()->route('dosen.pinjam-alat', ['id' => $labId])
                 ->with('success', 'Peminjaman alat berhasil diajukan!');
         }
         catch (\Exception $e) {
@@ -688,6 +678,7 @@ class DosenController extends Controller
     //         'Phone' => 'required|string|max:20',
     //         'Email' => 'required|email|unique:daftar_users,Email,' . $user->id,
     //         'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            
     //     ]);
 
     //     DB::beginTransaction();
@@ -730,6 +721,7 @@ class DosenController extends Controller
             'Phone' => 'required|string|max:20',
             'Email' => 'required|email|unique:daftar_users,Email,' . $user->id,
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ttd' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -740,16 +732,25 @@ class DosenController extends Controller
                 'Email' => $request->Email,
             ];
 
-            // Upload foto jika ada
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $filename = time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile'), $filename);
                 $data['foto'] = $filename;
 
-                // Hapus foto lama jika ada
                 if ($user->foto && file_exists(public_path('uploads/profile/' . $user->foto))) {
                     unlink(public_path('uploads/profile/' . $user->foto));
+                }
+            }
+
+            if ($request->hasFile('ttd')) {
+                $file = $request->file('ttd');
+                $filename = time() . '_ttd.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ttd'), $filename);
+                $data['ttd'] = $filename;
+
+                if ($user->ttd && file_exists(public_path('uploads/ttd/' . $user->ttd))) {
+                    unlink(public_path('uploads/ttd/' . $user->ttd));
                 }
             }
 
@@ -778,22 +779,17 @@ class DosenController extends Controller
      */
     private function cekKetersediaanRuangan($labId, $tanggalMulai, $tanggalSelesai, $jamMulai, $jamSelesai)
     {
-        // Cari peminjaman yang sudah disetujui atau menunggu untuk lab yang sama
         $peminjamanKonflik = PeminjamanRuangan::where('daftar_lab_id', $labId)
             ->whereIn('status', ['menunggu', 'disetujui_laboran', 'menunggu_kaprodi', 'disetujui'])
             ->where(function ($query) use ($tanggalMulai, $tanggalSelesai) {
-            // Cek apakah ada overlap tanggal
             $query->where(function ($q) use ($tanggalMulai, $tanggalSelesai) {
-                    // Kasus 1: Peminjaman baru dimulai di tengah-tengah peminjaman yang ada
                     $q->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai])
                         ->orWhereBetween('tanggal_selesai', [$tanggalMulai, $tanggalSelesai])
-                        // Kasus 2: Peminjaman yang ada berada di tengah-tengah peminjaman baru
                         ->orWhere(function ($q2) use ($tanggalMulai, $tanggalSelesai) {
                     $q2->where('tanggal', '<=', $tanggalMulai)
                         ->where('tanggal_selesai', '>=', $tanggalSelesai);
                 }
                 )
-                    // Kasus 3: Peminjaman baru mencakup peminjaman yang ada
                     ->orWhere(function ($q2) use ($tanggalMulai, $tanggalSelesai) {
                     $q2->where('tanggal', '>=', $tanggalMulai)
                         ->where('tanggal_selesai', '<=', $tanggalSelesai);
@@ -803,27 +799,22 @@ class DosenController extends Controller
             );
         })
             ->where(function ($query) use ($jamMulai, $jamSelesai) {
-            // Cek apakah ada overlap jam
             $query->where(function ($q) use ($jamMulai, $jamSelesai) {
-                    // Kasus 1: Jam mulai baru di antara jam yang ada
                     $q->where(function ($q2) use ($jamMulai) {
                             $q2->where('jam_mulai', '<=', $jamMulai)
                                 ->where('jam_selesai', '>', $jamMulai);
                         }
                         )
-                            // Kasus 2: Jam selesai baru di antara jam yang ada
                             ->orWhere(function ($q2) use ($jamSelesai) {
                     $q2->where('jam_mulai', '<', $jamSelesai)
                         ->where('jam_selesai', '>=', $jamSelesai);
                 }
                 )
-                    // Kasus 3: Jam baru mencakup jam yang ada
                     ->orWhere(function ($q2) use ($jamMulai, $jamSelesai) {
                     $q2->where('jam_mulai', '>=', $jamMulai)
                         ->where('jam_selesai', '<=', $jamSelesai);
                 }
                 )
-                    // Kasus 4: Jam yang ada mencakup jam baru
                     ->orWhere(function ($q2) use ($jamMulai, $jamSelesai) {
                     $q2->where('jam_mulai', '<=', $jamMulai)
                         ->where('jam_selesai', '>=', $jamSelesai);

@@ -18,9 +18,6 @@ use Illuminate\Support\Facades\Schema;
 
 class KepalaLabController extends Controller
 {
-    /**
-     * Tampilkan daftar Risk Assessment yang menunggu persetujuan Kepala Lab
-     */
     public function index()
     {
         $user = Auth::user();
@@ -29,7 +26,6 @@ class KepalaLabController extends Controller
         $isKepalaLab = $user->isKepalaLaboratorium();
         $kepalaLab = $user;
 
-        // Ambil SEMUA lab yang dikelola oleh kepala lab ini (bisa lebih dari 1 lab)
         $managedLabs = collect();
         if ($isKepalaLab) {
             $managedLabs = DaftarLab::whereRaw('LOWER(Kepala_Labolatorium) = LOWER(?)', [$kepalaLab->Nama])->get();
@@ -74,9 +70,6 @@ class KepalaLabController extends Controller
         return view('kepala-lab.risk-assessment.index', compact('riskAssessments', 'riwayat', 'user', 'labs'));
     }
 
-    /**
-     * Tampilkan detail Risk Assessment untuk final approval
-     */
     public function show($id)
     {
         $labs = DaftarLab::all();
@@ -85,7 +78,6 @@ class KepalaLabController extends Controller
         $isKepalaLab = $user->isKepalaLaboratorium();
         $kepalaLab = $user;
 
-        // Ambil SEMUA lab yang dikelola oleh kepala lab ini
         $managedLabs = collect();
         if ($isKepalaLab) {
             $managedLabs = DaftarLab::whereRaw('LOWER(Kepala_Labolatorium) = LOWER(?)', [$kepalaLab->Nama])->get();
@@ -107,18 +99,14 @@ class KepalaLabController extends Controller
             'pernyataanMahasiswa',
         ])->findOrFail($id);
 
-        $labIds = $managedLabs->pluck('id')->toArray();
-        if (empty($labIds) || !in_array($riskAssessment->daftar_lab_id, $labIds)) {
-            abort(403, 'Anda tidak memiliki akses ke Risk Assessment ini.');
-        }
+        
+        
+        
+        
 
         return view('kepala-lab.risk-assessment.review', compact('riskAssessment', 'labs', 'user'));
     }
 
-    /**
-     * Proses final approval dari Kepala Lab
-     * UPDATE: Otomatis set batas waktu peminjaman saat approve
-     */
     public function approve(Request $request, $id)
     {
         $request->validate([
@@ -130,7 +118,6 @@ class KepalaLabController extends Controller
         $isKepalaLab = $user->isKepalaLaboratorium();
         $kepalaLab = $user;
 
-        // Ambil SEMUA lab yang dikelola oleh kepala lab ini
         $managedLabs = collect();
         if ($isKepalaLab) {
             $managedLabs = DaftarLab::whereRaw('LOWER(Kepala_Labolatorium) = LOWER(?)', [$kepalaLab->Nama])->get();
@@ -164,14 +151,11 @@ class KepalaLabController extends Controller
                 'status' => $disetujui ? 'disetujui' : 'ditolak',
             ]);
 
-            // ⭐ BARU: Otomatis set batas waktu peminjaman jika disetujui
             if ($disetujui) {
                 $riskAssessment->updateBatasWaktuPeminjaman();
 
-                // ⭐ BARU: Generate ID Risk Assessment
                 $riskAssessment->generateIdRa();
 
-                // Log untuk debugging (opsional)
                 \Log::info('Batas waktu peminjaman di-set untuk RA ID: ' . $riskAssessment->id, [
                     'mahasiswa' => $riskAssessment->nama,
                     'id_ra' => $riskAssessment->id_ra,
@@ -181,7 +165,6 @@ class KepalaLabController extends Controller
                 ]);
             }
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => Auth::user()->Nama,
                 'action' => $disetujui ? 'Menyetujui Risk Assessment' : 'Menolak Risk Assessment',
@@ -197,7 +180,6 @@ class KepalaLabController extends Controller
                 . $riskAssessment->getBatasWaktuPeminjamanFormatted() . '.'
                 : 'Risk Assessment ditolak.';
 
-            // Di method approve()
             Mail::to($riskAssessment->user->Email)->send(new RiskAssessmentMail($riskAssessment, 'hasil_kalab', $request->catatan));
 
             return redirect()
@@ -217,9 +199,6 @@ class KepalaLabController extends Controller
         }
     }
 
-    /**
-     * Request revisi
-     */
     public function requestRevision(Request $request, $id)
     {
         $request->validate([
@@ -238,7 +217,6 @@ class KepalaLabController extends Controller
                 'status' => 'draft',
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => Auth::user()->Nama,
                 'action' => 'Meminta Revisi Risk Assessment',
@@ -260,9 +238,6 @@ class KepalaLabController extends Controller
         }
     }
 
-    /**
-     * Dashboard statistics
-     */
     public function dashboard()
     {
         $user = Auth::user();
@@ -275,7 +250,6 @@ class KepalaLabController extends Controller
             ->whereYear('tanggal_persetujuan_kepala_lab', now()->year)
             ->count(),
             'total_tahun_ini' => RiskAssessment::whereYear('created_at', now()->year)->count(),
-            // Ruangan Stats
             'ruangan_menunggu' => PeminjamanRuangan::whereIn('status', ['disetujui_laboran', 'menunggu_kepala_lab'])->count(),
             'ruangan_disetujui_bulan_ini' => PeminjamanRuangan::where('status', 'disetujui')
             ->whereMonth('tanggal_persetujuan_kepala_lab', now()->month)
@@ -297,9 +271,6 @@ class KepalaLabController extends Controller
         return view('kepala-lab.dashboard', compact('statistics', 'recentApprovals', 'recentRoomBorrowings', 'labs', 'user'));
     }
 
-    /**
-     * Laporan Risk Assessment
-     */
     public function report(Request $request)
     {
         $query = RiskAssessment::with([
@@ -311,7 +282,6 @@ class KepalaLabController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // Filter berdasarkan periode
         if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
             $query->whereBetween('created_at', [
                 $request->start_date,
@@ -319,22 +289,18 @@ class KepalaLabController extends Controller
             ]);
         }
 
-        // Filter berdasarkan status
         if ($request->has('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
-        // Filter berdasarkan lab
         if ($request->has('lab_id') && $request->lab_id !== 'all') {
             $query->where('daftar_lab_id', $request->lab_id);
         }
 
-        // Filter berdasarkan kategori resiko
         if ($request->has('kategori_resiko') && $request->kategori_resiko !== 'all') {
             $query->where('kategori_resiko_dosen', $request->kategori_resiko);
         }
 
-        // Filter berdasarkan jenis RA
         if ($request->has('jenis_ra') && $request->jenis_ra !== 'all') {
             $query->where('jenis_ra', $request->jenis_ra);
         }
@@ -344,9 +310,6 @@ class KepalaLabController extends Controller
         return view('kepala-lab.risk-assessment.report', compact('riskAssessments', 'user', 'labs'));
     }
 
-    // =====================================================================
-    // PENGUMUMAN
-    // =====================================================================
 
     public function pengumuman()
     {
@@ -384,7 +347,6 @@ class KepalaLabController extends Controller
                 'author' => $user->Nama,
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Membuat Pengumuman',
@@ -410,7 +372,6 @@ class KepalaLabController extends Controller
         $pengumuman = Pengumuman::findOrFail($id);
         $labs = DaftarLab::all();
 
-        // Hanya bisa edit pengumuman sendiri
         if ($pengumuman->author !== $user->Nama) {
             abort(403, 'Anda tidak dapat mengedit pengumuman orang lain.');
         }
@@ -441,7 +402,6 @@ class KepalaLabController extends Controller
                 'status' => $request->status,
             ]);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Mengupdate Pengumuman',
@@ -475,7 +435,6 @@ class KepalaLabController extends Controller
             $judul = $pengumuman->judul;
             $pengumuman->delete();
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Menghapus Pengumuman',
@@ -495,9 +454,6 @@ class KepalaLabController extends Controller
         }
     }
 
-    /**
-     * Tampilkan halaman profil
-     */
     public function profil()
     {
         $user = Auth::user();
@@ -506,9 +462,6 @@ class KepalaLabController extends Controller
         return view('kepala-lab.profil', compact('user', 'labs'));
     }
 
-    /**
-     * Update profil
-     */
     public function updateProfil(Request $request)
     {
         $user = Auth::user();
@@ -518,6 +471,7 @@ class KepalaLabController extends Controller
             'Phone' => 'required|string|max:20',
             'Email' => 'required|email|unique:daftar_users,Email,' . $user->id,
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ttd' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -528,22 +482,30 @@ class KepalaLabController extends Controller
                 'Email' => $request->Email,
             ];
 
-            // Upload foto jika ada
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $filename = time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile'), $filename);
                 $data['foto'] = $filename;
 
-                // Hapus foto lama jika ada
                 if ($user->foto && file_exists(public_path('uploads/profile/' . $user->foto))) {
                     unlink(public_path('uploads/profile/' . $user->foto));
                 }
             }
 
+            if ($request->hasFile('ttd')) {
+                $file = $request->file('ttd');
+                $filename = time() . '_ttd.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ttd'), $filename);
+                $data['ttd'] = $filename;
+
+                if ($user->ttd && file_exists(public_path('uploads/ttd/' . $user->ttd))) {
+                    unlink(public_path('uploads/ttd/' . $user->ttd));
+                }
+            }
+
             $user->update($data);
 
-            // Log aktivitas
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Update Profil',
@@ -562,27 +524,23 @@ class KepalaLabController extends Controller
         }
     }
 
-    /**
-     * List peminjaman ruangan yang menunggu persetujuan Kepala Lab
-     * Semua kepala lab dapat melihat semua peminjaman ruangan dari semua lab
-     */
     public function peminjamanRuanganIndex()
     {
         $user = Auth::user();
         $labs = DaftarLab::all();
 
-        // Validasi akses menggunakan model method (mendukung multi-role)
+        
         if (!$user->isKepalaLaboratorium()) {
             return redirect()->route('kepala-lab.dashboard')->with('error', 'Akses ditolak.');
         }
 
-        // Peminjaman ruangan yang menunggu persetujuan Kepala Lab (dari semua lab)
+        
         $peminjamanMenunggu = PeminjamanRuangan::whereIn('status', ['disetujui_laboran', 'menunggu_kepala_lab'])
             ->with(['daftarLab', 'laboran'])
             ->orderBy('created_at', 'desc')
             ->paginate(10, ['*'], 'waiting');
 
-        // Peminjaman ruangan yang sudah diproses (dari semua lab)
+        
         $peminjamanDiproses = PeminjamanRuangan::whereIn('status', ['disetujui', 'ditolak', 'dikembalikan', 'disetujui_final'])
             ->with(['daftarLab', 'laboran', 'kepalaLab'])
             ->orderBy('updated_at', 'desc')
@@ -606,12 +564,13 @@ class KepalaLabController extends Controller
         $labs = DaftarLab::all();
 
         $peminjaman = PeminjamanRuangan::with([
+            'user',
             'daftarLab',
             'laboran',
             'kepalaLab',
         ])->findOrFail($id);
 
-        // Validasi akses menggunakan model method yang lebih robust (mendukung multi-role)
+        
         if (!$user->isKepalaLaboratorium()) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini');
         }
@@ -636,7 +595,7 @@ class KepalaLabController extends Controller
         $user = Auth::user();
         $peminjaman = PeminjamanRuangan::findOrFail($id);
 
-        // Validasi akses menggunakan model method yang lebih robust (mendukung multi-role)
+        
         if (!$user->isKepalaLaboratorium()) {
             return back()->with('error', 'Anda tidak memiliki akses untuk approve');
         }
@@ -655,7 +614,7 @@ class KepalaLabController extends Controller
                 'status' => 'disetujui',
             ]);
 
-            // Log aktivitas
+            
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Approve Peminjaman Ruangan',
@@ -687,7 +646,7 @@ class KepalaLabController extends Controller
         $user = Auth::user();
         $peminjaman = PeminjamanRuangan::findOrFail($id);
 
-        // Validasi akses menggunakan model method yang lebih robust (mendukung multi-role)
+        
         if (!$user->isKepalaLaboratorium()) {
             return back()->with('error', 'Anda tidak memiliki akses untuk reject');
         }
@@ -706,7 +665,7 @@ class KepalaLabController extends Controller
                 'status' => 'ditolak',
             ]);
 
-            // Log aktivitas
+            
             ActivityLog::create([
                 'user_name' => $user->Nama,
                 'action' => 'Reject Peminjaman Ruangan',
@@ -735,17 +694,17 @@ class KepalaLabController extends Controller
 
         $query = PeminjamanRuangan::with(['daftarLab', 'laboran', 'kepalaLab']);
 
-        // Filter berdasarkan tanggal
+        
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('tanggal', [$request->start_date, $request->end_date]);
         }
 
-        // Filter berdasarkan status
+        
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
-        // Filter berdasarkan lab
+        
         if ($request->filled('lab_id') && $request->lab_id !== 'all') {
             $query->where('daftar_lab_id', $request->lab_id);
         }

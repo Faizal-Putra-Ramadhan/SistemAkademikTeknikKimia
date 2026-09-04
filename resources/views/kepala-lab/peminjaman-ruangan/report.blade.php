@@ -108,10 +108,10 @@
                     <td>
                         <span class="status-badge status-{{ str_replace('_', '-', $item->status) }}">
                             @switch($item->status)
-                                @case('disetujui') ✅ Disetujui @break
-                                @case('ditolak') ❌ Ditolak @break
+                                @case('disetujui')  Disetujui @break
+                                @case('ditolak')  Ditolak @break
                                 @case('menunggu_kepala_lab') ⏳ Menunggu @break
-                                @case('disetujui_laboran') 📋 Approved Laboran @break
+                                @case('disetujui_laboran')  Approved Laboran @break
                                 @default {{ $item->status }}
                             @endswitch
                         </span>

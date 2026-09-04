@@ -44,7 +44,7 @@ class MsdsController extends Controller
             abort(500, 'Gagal memproses file.');
         }
 
-        // Redirect ke file di public - dilayani langsung oleh web server
+        
         $url = asset('temp-msds/'.basename($tempFile));
 
         return redirect($url);

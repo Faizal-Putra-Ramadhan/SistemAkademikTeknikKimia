@@ -10,7 +10,7 @@
         <!-- Header -->
         <tr>
             <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center;">
-                <h1 style="margin: 0; font-size: 24px;">🏢 LIMS - Peminjaman Ruangan</h1>
+                <h1 style="margin: 0; font-size: 24px;"> LIMS - Peminjaman Ruangan</h1>
             </td>
         </tr>
 
@@ -29,7 +29,7 @@
                         <p>Peminjaman ruangan Anda telah <strong style="color: #28a745;">DISETUJUI</strong> oleh Laboran.</p>
                         
                         <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0; border-radius: 4px; color: #0c5460;">
-                            <strong>ℹ️ Informasi:</strong> Peminjaman Anda akan diteruskan ke Kepala Lab untuk persetujuan final.
+                            <strong>ℹ Informasi:</strong> Peminjaman Anda akan diteruskan ke Kepala Lab untuk persetujuan final.
                         </div>
                     @else
                         <h2 style="color: #333; margin-top: 0;">Peminjaman Ruangan Ditolak</h2>
@@ -54,7 +54,7 @@
                     @if($peminjamanRuangan->persetujuan_kaprodi)
                         <p>Selamat! Peminjaman ruangan Anda telah <strong style="color: #28a745;">DISETUJUI</strong> oleh Kaprodi.</p>
                         <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0; border-radius: 4px; color: #0c5460;">
-                            <strong>✅ Peminjaman Dikonfirmasi:</strong> Anda dapat menggunakan ruangan sesuai jadwal yang telah ditentukan.
+                            <strong> Peminjaman Dikonfirmasi:</strong> Anda dapat menggunakan ruangan sesuai jadwal yang telah ditentukan.
                         </div>
                     @else
                         <p>Mohon maaf, peminjaman ruangan Anda <strong style="color: #dc3545;">DITOLAK</strong> oleh Kaprodi.</p>
@@ -65,7 +65,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin-top: 0; color: #667eea;">📋 Detail Peminjaman</h3>
+                            <h3 style="margin-top: 0; color: #667eea;"> Detail Peminjaman</h3>
                             
                             <table width="100%" cellpadding="8" cellspacing="0">
                                 <tr style="border-bottom: 1px solid #eee;">
@@ -121,7 +121,7 @@
 
                 @if($catatan)
                 <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 4px;">
-                    <strong>💬 Catatan:</strong>
+                    <strong> Catatan:</strong>
                     <p style="margin: 10px 0 0 0;">{{ $catatan }}</p>
                 </div>
                 @endif

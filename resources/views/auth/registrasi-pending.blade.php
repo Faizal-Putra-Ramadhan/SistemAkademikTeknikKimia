@@ -217,7 +217,7 @@
             </svg>
         </div>
 
-        <h1>📧 Cek Email Anda!</h1>
+        <h1> Cek Email Anda!</h1>
 
         <div class="email-display">
             <p>Kami telah mengirim link verifikasi ke:</p>
@@ -264,7 +264,7 @@
                 @csrf
                 <input type="hidden" name="email" value="{{ session('email') }}">
                 <button type="submit" class="btn-resend">
-                    🔄 Kirim Ulang Email
+                     Kirim Ulang Email
                 </button>
             </form>
         </div>

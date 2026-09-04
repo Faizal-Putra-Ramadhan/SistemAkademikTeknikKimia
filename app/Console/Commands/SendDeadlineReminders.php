@@ -30,13 +30,12 @@ class SendDeadlineReminders extends Command
     {
         $this->info('Starting deadline reminder process...');
 
-        // Find Risk Assessments with deadline 7 days from now
         $sevenDaysFromNow = now()->addDays(7)->startOfDay();
         $sevenDaysFromNowEnd = now()->addDays(7)->endOfDay();
 
         $riskAssessments = RiskAssessment::whereBetween('batas_waktu_peminjaman', [$sevenDaysFromNow, $sevenDaysFromNowEnd])
-            ->where('batas_waktu_peminjaman', '>', now()) // Belum expired
-            ->whereNull('pengajuan_perpanjangan') // Belum ada pengajuan perpanjangan
+            ->where('batas_waktu_peminjaman', '>', now())
+            ->whereNull('pengajuan_perpanjangan')
             ->with('user')
             ->get();
 
@@ -44,21 +43,19 @@ class SendDeadlineReminders extends Command
 
         foreach ($riskAssessments as $riskAssessment) {
             try {
-                // Kirim email reminder
                 Mail::to($riskAssessment->user->Email)->send(
                     new RiskAssessmentMail($riskAssessment, 'deadline_reminder_7_days')
                 );
 
-                // Update flag bahwa notifikasi sudah dikirim
                 $riskAssessment->update([
                     'notifikasi_deadline_terkirim' => true,
                     'tanggal_notifikasi_deadline' => now(),
                 ]);
 
                 $count++;
-                $this->line("✓ Reminder sent to {$riskAssessment->nama} ({$riskAssessment->user->Email})");
+                $this->line(" Reminder sent to {$riskAssessment->nama} ({$riskAssessment->user->Email})");
             } catch (\Exception $e) {
-                $this->error("✗ Failed to send reminder to {$riskAssessment->nama}: ".$e->getMessage());
+                $this->error(" Failed to send reminder to {$riskAssessment->nama}: ".$e->getMessage());
             }
         }
 

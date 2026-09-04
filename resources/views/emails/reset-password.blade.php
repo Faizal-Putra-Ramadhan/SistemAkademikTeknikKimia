@@ -55,7 +55,7 @@
                                 <tr>
                                     <td style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px;">
                                         <p style="margin: 0; color: #856404; font-size: 13px; line-height: 1.6;">
-                                            <strong>⚠️ Perhatian:</strong><br>
+                                            <strong> Perhatian:</strong><br>
                                             • Link ini hanya berlaku selama <strong>1 jam</strong><br>
                                             • Jika Anda tidak meminta reset password, abaikan email ini<br>
                                             • Jangan bagikan link ini kepada siapapun
