@@ -26,12 +26,6 @@ class BebasLabController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::penelitian()->get();
 
-        
-        
-        
-        
-        
-        
         $allBebasLabRaIds = BebasLabRequest::where('user_id', $user->id)
             ->pluck('risk_assessment_id')
             ->unique()
@@ -47,7 +41,7 @@ class BebasLabController extends Controller
             if ($hasActiveBebas) {
                 $excludeRaIds[] = $raId;
             } else {
-                
+
                 $hasActivePeminjaman = PeminjamanAlat::where('user_nama', $user->Nama)
                     ->where('risk_assessment_id', $raId)
                     ->whereIn('status', ['menunggu', 'disetujui', 'disetujui_final'])
@@ -63,28 +57,25 @@ class BebasLabController extends Controller
             }
         }
 
-        
         $riskAssessments = RiskAssessment::where('user_id', $user->id)
             ->whereIn('status', ['disetujui', 'disetujui_final'])
             ->whereNotIn('id', $excludeRaIds)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        
         $bebasLabRequests = BebasLabRequest::with(['approvals.lab', 'riskAssessment.daftarLab'])
             ->where('user_id', $user->id)
             ->where('is_active', true)
             ->latest()
             ->get();
 
-        
         foreach ($bebasLabRequests as $key => $blr) {
             if ($blr->status === 'disetujui' && $blr->hasPeminjamanAktif()) {
                 $blr->deactivate();
                 $bebasLabRequests->forget($key);
             }
         }
-        $bebasLabRequests = $bebasLabRequests->values(); 
+        $bebasLabRequests = $bebasLabRequests->values();
 
         $historyRequests = BebasLabRequest::with(['riskAssessment.daftarLab', 'approvals.lab'])
             ->where('user_id', $user->id)
@@ -119,19 +110,16 @@ class BebasLabController extends Controller
     {
         $user = Auth::user();
 
-        
         $request->validate([
             'risk_assessment_id' => 'required|integer|exists:risk_assessments,id',
         ]);
 
         $riskAssessment = RiskAssessment::findOrFail($request->risk_assessment_id);
 
-        
         if ($riskAssessment->user_id !== $user->id || ! in_array($riskAssessment->status, ['disetujui', 'disetujui_final'])) {
             return redirect()->back()->with('error', 'Risk Assessment tidak valid atau belum disetujui.');
         }
 
-        
         $existingActive = BebasLabRequest::where('user_id', $user->id)
             ->where('risk_assessment_id', $request->risk_assessment_id)
             ->where('is_active', true)
@@ -141,7 +129,6 @@ class BebasLabController extends Controller
             return redirect()->back()->with('error', 'Risk Assessment dengan kode '.($riskAssessment->id_ra ?? 'RA-'.$riskAssessment->id).' sudah memiliki pengajuan Bebas Lab yang masih aktif.');
         }
 
-        
         $previousCount = BebasLabRequest::where('user_id', $user->id)
             ->where('risk_assessment_id', $request->risk_assessment_id)
             ->count();
@@ -157,12 +144,10 @@ class BebasLabController extends Controller
             'periode' => $periode,
         ]);
 
-        
         $laborans = DaftarLaboranLaboratorium::with(['laboratoriums', 'daftarLab'])->get();
 
-        
         foreach ($laborans as $laboran) {
-            
+
             if ($laboran->laboratoriums && $laboran->laboratoriums->isNotEmpty()) {
                 foreach ($laboran->laboratoriums as $lab) {
                     BebasLabApproval::create([
@@ -173,9 +158,7 @@ class BebasLabController extends Controller
                         'status' => 'menunggu',
                     ]);
                 }
-            }
-            
-            elseif ($laboran->daftarLab) {
+            } elseif ($laboran->daftarLab) {
                 BebasLabApproval::create([
                     'bebas_lab_request_id' => $bebasLabRequest->id,
                     'daftar_lab_id' => $laboran->daftarLab->id,
@@ -186,10 +169,9 @@ class BebasLabController extends Controller
             }
         }
 
-        
         foreach ($laborans as $laboran) {
             try {
-                
+
                 if (! empty($laboran->Email)) {
                     Mail::to($laboran->Email)->send(new BebasLabMail($bebasLabRequest, $isResubmit));
                 }
@@ -266,17 +248,14 @@ class BebasLabController extends Controller
             ->where('user_id', $user->id)
             ->findOrFail($id);
 
-        
         if (! $bebasLabRequest->isFullyApproved()) {
             return redirect()->back()->with('error', 'Pengajuan Bebas Lab belum disetujui oleh semua laboran.');
         }
 
-        
         if (! $bebasLabRequest->is_active || ! $bebasLabRequest->isMasihBerlaku()) {
             return redirect()->back()->with('error', 'Bebas Lab Anda sudah tidak aktif atau masa berlakunya habis. Silakan ajukan ulang.');
         }
 
-        
         if ($bebasLabRequest->hasPeminjamanAktif()) {
             return redirect()->back()->with('error', 'Anda memiliki peminjaman aktif. Bebas Lab harus diajukan ulang setelah peminjaman selesai.');
         }
@@ -286,19 +265,17 @@ class BebasLabController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        
         $templatePath = storage_path('app/templates/bebas_lab.docx');
 
         App::setLocale('id');
         Carbon::setLocale('id');
         Carbon::setLocale('id');
-        
+
         $phpWord = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
 
         $current_time = Carbon::now('Asia/Jakarta')->translatedFormat(('d F Y'));
         $formatDate = fn ($value) => $value ? Carbon::parse($value)->translatedFormat('d F Y') : '-';
 
-        
         $phpWord->setValues([
             'NAMA_MAHASISWA' => $bebasLabRequest->user_nama,
             'NIM' => $bebasLabRequest->riskAssessment->nim ?? '-',
@@ -307,35 +284,29 @@ class BebasLabController extends Controller
 
         ]);
 
-        
-        
         $approvals = $bebasLabRequest->approvals;
 
         if ($approvals->isEmpty()) {
-            
+
             $phpWord->setValue('NOMOR', '-');
             $phpWord->setValue('LAB_NAME', '-');
             $phpWord->setValue('LABORAN_NAME', '-');
             $phpWord->setValue('PERSETUJUAN', '-');
         } else {
-            
+
             $phpWord->cloneRow('NOMOR', $approvals->count());
 
             foreach ($approvals as $index => $approval) {
-                $rowNumber = $index + 1; 
+                $rowNumber = $index + 1;
 
                 Log::info("Setting row {$rowNumber}");
 
-                
                 $phpWord->setValue('NOMOR#'.$rowNumber, (string) $rowNumber);
 
-                
                 $phpWord->setValue('LAB_NAME#'.$rowNumber, $approval->lab->Nama_Laboratorium ?? '-');
 
-                
                 $phpWord->setValue('LABORAN_NAME#'.$rowNumber, $approval->laboran_nama ?? '-');
 
-                
                 if ($approval->status === 'disetujui') {
                     $tanggal = $approval->approved_at ? $approval->approved_at->format('d/m/Y') : '';
                     $persetujuan = ' Disetujui'.($tanggal ? " ({$tanggal})" : '');
@@ -348,7 +319,6 @@ class BebasLabController extends Controller
             }
         }
 
-        
         $kepalaLabs = DaftarUser::where(function ($query) {
             $query->where('Role_User', 'Kepala Laboratorium')
                 ->orWhereHas('roles', fn ($q) => $q->where('name', 'Kepala Laboratorium'));
@@ -358,28 +328,37 @@ class BebasLabController extends Controller
         Log::info('Jumlah Kepala Lab ditemukan: '.$kepalaLabs->count());
 
         if ($kepalaLabs->count() === 0) {
-            
+
             Log::warning('Tidak ada Kepala Laboratorium, coba cek semua role:');
             $allRoles = DaftarUser::select('Role_User')->distinct()->get();
             Log::info('Semua Role yang ada: '.json_encode($allRoles->pluck('Role')));
         }
 
-        
         for ($i = 1; $i <= 2; $i++) {
             if ($kepalaLabs->count() >= $i) {
                 $kepalaLab = $kepalaLabs[$i - 1];
                 $nama = $kepalaLab->Nama ?? '-';
                 $noIdentitas = $kepalaLab->nomor_identitas ?? '-';
-                $persetujuan_kepala_lab = 'Disetujui';
 
                 $phpWord->setValue('KEPALA_LAB_'.$i, $nama);
                 $phpWord->setValue('NO_IDENTITAS_'.$i, $noIdentitas);
-                $phpWord->setValue('PERSETUJUAN_KEPALA_LAB_'.$i, $persetujuan_kepala_lab);
+
+                if ($kepalaLab->ttd && file_exists(public_path('uploads/ttd/'.$kepalaLab->ttd))) {
+                    $phpWord->setImageValue('PERSETUJUAN_KEPALA_LAB_'.$i, [
+                        'path' => public_path('uploads/ttd/'.$kepalaLab->ttd),
+                        'width' => 160,
+                        'height' => 160,
+                        'wrappingStyle' => 'inline',
+                        'positioning' => 'relative',
+                    ]);
+                } else {
+                    $phpWord->setValue('PERSETUJUAN_KEPALA_LAB_'.$i, 'Disetujui');
+                }
 
                 Log::info("KEPALA_LAB_{$i} = {$nama}");
                 Log::info("NO_IDENTITAS_{$i} = {$noIdentitas}");
             } else {
-                
+
                 $phpWord->setValue('KEPALA_LAB_'.$i, '-');
                 $phpWord->setValue('NO_IDENTITAS_'.$i, '-');
                 $phpWord->setValue('PERSETUJUAN_KEPALA_LAB_'.$i, '-');
@@ -387,15 +366,12 @@ class BebasLabController extends Controller
             }
         }
 
-        
         $fileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.docx';
 
-        
         $savePath = storage_path('app/public/'.$fileName);
 
         $phpWord->saveAs($savePath);
 
-        
         return response()->download($savePath)->deleteFileAfterSend(true);
     }
 }
