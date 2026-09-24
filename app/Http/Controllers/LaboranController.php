@@ -867,9 +867,9 @@ class LaboranController extends Controller
             'NAMA_KEPALA_LAB' => $riskAssessment->kepala_lab_nama ?? '-',
             'CURRENT_TIME' => $current_time ?? '-',
             'WAKTU_PENGAJUAN' => $formatDate($riskAssessment->created_at),
-            'PENELITIAN' => $riskAssessment->jenis_ra == 'Penelitian' ? '' : '',
-            'PRAKTIKUM' => $riskAssessment->jenis_ra == 'Praktikum' ? '' : '',
-            'LAIN' => $riskAssessment->jenis_ra == 'Lain-lain' ? '' : '',
+            'PENELITIAN' => $riskAssessment->jenis_ra == 'Penelitian' ? '✔' : '',
+            'PRAKTIKUM' => $riskAssessment->jenis_ra == 'Praktikum' ? '✔' : '',
+            'LAIN' => $riskAssessment->jenis_ra == 'Lain-lain' ? '✔' : '',
             'KATEGORI_BAHAN_KIMIA' => ucwords(str_replace('_', ' ', $riskAssessment->kategoriHazardBahan?->kategori ?? '-')),
             'TEMPERATURE_MAKS' => $riskAssessment->peralatanOperasi?->temperatur_maksimum ?? '-',
             'TEKANAN_MAKS' => $riskAssessment->peralatanOperasi?->tekanan_maksimum ?? '-',
@@ -959,7 +959,7 @@ class LaboranController extends Controller
         $totalRows = 10;
         for ($i = 1; $i <= $totalRows; $i++) {
             $bahan = $bahanList[$i - 1] ?? null;
-            $cek = fn ($v) => $v == 1 ? '' : '';
+            $cek = fn ($v) => $v == 1 ? '✔' : '';
             $phpWord->setValue("BAHAN_KIMIA_{$i}", $bahan->nama_bahan ?? '');
             $phpWord->setValue("EXPLOSIVE_{$i}", $bahan ? $cek($bahan->explosive) : '');
             $phpWord->setValue("FLAMMABLE_{$i}", $bahan ? $cek($bahan->flammable) : '');
@@ -970,39 +970,39 @@ class LaboranController extends Controller
             $phpWord->setValue("BAHAN_LAIN_{$i}", $bahan ? $cek($bahan->lain_lain) : '');
         }
 
-        $ya = fn($val) => $val == 1 ? '' : '';
-        $tidak = fn($val) => $val == 0 ? '' : '';
+        $ya = fn($val) => $val == 1 ? '✔' : '';
+        $tidak = fn($val) => $val == 0 ? '✔' : '';
 
         if ($riskAssessment->peralatanOperasi?->tekanan_tinggi == 1) {
-            $phpWord->setValue('TTY', '');
+            $phpWord->setValue('TTY', '✔');
             $phpWord->setValue('TTT', '');
         } else {
             $phpWord->setValue('TTY', '');
-            $phpWord->setValue('TTT', '');
+            $phpWord->setValue('TTT', '✔');
         }
 
         if ($riskAssessment->peralatanOperasi?->suhu_tinggi == 1) {
-            $phpWord->setValue('SHY', '');
+            $phpWord->setValue('SHY', '✔');
             $phpWord->setValue('SHT', '');
         } else {
             $phpWord->setValue('SHY', '');
-            $phpWord->setValue('SHT', '');
+            $phpWord->setValue('SHT', '✔');
         }
 
         if ($riskAssessment->peralatanOperasi?->nyala_api == 1) {
-            $phpWord->setValue('NAY', '');
+            $phpWord->setValue('NAY', '✔');
             $phpWord->setValue('NAT', '');
         } else {
             $phpWord->setValue('NAY', '');
-            $phpWord->setValue('NAT', '');
+            $phpWord->setValue('NAT', '✔');
         }
 
         if ($riskAssessment->peralatanOperasi?->peralatan_berputar == 1) {
-            $phpWord->setValue('PBY', '');
+            $phpWord->setValue('PBY', '✔');
             $phpWord->setValue('PBT', '');
         } else {
             $phpWord->setValue('PBY', '');
-            $phpWord->setValue('PBT', '');
+            $phpWord->setValue('PBT', '✔');
         }
 
         $ops = $riskAssessment->pelakuKerja;
