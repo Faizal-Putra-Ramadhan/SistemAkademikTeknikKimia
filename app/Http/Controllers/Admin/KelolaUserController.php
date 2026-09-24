@@ -300,7 +300,7 @@ class KelolaUserController extends Controller
                     'string',
                     'min:8',
                     'confirmed',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&].+$/',
+                    'regex:/^(?=.*[a-z])(?=.*\d).+$/',
                 ],
             ], [
                 'password.required' => 'Password wajib diisi',

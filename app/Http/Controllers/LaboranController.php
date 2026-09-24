@@ -836,8 +836,16 @@ class LaboranController extends Controller
     public function downloadRiskAssessment($id, $format = 'pdf')
     {
         $riskAssessment = RiskAssessment::with([
-            'user', 'daftarLab', 'dosenPembimbing', 'safetyOfficer', 'kepalaLab', 'bahanKimias', 
-            'kategoriHazardBahan', 'peralatanOperasi', 'pelakuKerja', 'pernyataanMahasiswa'
+            'user',
+            'daftarLab',
+            'dosenPembimbing',
+            'safetyOfficer',
+            'kepalaLab',
+            'bahanKimias',
+            'kategoriHazardBahan',
+            'peralatanOperasi',
+            'pelakuKerja',
+            'pernyataanMahasiswa',
         ])->findOrFail($id);
 
         $templatePath = storage_path('app/templates/template1.docx');
@@ -865,34 +873,178 @@ class LaboranController extends Controller
             'KATEGORI_BAHAN_KIMIA' => ucwords(str_replace('_', ' ', $riskAssessment->kategoriHazardBahan?->kategori ?? '-')),
             'TEMPERATURE_MAKS' => $riskAssessment->peralatanOperasi?->temperatur_maksimum ?? '-',
             'TEKANAN_MAKS' => $riskAssessment->peralatanOperasi?->tekanan_maksimum ?? '-',
+            'KATEGORI_PERALATAN' => ucwords(str_replace('_', ' ', $riskAssessment->peralatanOperasi?->kategori_hazard ?? '-')),
+            'PENILAIAN_KETERAMPILAN' => ucwords(str_replace('_', ' ', $riskAssessment->pelakuKerja?->penilaian_keterampilan ?? '-')),
             'KATEGORI_RISIKO_DOSEN' => ucwords(str_replace('_', ' ', $riskAssessment->kategori_resiko_dosen ?? '-')),
             'NAMA_SO' => $riskAssessment->safety_officer_nama ?? '-',
             'TGL_PERSETUJUAN_DOSEN' => $formatDate($riskAssessment->tanggal_persetujuan_dosen),
             'TGL_PERSETUJUAN_KLAB' => $formatDate($riskAssessment->tanggal_persetujuan_kepala_lab),
             'TGL_PERSETUJUAN_SO' => $formatDate($riskAssessment->tanggal_persetujuan_safety_officer),
+            'NOMOR_IDENTITAS' => $riskAssessment->nim ?? '-',
+            'NOMOR_IDENTITAS_DOSEN' => $riskAssessment->nomor_identitas_dosen ?? $riskAssessment->dosenPembimbing?->nomor_identitas ?? '-',
+            'NOMOR_IDENTITAS_KEPALA_LAB' => $riskAssessment->nomor_identitas_kepala_lab ?? $riskAssessment->kepalaLab?->nomor_identitas ?? '-',
             'NAMA_LAB' => $riskAssessment->daftarLab?->Nama_Laboratorium ?? '-',
+            'NAMA_KAPRODI' => $riskAssessment->kaprodi_nama ?? $riskAssessment->kaprodi?->Nama ?? '-',
             'PERSETUJUAN_MAHASISWA' => 'Disetujui',
         ]);
 
-        foreach (['KAPRODI', 'KEPALA_LAB', 'SAFETY_OFFICER', 'DOSEN'] as $key) {
-            $field = 'persetujuan_' . strtolower($key);
-            $phpWord->setValue('PERSETUJUAN_' . $key, $riskAssessment->$field == 1 ? 'Disetujui' : 'Tidak Disetujui');
+        $user = Auth::user();
+
+        if ($riskAssessment->persetujuan_kaprodi == 1) {
+            $kaprodi = $riskAssessment->kaprodi;
+            if ($kaprodi && $kaprodi->ttd && file_exists(public_path('uploads/ttd/' . $kaprodi->ttd))) {
+                $phpWord->setImageValue('PERSETUJUAN_KAPRODI', [
+                    'path' => public_path('uploads/ttd/' . $kaprodi->ttd),
+                    'width' => 160,
+                    'height' => 160,
+                    'wrappingStyle' => 'behind'
+                ]);
+            } else {
+                $phpWord->setValue('PERSETUJUAN_KAPRODI', 'Disetujui');
+            }
+        } else {
+            $phpWord->setValue('PERSETUJUAN_KAPRODI', 'Tidak Disetujui');
+        }
+
+        if ($riskAssessment->persetujuan_kepala_lab == 1) {
+            $kepalaLab = $riskAssessment->kepalaLab;
+            if ($kepalaLab && $kepalaLab->ttd && file_exists(public_path('uploads/ttd/' . $kepalaLab->ttd))) {
+                $phpWord->setImageValue('PERSETUJUAN_KEPALA_LAB', [
+                    'path' => public_path('uploads/ttd/' . $kepalaLab->ttd),
+                    'width' => 160,
+                    'height' => 160,
+                    'wrappingStyle' => 'inline',
+                    'positioning' => 'relative'
+                ]);
+            } else {
+                $phpWord->setValue('PERSETUJUAN_KEPALA_LAB', 'Disetujui');
+            }
+        } else {
+            $phpWord->setValue('PERSETUJUAN_KEPALA_LAB', 'Tidak Disetujui');
+        }
+
+        if ($riskAssessment->persetujuan_safety_officer == 1) {
+            $safetyOfficer = $riskAssessment->safetyOfficer;
+            if ($safetyOfficer && $safetyOfficer->ttd && file_exists(public_path('uploads/ttd/' . $safetyOfficer->ttd))) {
+                $phpWord->setImageValue('PERSETUJUAN_SAFETY_OFFICER', [
+                    'path' => public_path('uploads/ttd/' . $safetyOfficer->ttd),
+                    'width' => 160,
+                    'height' => 160,
+                    'wrappingStyle' => 'behind'
+                ]);
+            } else {
+                $phpWord->setValue('PERSETUJUAN_SAFETY_OFFICER', 'Disetujui');
+            }
+        } else {
+            $phpWord->setValue('PERSETUJUAN_SAFETY_OFFICER', 'Tidak Disetujui');
+        }
+
+        if ($riskAssessment->persetujuan_dosen == 1) {
+            $dosen = $riskAssessment->dosenPembimbing;
+            if ($dosen && $dosen->ttd && file_exists(public_path('uploads/ttd/' . $dosen->ttd))) {
+                $phpWord->setImageValue('PERSETUJUAN_DOSEN', [
+                    'path' => public_path('uploads/ttd/' . $dosen->ttd),
+                    'width' => 160,
+                    'height' => 160,
+                    'wrappingStyle' => 'behind'
+                ]);
+            } else {
+                $phpWord->setValue('PERSETUJUAN_DOSEN', 'Disetujui');
+            }
+        } else {
+            $phpWord->setValue('PERSETUJUAN_DOSEN', 'Tidak Disetujui');
         }
 
         $bahanList = $riskAssessment->bahanKimias;
-        for ($i = 1; $i <= 10; $i++) {
+        $totalRows = 10;
+        for ($i = 1; $i <= $totalRows; $i++) {
             $bahan = $bahanList[$i - 1] ?? null;
             $cek = fn ($v) => $v == 1 ? '' : '';
             $phpWord->setValue("BAHAN_KIMIA_{$i}", $bahan->nama_bahan ?? '');
-            foreach (['explosive', 'flammable', 'toxic', 'corrosive', 'irritant', 'oxidizing'] as $attr) {
-                $phpWord->setValue(strtoupper($attr)."_{$i}", $bahan ? $cek($bahan->$attr) : '');
-            }
+            $phpWord->setValue("EXPLOSIVE_{$i}", $bahan ? $cek($bahan->explosive) : '');
+            $phpWord->setValue("FLAMMABLE_{$i}", $bahan ? $cek($bahan->flammable) : '');
+            $phpWord->setValue("TOXIC_{$i}", $bahan ? $cek($bahan->toxic) : '');
+            $phpWord->setValue("CORROSIVE_{$i}", $bahan ? $cek($bahan->corrosive) : '');
+            $phpWord->setValue("IRRITANT_{$i}", $bahan ? $cek($bahan->irritant) : '');
+            $phpWord->setValue("OXIDIXING_{$i}", $bahan ? $cek($bahan->oxidizing) : '');
+            $phpWord->setValue("BAHAN_LAIN_{$i}", $bahan ? $cek($bahan->lain_lain) : '');
         }
+
+        $ya = fn($val) => $val == 1 ? '' : '';
+        $tidak = fn($val) => $val == 0 ? '' : '';
+
+        if ($riskAssessment->peralatanOperasi?->tekanan_tinggi == 1) {
+            $phpWord->setValue('TTY', '');
+            $phpWord->setValue('TTT', '');
+        } else {
+            $phpWord->setValue('TTY', '');
+            $phpWord->setValue('TTT', '');
+        }
+
+        if ($riskAssessment->peralatanOperasi?->suhu_tinggi == 1) {
+            $phpWord->setValue('SHY', '');
+            $phpWord->setValue('SHT', '');
+        } else {
+            $phpWord->setValue('SHY', '');
+            $phpWord->setValue('SHT', '');
+        }
+
+        if ($riskAssessment->peralatanOperasi?->nyala_api == 1) {
+            $phpWord->setValue('NAY', '');
+            $phpWord->setValue('NAT', '');
+        } else {
+            $phpWord->setValue('NAY', '');
+            $phpWord->setValue('NAT', '');
+        }
+
+        if ($riskAssessment->peralatanOperasi?->peralatan_berputar == 1) {
+            $phpWord->setValue('PBY', '');
+            $phpWord->setValue('PBT', '');
+        } else {
+            $phpWord->setValue('PBY', '');
+            $phpWord->setValue('PBT', '');
+        }
+
+        $ops = $riskAssessment->pelakuKerja;
+        $phpWord->setValues([
+            'MFMY' => $ya($ops->menyadari_faktor_manusia ?? null),
+            'MFMT' => $tidak($ops->menyadari_faktor_manusia ?? null),
+            'MBDY' => $ya($ops->memahami_bahaya_diri ?? null),
+            'MBDT' => $tidak($ops->memahami_bahaya_diri ?? null),
+            'MBRY' => $ya($ops->memahami_bahaya_orang_lain ?? null),
+            'MBRT' => $tidak($ops->memahami_bahaya_orang_lain ?? null),
+            'MBLY' => $ya($ops->memahami_bahaya_lingkungan ?? null),
+            'MBLT' => $tidak($ops->memahami_bahaya_lingkungan ?? null),
+            'MBPY' => $ya($ops->memahami_bahaya_peralatan ?? null),
+            'MBPT' => $tidak($ops->memahami_bahaya_peralatan ?? null),
+            'PTKY' => $ya($ops->paham_tindakan_kecelakaan ?? null),
+            'PTKT' => $tidak($ops->paham_tindakan_kecelakaan ?? null),
+        ]);
 
         $fileName = 'Risk_Assessment_'.$riskAssessment->id.'.docx';
         $savePath = storage_path('app/public/'.$fileName);
         $phpWord->saveAs($savePath);
-        return response()->download($savePath)->deleteFileAfterSend(true);
+
+        // Convert to PDF using LibreOffice (soffice) untuk hasil yang 100% sama dengan Word
+        $outDir = storage_path('app/public');
+        $pdfFileName = 'Risk_Assessment_'.$riskAssessment->id.'.pdf';
+        $pdfPath = $outDir.'/'.$pdfFileName;
+        
+        $command = 'soffice --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
+        exec($command);
+
+        // Hapus file docx sementara
+        if (file_exists($savePath)) {
+            @unlink($savePath);
+        }
+
+        if (file_exists($pdfPath)) {
+            return response()->download($pdfPath, $pdfFileName, [
+                'Content-Type' => 'application/pdf',
+            ])->deleteFileAfterSend(true);
+        } else {
+            return back()->with('error', 'Gagal menghasilkan PDF.');
+        }
     }
 
     public function sendDeadlineNotification($id)

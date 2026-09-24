@@ -640,8 +640,8 @@ class RiskAssessmentController extends Controller
             if ($kaprodi && $kaprodi->ttd && file_exists(public_path('uploads/ttd/' . $kaprodi->ttd))) {
                 $phpWord->setImageValue('PERSETUJUAN_KAPRODI', [
                     'path' => public_path('uploads/ttd/' . $kaprodi->ttd),
-                    'width' => 300,
-                    'height' => 300,
+                    'width' => 160,
+                    'height' => 160,
                     'wrappingStyle' => 'behind'
                 ]);
             } else {
@@ -656,8 +656,8 @@ class RiskAssessmentController extends Controller
             if ($kepalaLab && $kepalaLab->ttd && file_exists(public_path('uploads/ttd/' . $kepalaLab->ttd))) {
                 $phpWord->setImageValue('PERSETUJUAN_KEPALA_LAB', [
                     'path' => public_path('uploads/ttd/' . $kepalaLab->ttd),
-                    'width' => 300,
-                    'height' => 300,
+                    'width' => 160,
+                    'height' => 160,
                     'wrappingStyle' => 'behind'
                 ]);
             } else {
@@ -672,8 +672,8 @@ class RiskAssessmentController extends Controller
             if ($safetyOfficer && $safetyOfficer->ttd && file_exists(public_path('uploads/ttd/' . $safetyOfficer->ttd))) {
                 $phpWord->setImageValue('PERSETUJUAN_SAFETY_OFFICER', [
                     'path' => public_path('uploads/ttd/' . $safetyOfficer->ttd),
-                    'width' => 300,
-                    'height' => 300,
+                    'width' => 160,
+                    'height' => 160,
                     'wrappingStyle' => 'behind'
                 ]);
             } else {
@@ -688,8 +688,8 @@ class RiskAssessmentController extends Controller
             if ($dosen && $dosen->ttd && file_exists(public_path('uploads/ttd/' . $dosen->ttd))) {
                 $phpWord->setImageValue('PERSETUJUAN_DOSEN', [
                     'path' => public_path('uploads/ttd/' . $dosen->ttd),
-                    'width' => 300,
-                    'height' => 300,
+                    'width' => 160,
+                    'height' => 160,
                     'wrappingStyle' => 'behind'
                 ]);
             } else {
