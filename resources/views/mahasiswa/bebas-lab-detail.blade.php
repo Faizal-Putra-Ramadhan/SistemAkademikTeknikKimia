@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title', 'Detail Bebas Lab')
 @section('page-title', 'Detail Bebas Lab')
 
@@ -70,10 +70,12 @@
                     <p style="font-size: 14px; color: #065f46; margin-bottom: 10px; font-weight: 600;">
                          Semua laboran telah menyetujui. Laporan siap diunduh!
                     </p>
-                    <a href="{{ route('mahasiswa.bebas-lab.download', $bebasLabRequest->id) }}" class="btn btn-success" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; font-size: 14px;">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Download Laporan Bebas Lab
-                    </a>
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                        <a href="{{ route('mahasiswa.bebas-lab.download', ['id' => $bebasLabRequest->id, 'format' => 'pdf']) }}" class="btn btn-danger" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; font-size: 14px; background-color: #dc2626; color: white;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Download Laporan Bebas Lab
+                        </a>
+                    </div>
                 </div>
             @else
                 <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px;">

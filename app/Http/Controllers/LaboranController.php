@@ -502,20 +502,61 @@ class LaboranController extends Controller
 
         for ($i = 1; $i <= 2; $i++) {
             if ($kepalaLabs->count() >= $i) {
-                $kepalaLab = $kepalaLabs->values()[$i - 1];
-                $phpWord->setValue('KEPALA_LAB_'.$i, $kepalaLab->Nama ?? '-');
-                $phpWord->setValue('NO_IDENTITAS_'.$i, $kepalaLab->nomor_identitas ?? '-');
-                $phpWord->setValue('PERSETUJUAN_KEPALA_LAB_'.$i, 'Disetujui');
+                $kepalaLab = $kepalaLabs[$i - 1];
+                $nama = $kepalaLab->Nama ?? '-';
+                $noIdentitas = $kepalaLab->nomor_identitas ?? '-';
+
+                $phpWord->setValue('KEPALA_LAB_'.$i, $nama);
+                $phpWord->setValue('NO_IDENTITAS_'.$i, $noIdentitas);
+
+                if ($kepalaLab->ttd && file_exists(public_path('uploads/ttd/'.$kepalaLab->ttd))) {
+                    $phpWord->setImageValue('PERSETUJUAN_KEPALA_LAB_'.$i, [
+                        'path' => public_path('uploads/ttd/'.$kepalaLab->ttd),
+                        'width' => 160,
+                        'height' => 160,
+                        'wrappingStyle' => 'inline',
+                        'positioning' => 'relative',
+                    ]);
+                } else {
+                    $phpWord->setValue('PERSETUJUAN_KEPALA_LAB_'.$i, 'Disetujui');
+                }
+
+                Log::info("KEPALA_LAB_{$i} = {$nama}");
+                Log::info("NO_IDENTITAS_{$i} = {$noIdentitas}");
             } else {
+
                 $phpWord->setValue('KEPALA_LAB_'.$i, '-');
                 $phpWord->setValue('NO_IDENTITAS_'.$i, '-');
                 $phpWord->setValue('PERSETUJUAN_KEPALA_LAB_'.$i, '-');
+                Log::warning("KEPALA_LAB_{$i} tidak ada data, diisi dengan '-'");
             }
         }
 
         $fileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.docx';
         $savePath = storage_path('app/public/'.$fileName);
         $phpWord->saveAs($savePath);
+
+        if (request()->query('format') === 'pdf') {
+            $outDir = storage_path('app/public');
+            $pdfFileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.pdf';
+            $pdfPath = $outDir.'/'.$pdfFileName;
+            
+            $command = 'soffice --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
+            exec($command);
+
+            if (file_exists($savePath)) {
+                @unlink($savePath);
+            }
+
+            if (file_exists($pdfPath)) {
+                return response()->download($pdfPath, $pdfFileName, [
+                    'Content-Type' => 'application/pdf',
+                ])->deleteFileAfterSend(true);
+            } else {
+                return redirect()->back()->with('error', 'Gagal menghasilkan file PDF.');
+            }
+        }
+
         return response()->download($savePath)->deleteFileAfterSend(true);
     }
 

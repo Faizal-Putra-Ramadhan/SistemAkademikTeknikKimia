@@ -223,9 +223,11 @@
                     <div class="info-panel green" style="text-align: center;">
                         <h4 style="font-size: 16px; margin-bottom: 8px;"> Pengajuan Disetujui!</h4>
                         <p style="margin-bottom: 16px;">Semua laboran telah menyetujui pengajuan Anda. Laporan siap diunduh.</p>
-                        <a href="{{ route('peneliti-eksternal.bebas-lab.download', $bebasLabRequest->id) }}" class="btn btn-success" style="padding: 10px 24px;">
-                            Download Laporan Bebas Lab
-                        </a>
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                            <a href="{{ route('peneliti-eksternal.bebas-lab.download', ['id' => $bebasLabRequest->id, 'format' => 'pdf']) }}" class="btn btn-danger" style="padding: 10px 24px; background-color: #dc2626; color: white;">
+                                Download Laporan Bebas Lab
+                            </a>
+                        </div>
                     </div>
                 @elseif($isApproved && !$isActive)
                     <div class="info-panel red">

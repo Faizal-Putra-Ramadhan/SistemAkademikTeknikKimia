@@ -112,7 +112,7 @@
                                         Lihat Detail
                                     </a>
                                     @if($req->is_active && $req->isFullyApproved() && !$req->hasPeminjamanAktif())
-                                        <a href="{{ route('laboran.bebas-lab.download', [$lab->id, $req->id]) }}" class="btn btn-success btn-sm" style="background-color: #059669; color: white;">
+                                        <a href="{{ route('laboran.bebas-lab.download', ['labId' => $lab->id, 'requestId' => $req->id, 'format' => 'pdf']) }}" class="btn btn-danger btn-sm" style="background-color: #dc2626; color: white;">
                                             Download
                                         </a>
                                     @endif

@@ -297,9 +297,11 @@
             </a>
 
             @if($bebasLabRequest->is_active && $bebasLabRequest->isFullyApproved() && !$bebasLabRequest->hasPeminjamanAktif())
-                <a href="{{ route('laboran.bebas-lab.download', [$lab->id, $bebasLabRequest->id]) }}" class="btn btn-success" style="background-color: #059669; color: white;">
-                    Download Surat Bebas Lab
-                </a>
+                <div style="display: flex; gap: 8px;">
+                    <a href="{{ route('laboran.bebas-lab.download', ['labId' => $lab->id, 'requestId' => $bebasLabRequest->id, 'format' => 'pdf']) }}" class="btn btn-danger" style="background-color: #dc2626; color: white;">
+                        Download Surat Bebas Lab
+                    </a>
+                </div>
             @endif
 
             @if(!$isApproved)

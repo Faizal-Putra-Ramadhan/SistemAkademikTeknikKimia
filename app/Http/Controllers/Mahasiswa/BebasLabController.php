@@ -367,10 +367,29 @@ class BebasLabController extends Controller
         }
 
         $fileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.docx';
-
         $savePath = storage_path('app/public/'.$fileName);
-
         $phpWord->saveAs($savePath);
+
+        if (request()->query('format') === 'pdf') {
+            $outDir = storage_path('app/public');
+            $pdfFileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.pdf';
+            $pdfPath = $outDir.'/'.$pdfFileName;
+            
+            $command = 'soffice --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
+            exec($command);
+
+            if (file_exists($savePath)) {
+                @unlink($savePath);
+            }
+
+            if (file_exists($pdfPath)) {
+                return response()->download($pdfPath, $pdfFileName, [
+                    'Content-Type' => 'application/pdf',
+                ])->deleteFileAfterSend(true);
+            } else {
+                return redirect()->back()->with('error', 'Gagal menghasilkan file PDF.');
+            }
+        }
 
         return response()->download($savePath)->deleteFileAfterSend(true);
     }

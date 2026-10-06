@@ -222,9 +222,11 @@
                     <div class="info-panel green" style="text-align: center;">
                         <h4 style="font-size: 16px; margin-bottom: 8px;"> Pengajuan Disetujui!</h4>
                         <p style="margin-bottom: 16px;">Semua laboran telah menyetujui pengajuan Anda. Laporan siap diunduh.</p>
-                        <a href="{{ route('mahasiswa.bebas-lab.download', $bebasLabRequest->id) }}" class="btn btn-success" style="padding: 10px 24px;">
-                            Download Laporan Bebas Lab
-                        </a>
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                            <a href="{{ route('mahasiswa.bebas-lab.download', ['id' => $bebasLabRequest->id, 'format' => 'pdf']) }}" class="btn btn-danger" style="padding: 10px 24px; background-color: #dc2626; color: white;">
+                                Download Laporan Bebas Lab
+                            </a>
+                        </div>
                     </div>
                 @elseif($isApproved && !$isActive)
                     <div class="info-panel red">
@@ -368,7 +370,7 @@
                                             Lihat Detail
                                         </a>
                                         @if($history->isFullyApproved() && $history->is_active && $history->isMasihBerlaku())
-                                        <a href="{{ route('mahasiswa.bebas-lab.download', $history->id) }}" class="btn btn-sm btn-success" style="display: inline-flex; align-items: center; gap: 4px;">
+                                        <a href="{{ route('mahasiswa.bebas-lab.download', ['id' => $history->id, 'format' => 'pdf']) }}" class="btn btn-sm btn-danger" style="display: inline-flex; align-items: center; gap: 4px; background-color: #dc2626; color: white;">
                                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                             Download
                                         </a>
