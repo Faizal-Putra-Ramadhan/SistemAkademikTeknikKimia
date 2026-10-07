@@ -196,7 +196,23 @@
                     <span><i class="fas fa-user"></i> {{ $item->author }}</span>
                     <span><i class="fas fa-calendar"></i> {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</span>
                 </div>
-                <div class="pn-item-content">{{ $item->isi }}</div>
+                <div class="pn-item-content"><div class="ann-preview" style="margin-bottom: 8px; color: #4b5563; font-size: 14px;">
+                        {{ Str::limit(strip_tags(str_replace(['</p>', '<br>', '</h1>', '</h2>', '</h3>', '</li>'], ' ', $item->isi)), 150) }}
+                    </div>
+                    <a href="javascript:void(0)" onclick="openPengumumanModal('modal-pengumuman-{{ $item->id }}')" style="font-size: 13px; color: #0d6efd; text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 12px;">Lihat Selengkapnya</a>
+                    
+                    <div id="modal-pengumuman-{{ $item->id }}" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                        <div style="background: #fff; width: 90%; max-width: 650px; border-radius: 12px; padding: 30px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: left; white-space: normal;">
+                            <button type="button" onclick="closePengumumanModal('modal-pengumuman-{{ $item->id }}')" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 28px; cursor: pointer; color: #6b7280; line-height: 1;">&times;</button>
+                            <h2 style="margin-bottom: 8px; color: #1f2937; font-size: 20px;">{{ $item->judul }}</h2>
+                            <div style="font-size: 13px; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb;">
+                                {{ \Carbon\Carbon::parse($item->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                            </div>
+                            <div class="quill-content" style="color: #374151; line-height: 1.6;">
+                                {!! $item->isi !!}
+                            </div>
+                        </div>
+                    </div></div>
             </div>
             @empty
             <div class="so-empty">

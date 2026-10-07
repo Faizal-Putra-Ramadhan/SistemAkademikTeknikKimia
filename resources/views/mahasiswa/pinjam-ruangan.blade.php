@@ -259,69 +259,32 @@ body { background: #f5f7fa; }
             color: white; 
         }
 
-        .lab-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-            gap: 1.5rem; 
-            margin-top: 1.5rem; 
-        }
-        
-        .lab-card { 
-            border: 2px solid #e0e0e0; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            transition: all 0.3s; 
-            cursor: pointer; 
-            background: white; 
-        }
-        
-        .lab-card:hover { 
-            border-color: #007bff; 
-            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2); 
-            transform: translateY(-5px); 
-        }
-        
-        .lab-image { 
-            width: 100%; 
-            height: 180px; 
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 4rem; 
-            color: white; 
-        }
-        
-        .lab-body { 
-            padding: 1.5rem; 
-        }
-        
-        .lab-body h3 { 
-            color: #333; 
-            margin-bottom: 0.75rem; 
-            font-size: 1.25rem; 
-            font-weight: bold; 
-        }
-        
-        .lab-info { 
-            color: #666; 
-            font-size: 0.9rem; 
-            margin-bottom: 0.5rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.5rem; 
-        }
-        
-        .lab-badge { 
-            display: inline-block; 
-            padding: 0.35rem 0.75rem; 
-            background: #e7f3ff; 
-            color: #007bff; 
-            border-radius: 15px; 
-            font-size: 0.85rem; 
-            margin-top: 0.5rem; 
-            font-weight: 600; 
-        }
+        .lab-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+        .lab-card { border: 1.5px solid #3b82f6; border-radius: 12px; overflow: hidden; transition: all 0.3s; cursor: pointer; background: white; padding: 1.25rem 1.5rem; }
+        .lab-card:hover { box-shadow: 0 4px 20px rgba(59,130,246,0.15); transform: translateY(-2px); }
+        .lab-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+        .lab-header-left { display: flex; gap: 0.75rem; align-items: center; }
+        .badge-reservasi { background-color: #ecfdf5; color: #059669; padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem; }
+        .badge-reservasi::before { content: ''; width: 6px; height: 6px; background-color: #10b981; border-radius: 50%; display: inline-block; }
+        .badge-tipe { background-color: #eff6ff; color: #2563eb; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .badge-lantai { color: #4b5563; font-size: 0.85rem; font-weight: 500; background: #f9fafb; padding: 0.35rem 0.75rem; border-radius: 6px; }
+        .badge-lantai strong { color: #111827; }
+        .lab-title { color: #111827; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .lab-subtitle { color: #6b7280; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .lab-attr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        @media (max-width: 768px) { .lab-attr-grid { grid-template-columns: 1fr; } }
+        .lab-attr-item { background: #f9fafb; border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 1rem; }
+        .lab-attr-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; }
+        .icon-kl { background: #eff6ff; color: #1d4ed8; }
+        .icon-al { background: #f5f3ff; color: #6d28d9; }
+        .icon-so { background: #fffbeb; color: #b45309; }
+        .lab-attr-content { flex: 1; }
+        .lab-attr-label { font-size: 0.65rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 0.15rem; }
+        .lab-attr-value { font-size: 0.85rem; color: #1f2937; font-weight: 500; }
+        .lab-footer-flex { display: flex; justify-content: space-between; align-items: center; }
+        .lab-proses { color: #6b7280; font-size: 0.85rem; }
+        .lab-btn-ajukan { background: #2563eb; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s; cursor: pointer; }
+        .lab-btn-ajukan:hover { background: #1d4ed8; }
 
         .modal-overlay { 
             display: none; 
@@ -654,73 +617,104 @@ body { background: #f5f7fa; }
                                         @else
                                         @foreach($labs as $labItem)
                                         <div class="lab-card" 
-                                             onclick="openModal({{ $labItem->id }}, '{{ $labItem->Nama_Laboratorium }}', '{{ $labItem->Kepala_Labolatorium }}', '{{ $labItem->email_lab }}')" 
+                                             onclick="openModal({{ $labItem->id }}, '{{ addslashes($labItem->Nama_Laboratorium) }}', '{{ addslashes($labItem->Kepala_Labolatorium) }}', '{{ addslashes($labItem->email_lab ?? '') }}')" 
                                              data-lab-id="{{ $labItem->id }}"
                                              style="display: none;">
-                                            <div class="lab-image"></div>
-                                            <div class="lab-body">
-                                                <h3>{{ $labItem->Nama_Laboratorium }} -  {{ $labItem->floor }}</h3>
-                                                <div class="lab-info">
-                                                    <span>‍</span>
-                                                    <span>{{ $labItem->Kepala_Labolatorium }}</span>
+                                            <div class="lab-header-flex">
+                                                <div class="lab-header-left">
+                                                    <span class="badge-reservasi">Reservasi Tersedia</span>
+                                                    <span class="badge-tipe">TIPE: {{ strtoupper($labItem->lab_type ?? 'PENDIDIKAN') }}</span>
                                                 </div>
-                                                <div class="lab-info">
-                                                    <span></span>
-                                                    <span>{{ $labItem->email_lab }}</span>
+                                                <span class="badge-lantai">Lantai: <strong>{{ $labItem->floor ?? '-' }}</strong></span>
+                                            </div>
+                                            <h3 class="lab-title">{{ $labItem->Nama_Laboratorium }}</h3>
+                                            <p class="lab-subtitle">Daftar atribut sesuai spesifikasi skema laboratorium.</p>
+                                            
+                                            <div class="lab-attr-grid">
+                                                <div class="lab-attr-item">
+                                                    <div class="lab-attr-icon icon-kl">KL</div>
+                                                    <div class="lab-attr-content">
+                                                        <div class="lab-attr-label">KEPALA LABORATORIUM</div>
+                                                        <div class="lab-attr-value">{{ $labItem->Kepala_Labolatorium ?? '-' }}</div>
+                                                    </div>
                                                 </div>
-                                                <span class="lab-badge"> Reservasi Tersedia</span>
-    
-                                                @if(isset($peminjaman_aktif_per_lab[$labItem->id]) && $peminjaman_aktif_per_lab[$labItem->id]->count() > 0)
-                                                    <div class="warning-box">
-                                                        <div class="warning-box-header">
-                                                            <span class="warning-icon"></span>
-                                                            <span>Jadwal Terpakai ({{ $peminjaman_aktif_per_lab[$labItem->id]->count() }} booking)</span>
-                                                        </div>
-                                                        <div class="warning-schedules">
-                                                            @foreach($peminjaman_aktif_per_lab[$labItem->id] as $aktif)
-                                                                <div class="warning-schedule">
-                                                                    <div class="warning-schedule-title">
-                                                                        <span></span>
-                                                                        <span>{{ $aktif->user_nama }}</span>
-                                                                        <span class="status-badge status-{{ $aktif->status }}">
-                                                                            @if($aktif->status === 'menunggu')
-                                                                                ⏳ Menunggu
-                                                                            @elseif($aktif->status === 'disetujui_laboran' || $aktif->status === 'menunggu_kepala_lab')
-                                                                                 Proses
-                                                                            @elseif($aktif->status === 'disetujui' || $aktif->status === 'disetujui_final')
-                                                                                 Disetujui
-                                                                            @elseif($aktif->status === 'dikembalikan')
-                                                                                 Selesai
-                                                                            @else
-                                                                                 Ditolak
-                                                                            @endif
-                                                                        </span>
-                                                                    </div>
-                                                                    <div class="warning-schedule-time">
-                                                                        <span>
-                                                                            <strong></strong>
-                                                                            {{ \Carbon\Carbon::parse($aktif->tanggal)->format('d M Y') }} - 
-                                                                            {{ \Carbon\Carbon::parse($aktif->tanggal_selesai)->format('d M Y') }}
-                                                                        </span>
-                                                                        <span>
-                                                                            <strong></strong>
-                                                                            {{ \Carbon\Carbon::parse($aktif->jam_mulai)->format('H:i') }} - 
-                                                                            {{ \Carbon\Carbon::parse($aktif->jam_selesai)->format('H:i') }}
-                                                                        </span>
-                                                                    </div>
+                                                <div class="lab-attr-item">
+                                                    <div class="lab-attr-icon icon-al">AL</div>
+                                                    <div class="lab-attr-content">
+                                                        <div class="lab-attr-label">ADMIN LABORATORIUM</div>
+                                                        <div class="lab-attr-value">{{ $labItem->Admin_Laboratorium ?? '-' }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="lab-attr-item">
+                                                    <div class="lab-attr-icon icon-so">SO</div>
+                                                    <div class="lab-attr-content">
+                                                        <div class="lab-attr-label">SAFETY OFFICER</div>
+                                                        <div class="lab-attr-value">{{ $labItem->Safety_Officer ?? '-' }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="lab-attr-item">
+                                                    <div class="lab-attr-content">
+                                                        <div class="lab-attr-label">EMAIL LAB</div>
+                                                        <div class="lab-attr-value" style="color: #3b82f6;">{{ $labItem->email_lab ?? '-' }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @if(isset($peminjaman_aktif_per_lab[$labItem->id]) && $peminjaman_aktif_per_lab[$labItem->id]->count() > 0)
+                                                <div class="warning-box">
+                                                    <div class="warning-box-header">
+                                                        <span class="warning-icon"></span>
+                                                        <span>Jadwal Terpakai ({{ $peminjaman_aktif_per_lab[$labItem->id]->count() }} booking)</span>
+                                                    </div>
+                                                    <div class="warning-schedules">
+                                                        @foreach($peminjaman_aktif_per_lab[$labItem->id] as $aktif)
+                                                            <div class="warning-schedule">
+                                                                <div class="warning-schedule-title">
+                                                                    <span></span>
+                                                                    <span>{{ $aktif->user_nama }}</span>
+                                                                    <span class="status-badge status-{{ $aktif->status }}">
+                                                                        @if($aktif->status === 'menunggu')
+                                                                            ⏳ Menunggu
+                                                                        @elseif($aktif->status === 'disetujui_laboran' || $aktif->status === 'menunggu_kepala_lab')
+                                                                             Proses
+                                                                        @elseif($aktif->status === 'disetujui' || $aktif->status === 'disetujui_final')
+                                                                             Disetujui
+                                                                        @elseif($aktif->status === 'dikembalikan')
+                                                                             Selesai
+                                                                        @else
+                                                                             Ditolak
+                                                                        @endif
+                                                                    </span>
                                                                 </div>
-                                                            @endforeach
-                                                        </div>
+                                                                <div class="warning-schedule-time">
+                                                                    <span>
+                                                                        <strong></strong>
+                                                                        {{ \Carbon\Carbon::parse($aktif->tanggal)->format('d M Y') }} - 
+                                                                        {{ \Carbon\Carbon::parse($aktif->tanggal_selesai)->format('d M Y') }}
+                                                                    </span>
+                                                                    <span>
+                                                                        <strong></strong>
+                                                                        {{ \Carbon\Carbon::parse($aktif->jam_mulai)->format('H:i') }} - 
+                                                                        {{ \Carbon\Carbon::parse($aktif->jam_selesai)->format('H:i') }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
                                                     </div>
-                                                @else
-                                                    <div class="warning-box">
-                                                        <div class="no-schedule">
-                                                            <span class="no-schedule-icon"></span>
-                                                            <strong>Tidak ada jadwal terpakai</strong>
-                                                            <span>Ruangan tersedia untuk semua waktu</span>
-                                                        </div>
+                                                </div>
+                                            @else
+                                                <div class="warning-box">
+                                                    <div class="no-schedule">
+                                                        <span class="no-schedule-icon"></span>
+                                                        <strong>Tidak ada jadwal terpakai</strong>
+                                                        <span>Ruangan tersedia untuk semua waktu</span>
                                                     </div>
-                                                @endif
+                                                </div>
+                                            @endif
+                                            
+                                            <div class="lab-footer-flex" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #f3f4f6;">
+                                                <div class="lab-proses">Proses persetujuan: &plusmn; 1x24 jam kerja</div>
+                                                <button type="button" class="lab-btn-ajukan">Ajukan Peminjaman &rarr;</button>
                                             </div>
                                         </div>
                                         @endforeach

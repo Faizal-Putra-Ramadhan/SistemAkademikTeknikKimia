@@ -21,7 +21,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .email-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             color: white;
             padding: 30px;
             text-align: center;
@@ -45,7 +45,7 @@
         .verify-button {
             display: inline-block;
             padding: 15px 40px;
-            background: #667eea;
+            background: #1e3a8a;
             color: white !important;
             text-decoration: none;
             border-radius: 5px;
@@ -53,11 +53,11 @@
             margin: 20px 0;
         }
         .verify-button:hover {
-            background: #5568d3;
+            background: #1e3a8a;
         }
         .info-box {
             background: #f8f9fa;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1e3a8a;
             padding: 15px;
             margin: 20px 0;
         }
@@ -103,7 +103,7 @@
             
             <p style="margin-top: 30px; font-size: 14px; color: #999;">
                 Jika tombol tidak berfungsi, copy dan paste link berikut ke browser Anda:<br>
-                <a href="{{ $verificationUrl }}" style="color: #667eea; word-break: break-all;">{{ $verificationUrl }}</a>
+                <a href="{{ $verificationUrl }}" style="color: #1e3a8a; word-break: break-all;">{{ $verificationUrl }}</a>
             </p>
         </div>
         

@@ -144,7 +144,7 @@
                 </table>
 
                 <!-- Extension Option -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="background: #e0e7ff; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="background: #e0e7ff; margin: 20px 0; border-radius: 8px; border-left: 4px solid #1e3a8a;">
                     <tr>
                         <td style="padding: 15px;">
                             <h4 style="margin: 0 0 8px 0; color: #3730a3;"> Butuh Perpanjangan Deadline?</h4>

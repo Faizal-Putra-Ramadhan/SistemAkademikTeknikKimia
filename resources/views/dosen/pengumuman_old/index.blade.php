@@ -23,7 +23,7 @@
             align-items: center;
         }
         .navbar h1 {
-            color: #667eea;
+            color: #1e3a8a;
         }
         .container {
             max-width: 1200px;
@@ -48,7 +48,7 @@
             color: white;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn:hover, .back-btn:hover {
@@ -72,7 +72,7 @@
             padding: 1.5rem;
             border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1e3a8a;
         }
         .pengumuman-header {
             display: flex;

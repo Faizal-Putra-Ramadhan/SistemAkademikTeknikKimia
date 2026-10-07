@@ -44,7 +44,7 @@
         width: 100%;
         height: 200px;
         object-fit: cover;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #1e3a8a;
         display: flex;
         align-items: center;
         justify-content: center;

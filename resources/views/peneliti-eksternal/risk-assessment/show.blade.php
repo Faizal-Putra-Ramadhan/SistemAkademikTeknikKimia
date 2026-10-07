@@ -17,7 +17,7 @@
             font-weight: 600;
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1e3a8a;
         }
         .detail-grid {
             display: grid;
@@ -108,11 +108,11 @@
             cursor: pointer;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn-primary:hover {
-            background: #5568d3;
+            background: #1e3a8a;
         }
         .btn-secondary {
             background: #6b7280;
@@ -137,12 +137,12 @@
                             {{ $riskAssessment->topik_judul }}
                         </h2>
                         @if($riskAssessment->id_ra)
-                            <p style="color: #667eea; margin-top: 0.5rem; font-weight: 600; font-size: 1.1rem;">
+                            <p style="color: #1e3a8a; margin-top: 0.5rem; font-weight: 600; font-size: 1.1rem;">
                                 🆔 ID: {{ $riskAssessment->id_ra }}
                             </p>
                         @endif
                         @if($riskAssessment->id_ra)
-                            <p style="color: #667eea; margin-top: 0.5rem; font-weight: 600; font-size: 1.1rem;">
+                            <p style="color: #1e3a8a; margin-top: 0.5rem; font-weight: 600; font-size: 1.1rem;">
                                 🆔 ID: {{ $riskAssessment->id_ra }}
                             </p>
                         @elseif($riskAssessment->status === 'disetujui')
@@ -201,7 +201,7 @@
                 <h3> Bahan Kimia yang Digunakan</h3>
                 @foreach($riskAssessment->bahanKimias as $index => $bahan)
                 <div style="border: 2px solid #e5e7eb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-                    <h4 style="color: #667eea; margin-bottom: 1rem;">Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}</h4>
+                    <h4 style="color: #1e3a8a; margin-bottom: 1rem;">Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}</h4>
                     
                     <div class="detail-item" style="margin-bottom: 1rem;">
                         <span class="detail-label">Sifat Bahan</span>
@@ -412,7 +412,7 @@
                                     </p>
                                 @endif
                                 @if($riskAssessment->catatan_dosen)
-                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #667eea; border-radius: 4px;">
+                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #1e3a8a; border-radius: 4px;">
                                         <strong>Catatan:</strong><br>
                                         {{ $riskAssessment->catatan_dosen }}
                                     </div>
@@ -461,7 +461,7 @@
                                     </strong>
                                 </p>
                                 @if($riskAssessment->catatan_safety_officer)
-                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #667eea; border-radius: 4px;">
+                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #1e3a8a; border-radius: 4px;">
                                         <strong>Catatan:</strong><br>
                                         {{ $riskAssessment->catatan_safety_officer }}
                                     </div>
@@ -497,7 +497,7 @@
                                     </strong>
                                 </p>
                                 @if($riskAssessment->catatan_kepala_lab)
-                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #667eea; border-radius: 4px;">
+                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #1e3a8a; border-radius: 4px;">
                                         <strong>Catatan:</strong><br>
                                         {{ $riskAssessment->catatan_kepala_lab }}
                                     </div>

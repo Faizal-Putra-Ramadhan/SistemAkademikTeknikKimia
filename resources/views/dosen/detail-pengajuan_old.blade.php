@@ -20,7 +20,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .navbar h1 {
-            color: #667eea;
+            color: #1e3a8a;
         }
         .container {
             max-width: 900px;
@@ -56,7 +56,7 @@
             color: #333;
             margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1e3a8a;
         }
         .info-grid {
             display: grid;
@@ -80,7 +80,7 @@
             background: #f8f9fa;
             padding: 1rem;
             border-radius: 5px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1e3a8a;
             margin-top: 0.5rem;
             line-height: 1.6;
             white-space: pre-wrap;

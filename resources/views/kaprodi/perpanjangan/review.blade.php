@@ -17,7 +17,7 @@
             font-weight: 600;
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1e3a8a;
         }
         .detail-grid {
             display: grid;
@@ -70,7 +70,7 @@
         }
         .form-select:focus, .form-textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #1e3a8a;
         }
         .form-textarea {
             min-height: 120px;
@@ -140,7 +140,7 @@
 @section('content')
 {{-- Informasi Risk Assessment --}}
             <div class="detail-section">
-                <h3> Informasi Risk Assessment</h3>
+                <h3>Informasi Risk Assessment</h3>
                 
                 <div class="detail-grid">
                     <div class="detail-item">
@@ -172,7 +172,7 @@
 
             {{-- Status Batas Waktu --}}
             <div class="detail-section">
-                <h3>⏰ Status Batas Waktu Peminjaman</h3>
+                <h3>Status Batas Waktu Peminjaman</h3>
                 
                 <div class="warning-box">
                     <div class="detail-grid">
@@ -218,7 +218,7 @@
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Durasi Perpanjangan Diminta</span>
-                        <span class="detail-value" style="color: #667eea; font-size: 1.25rem; font-weight: 600;">
+                        <span class="detail-value" style="color: #1e3a8a; font-size: 1.25rem; font-weight: 600;">
                             {{ $riskAssessment->durasi_perpanjangan_diminta }} Bulan
                         </span>
                     </div>
@@ -237,7 +237,7 @@
                 @csrf
                 
                 <div class="detail-section">
-                    <h3> Keputusan Perpanjangan</h3>
+                    <h3>Keputusan Perpanjangan</h3>
 
                     {{-- Keputusan --}}
                     <div class="form-group">
@@ -253,7 +253,7 @@
                                     required
                                     onchange="toggleDurasiField(true)"
                                 >
-                                <span style="font-weight: 500;"> Setujui Perpanjangan</span>
+                                <span style="font-weight: 500;">Setujui Perpanjangan</span>
                             </label>
                             <label class="radio-option">
                                 <input 
@@ -262,7 +262,7 @@
                                     value="tolak"
                                     onchange="toggleDurasiField(false)"
                                 >
-                                <span style="font-weight: 500;"> Tolak Perpanjangan</span>
+                                <span style="font-weight: 500;">Tolak Perpanjangan</span>
                             </label>
                         </div>
                         @error('persetujuan')

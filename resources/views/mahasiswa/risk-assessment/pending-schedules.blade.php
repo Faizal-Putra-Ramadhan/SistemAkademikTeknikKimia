@@ -5,7 +5,7 @@
 @push('styles')
 <style>
 .nav-bar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             padding: 1rem 2rem;
             color: white;
             display: flex;
@@ -86,10 +86,10 @@
             position: relative;
         }
         .schedule-card:hover {
-            border-color: #667eea;
+            border-color: #1e3a8a;
             background: #f3f4f6;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 5px 15px rgba(30, 58, 138, 0.1);
         }
         .schedule-card.selected {
             border-color: #10b981;
@@ -154,11 +154,11 @@
         }
         .alert-info {
             background: #e0e7ff;
-            border-left-color: #667eea;
+            border-left-color: #1e3a8a;
             color: #3730a3;
         }
         .btn-submit {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
             border: none;
             padding: 0.75rem 2rem;
@@ -169,7 +169,7 @@
             transition: background 0.3s;
         }
         .btn-submit:hover {
-            background: #5568d3;
+            background: #1e3a8a;
         }
         .btn-submit:disabled {
             background: #d1d5db;

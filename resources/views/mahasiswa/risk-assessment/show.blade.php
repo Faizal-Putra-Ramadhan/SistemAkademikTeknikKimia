@@ -17,7 +17,7 @@
         font-weight: 600;
         margin-bottom: 1.5rem;
         padding-bottom: 0.75rem;
-        border-bottom: 2px solid #667eea;
+        border-bottom: 2px solid #1e3a8a;
     }
     .detail-grid {
         display: grid;
@@ -53,7 +53,7 @@
                     {{ $riskAssessment->topik_judul }}
                 </h2>
                 @if($riskAssessment->id_ra)
-                    <p style="color: #667eea; margin-top: 0.5rem; font-weight: 600; font-size: 1.1rem;">
+                    <p style="color: #1e3a8a; margin-top: 0.5rem; font-weight: 600; font-size: 1.1rem;">
                         🆔 ID: {{ $riskAssessment->id_ra }}
                     </p>
                 @elseif($riskAssessment->status === 'disetujui')
@@ -115,7 +115,7 @@
         <h3> Bahan Kimia yang Digunakan</h3>
         @foreach($riskAssessment->bahanKimias as $index => $bahan)
         <div style="border: 2px solid #e5e7eb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-            <h4 style="color: #667eea; margin-bottom: 1rem;">Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}</h4>
+            <h4 style="color: #1e3a8a; margin-bottom: 1rem;">Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}</h4>
             <div class="detail-item" style="margin-bottom: 1rem;">
                 <span class="detail-label">Sifat Bahan</span>
                 <div>
@@ -242,7 +242,7 @@
                             <p style="margin-top: 0.25rem;">Kategori Resiko: <strong>{{ $riskAssessment->getKategoriResikoLabel() }}</strong></p>
                         @endif
                         @if($riskAssessment->catatan_dosen)
-                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #667eea; border-radius: 4px;"><strong>Catatan:</strong><br>{{ $riskAssessment->catatan_dosen }}</div>
+                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #1e3a8a; border-radius: 4px;"><strong>Catatan:</strong><br>{{ $riskAssessment->catatan_dosen }}</div>
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">{{ $riskAssessment->tanggal_persetujuan_dosen->format('d M Y, H:i') }}</p>
                     @else
@@ -268,7 +268,7 @@
                     @if($riskAssessment->persetujuan_safety_officer !== null)
                         <p style="margin-top: 0.5rem;">Status: <strong style="color: {{ $riskAssessment->persetujuan_safety_officer ? '#10b981' : '#ef4444' }}">{{ $riskAssessment->persetujuan_safety_officer ? 'Disetujui' : 'Ditolak' }}</strong></p>
                         @if($riskAssessment->catatan_safety_officer)
-                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #667eea; border-radius: 4px;"><strong>Catatan:</strong><br>{{ $riskAssessment->catatan_safety_officer }}</div>
+                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #1e3a8a; border-radius: 4px;"><strong>Catatan:</strong><br>{{ $riskAssessment->catatan_safety_officer }}</div>
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">{{ $riskAssessment->tanggal_persetujuan_safety_officer->format('d M Y, H:i') }}</p>
                     @elseif($riskAssessment->status === 'menunggu_safety_officer')
@@ -288,7 +288,7 @@
                     @if($riskAssessment->persetujuan_kepala_lab !== null)
                         <p style="margin-top: 0.5rem;">Status: <strong style="color: {{ $riskAssessment->persetujuan_kepala_lab ? '#10b981' : '#ef4444' }}">{{ $riskAssessment->persetujuan_kepala_lab ? 'Disetujui ' : 'Ditolak ' }}</strong></p>
                         @if($riskAssessment->catatan_kepala_lab)
-                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #667eea; border-radius: 4px;"><strong>Catatan:</strong><br>{{ $riskAssessment->catatan_kepala_lab }}</div>
+                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-left: 3px solid #1e3a8a; border-radius: 4px;"><strong>Catatan:</strong><br>{{ $riskAssessment->catatan_kepala_lab }}</div>
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">{{ $riskAssessment->tanggal_persetujuan_kepala_lab->format('d M Y, H:i') }}</p>
                     @elseif($riskAssessment->status === 'menunggu_kepala_lab')

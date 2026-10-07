@@ -20,7 +20,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .navbar h1 {
-            color: #667eea;
+            color: #1e3a8a;
         }
         .container {
             max-width: 1200px;
@@ -56,7 +56,7 @@
             color: #333;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1e3a8a;
         }
         table {
             width: 100%;
@@ -114,7 +114,7 @@
             top: 0.25rem;
             width: 10px;
             height: 10px;
-            background: #667eea;
+            background: #1e3a8a;
             border-radius: 50%;
         }
         .timeline-item::after {

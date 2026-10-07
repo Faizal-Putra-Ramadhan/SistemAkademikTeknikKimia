@@ -9,7 +9,7 @@
     <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: white;">
         <!-- Header -->
         <tr>
-            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center;">
+            <td style="background: #1e3a8a; color: white; padding: 30px; text-align: center;">
                 <h1 style="margin: 0; font-size: 24px;"> LIMS - Jadwal Wawancara Risk Assessment</h1>
             </td>
         </tr>
@@ -23,10 +23,10 @@
                 <p>Safety Officer telah menyediakan beberapa pilihan jadwal wawancara untuk Risk Assessment Anda. Silakan memilih salah satu jadwal yang paling sesuai dengan ketersediaan Anda.</p>
 
                 <!-- Risk Assessment Info Box -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #1e3a8a;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin-top: 0; color: #667eea;"> Informasi Risk Assessment</h3>
+                            <h3 style="margin-top: 0; color: #1e3a8a;"> Informasi Risk Assessment</h3>
                             
                             <table width="100%" cellpadding="8" cellspacing="0">
                                 <tr style="border-bottom: 1px solid #eee;">
@@ -47,7 +47,7 @@
                 </table>
 
                 <!-- Schedule Options -->
-                <h3 style="color: #667eea; margin-bottom: 15px;">⏰ Opsi Jadwal Wawancara</h3>
+                <h3 style="color: #1e3a8a; margin-bottom: 15px;">⏰ Opsi Jadwal Wawancara</h3>
                 
                 @forelse ($riskAssessment->jadwal_wawancara_options ?? [] as $index => $option)
                     <table width="100%" cellpadding="0" cellspacing="0" style="background: #f9fafb; margin: 12px 0; border-radius: 6px; border-left: 4px solid #10b981;">
@@ -83,7 +83,7 @@
 
                 @if ($riskAssessment->catatan_safety_officer)
                     <!-- Safety Officer Notes -->
-                    <table width="100%" cellpadding="0" cellspacing="0" style="background: #e0e7ff; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="background: #e0e7ff; margin: 20px 0; border-radius: 8px; border-left: 4px solid #1e3a8a;">
                         <tr>
                             <td style="padding: 15px;">
                                 <h4 style="margin: 0 0 8px 0; color: #3730a3;"> Catatan dari Safety Officer</h4>
@@ -98,7 +98,7 @@
                     <tr>
                         <td>
                             <a href="{{ route('mahasiswa.risk-assessment.pending-schedules', $riskAssessment->id) }}" 
-                               style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
+                               style="display: inline-block; background: #1e3a8a; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
                                  Pilih Jadwal Sekarang
                             </a>
                         </td>

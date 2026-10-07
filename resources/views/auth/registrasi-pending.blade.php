@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -108,7 +108,7 @@
         }
 
         .step-number {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
             width: 32px;
             height: 32px;
@@ -169,8 +169,8 @@
             width: 100%;
             padding: 14px;
             background: white;
-            border: 2px solid #667eea;
-            color: #667eea;
+            border: 2px solid #1e3a8a;
+            color: #1e3a8a;
             border-radius: 8px;
             font-size: 15px;
             font-weight: 600;
@@ -179,10 +179,10 @@
         }
 
         .btn-resend:hover {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
         }
 
         .back-link {

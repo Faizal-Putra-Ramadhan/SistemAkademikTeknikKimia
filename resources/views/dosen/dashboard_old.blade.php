@@ -12,7 +12,7 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             min-height: 100vh;
         }
         .navbar {
@@ -24,7 +24,7 @@
             align-items: center;
         }
         .navbar h1 {
-            color: #667eea;
+            color: #1e3a8a;
             font-size: 1.5rem;
         }
         .user-info {
@@ -119,7 +119,7 @@
             color: #333;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1e3a8a;
         }
         table {
             width: 100%;
@@ -163,7 +163,7 @@
             display: inline-block;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn-success {

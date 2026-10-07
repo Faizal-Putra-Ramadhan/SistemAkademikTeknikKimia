@@ -26,7 +26,7 @@
     .stat-card.pending { border-left-color: #f59e0b; }
     .stat-card.approved { border-left-color: #10b981; }
     .stat-card.rejected { border-left-color: #ef4444; }
-    .stat-card.total { border-left-color: #667eea; }
+    .stat-card.total { border-left-color: #1e3a8a; }
     
     .stat-value {
         font-size: 2.5rem;
@@ -126,11 +126,11 @@
         display: inline-block;
     }
     .btn-ra-primary {
-        background: #667eea;
+        background: #1e3a8a;
         color: white;
     }
     .btn-ra-primary:hover {
-        background: #5568d3;
+        background: #1e3a8a;
     }
     .btn-ra-secondary {
         background: #6b7280;
@@ -183,7 +183,7 @@
     <div class="stats-grid">
         <div class="stat-card pending">
             <div class="stat-value">{{ $riskAssessments->total() }}</div>
-            <div class="stat-label">⏳ Menunggu Review</div>
+            <div class="stat-label">Menunggu Review</div>
         </div>
         <div class="stat-card approved">
             <div class="stat-value">
@@ -213,7 +213,7 @@
     <div class="section-card">
         <div class="section-header">
             <h2 class="section-title">
-                <span>⏳</span>
+                <span></span>
                 <span>Menunggu Persetujuan Anda</span>
             </h2>
             <p style="color: #6b7280; font-size: 0.9rem; margin-top: 0.5rem;">
@@ -359,7 +359,7 @@
                     </div>
 
                     @if($ra->catatan_dosen)
-                    <div style="margin-top: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #667eea;">
+                    <div style="margin-top: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #1e3a8a;">
                         <strong style="color: #374151;"> Catatan Anda:</strong>
                         <div style="margin-top: 0.5rem; color: #4b5563;">
                             {{ $ra->catatan_dosen }}

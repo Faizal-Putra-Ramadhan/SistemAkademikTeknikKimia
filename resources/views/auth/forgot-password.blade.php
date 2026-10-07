@@ -82,7 +82,7 @@
 
         .input-wrapper input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #1e3a8a;
         }
 
         .input-wrapper .icon {
@@ -96,7 +96,7 @@
         .btn-submit {
             width: 100%;
             padding: 14px;
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
             border: none;
             border-radius: 6px;
@@ -107,7 +107,7 @@
         }
 
         .btn-submit:hover {
-            background: #5568d3;
+            background: #1e3a8a;
         }
 
         .back-link {
@@ -118,7 +118,7 @@
         }
 
         .back-link a {
-            color: #667eea;
+            color: #1e3a8a;
             text-decoration: none;
             font-weight: 600;
         }

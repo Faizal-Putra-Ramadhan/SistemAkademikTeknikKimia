@@ -5,7 +5,7 @@
 @push('styles')
 <style>
 .nav-bar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             padding: 1rem 2rem;
             color: white;
             display: flex;
@@ -93,8 +93,8 @@
         .form-input:focus,
         .form-textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
         .form-textarea {
             min-height: 100px;
@@ -109,7 +109,7 @@
             transition: all 0.3s;
         }
         .schedule-option:hover {
-            border-color: #667eea;
+            border-color: #1e3a8a;
             background: #f3f4f6;
         }
         .schedule-option-header {
@@ -119,7 +119,7 @@
             margin-bottom: 1rem;
         }
         .schedule-option-number {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
             width: 32px;
             height: 32px;
@@ -158,7 +158,7 @@
             background: #059669;
         }
         .btn-submit {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
             border: none;
             padding: 0.75rem 2rem;
@@ -169,7 +169,7 @@
             transition: background 0.3s;
         }
         .btn-submit:hover {
-            background: #5568d3;
+            background: #1e3a8a;
         }
         .alert {
             padding: 1rem;

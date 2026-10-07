@@ -18,7 +18,7 @@
             flex-wrap: wrap;
         }
         .breadcrumb a {
-            color: #667eea;
+            color: #1e3a8a;
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 500;
@@ -38,7 +38,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid #1e3a8a;
         }
         .form-section h3 {
             color: #1f2937;
@@ -85,8 +85,8 @@
         }
         .form-control:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
             background-color: #f8f9ff;
         }
         .form-control:disabled {
@@ -110,7 +110,7 @@
             cursor: pointer;
         }
         .checkbox-item:hover {
-            border-color: #667eea;
+            border-color: #1e3a8a;
             background-color: #f8f9ff;
         }
         .checkbox-item input[type="checkbox"] {
@@ -118,10 +118,10 @@
             height: 20px;
             margin-right: 0.75rem;
             cursor: pointer;
-            accent-color: #667eea;
+            accent-color: #1e3a8a;
         }
         .checkbox-item input[type="checkbox"]:checked {
-            accent-color: #667eea;
+            accent-color: #1e3a8a;
         }
         
         .radio-group {
@@ -140,7 +140,7 @@
             transition: all 0.3s;
         }
         .radio-item:hover {
-            border-color: #667eea;
+            border-color: #1e3a8a;
             background-color: #f8f9ff;
         }
         .radio-item input[type="radio"] {
@@ -148,15 +148,15 @@
             height: 20px;
             margin-right: 0.75rem;
             cursor: pointer;
-            accent-color: #667eea;
+            accent-color: #1e3a8a;
         }
         .radio-item input[type="radio"]:checked + span {
-            color: #667eea;
+            color: #1e3a8a;
             font-weight: 700;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
+            background: #1e3a8a;
             color: white;
             padding: 1rem 2.5rem;
             border-radius: 8px;
@@ -165,11 +165,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
         }
         
         .btn-secondary {
@@ -202,12 +202,12 @@
             border-radius: 10px;
             margin-bottom: 1.25rem;
             position: relative;
-            background: linear-gradient(to bottom, transparent, rgba(102, 126, 234, 0.02));
+            background: linear-gradient(to bottom, transparent, rgba(30, 58, 138, 0.02));
             transition: all 0.3s;
         }
         .bahan-kimia-item:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            border-color: #1e3a8a;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
         }
         
         .btn-remove {
@@ -363,7 +363,7 @@
                             @if($index > 0)
                             <button type="button" class="btn-remove" onclick="removeBahanKimia(this)"> Hapus</button>
                             @endif
-                            <h4 style="color: #667eea; margin-bottom: 1rem;">Bahan Kimia #{{ $index + 1 }}</h4>
+                            <h4 style="color: #1e3a8a; margin-bottom: 1rem;">Bahan Kimia #{{ $index + 1 }}</h4>
                             
                             <input type="hidden" name="bahan_kimia[{{ $index }}][id]" value="{{ $bahan->id }}">
                             
@@ -411,7 +411,7 @@
                                 <label>Upload MSDS Baru (PDF, max 5MB)</label>
                                 @if($bahan->msds_file)
                                 <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">
-                                    File saat ini: <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" style="color: #667eea;">Lihat/Download MSDS</a>
+                                    File saat ini: <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" style="color: #1e3a8a;">Lihat/Download MSDS</a>
                                 </p>
                                 @endif
                                 <input type="file" name="bahan_kimia[{{ $index }}][msds_file]" class="form-control" accept=".pdf">
@@ -569,7 +569,7 @@
                     <h3> Pernyataan Mahasiswa</h3>
                     
                     <div class="form-group">
-                        <div class="checkbox-item" style="background: #f8f9ff; padding: 1.5rem; border-radius: 6px; border: 2px solid #667eea;">
+                        <div class="checkbox-item" style="background: #f8f9ff; padding: 1.5rem; border-radius: 6px; border: 2px solid #1e3a8a;">
                             <input type="checkbox" name="setuju_bertanggung_jawab" value="1" id="pernyataan" {{ $riskAssessment->pernyataanMahasiswa->setuju_bertanggung_jawab ? 'checked' : '' }} required>
                             <label for="pernyataan" style="line-height: 1.6;">
                                 <strong>Saya menyatakan bahwa:</strong><br>

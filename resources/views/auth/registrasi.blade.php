@@ -50,14 +50,10 @@
         }
 
         .logo-container h3 {
-            color: #333;
+            color: #1e3a8a;
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 5px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .logo-container p {
@@ -92,8 +88,8 @@
 
         .input-wrapper input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
 
         .toggle-password {
@@ -191,7 +187,7 @@
         .btn-register {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             color: white;
             border: none;
             border-radius: 8px;
@@ -203,7 +199,7 @@
 
         .btn-register:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(30, 58, 138, 0.3);
         }
 
         .login-link {
@@ -214,7 +210,7 @@
         }
 
         .login-link a {
-            color: #667eea;
+            color: #1e3a8a;
             text-decoration: none;
             font-weight: 600;
         }
@@ -247,13 +243,13 @@
             border-radius: 10px;
             padding: 25px;
             margin-bottom: 20px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1e3a8a;
         }
 
         .feature-card .icon {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -288,7 +284,7 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
@@ -318,7 +314,7 @@
         .timeline-number {
             width: 32px;
             height: 32px;
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
             border-radius: 50%;
             display: flex;

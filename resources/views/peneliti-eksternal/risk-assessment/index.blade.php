@@ -18,7 +18,7 @@
             flex-wrap: wrap;
         }
         .breadcrumb a {
-            color: #667eea;
+            color: #1e3a8a;
             text-decoration: none;
             font-size: 0.95rem;
         }
@@ -42,7 +42,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             text-align: center;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid #1e3a8a;
             transition: transform 0.3s, box-shadow 0.3s;
         }
         .stat-card:hover {
@@ -52,7 +52,7 @@
         .stat-number {
             font-size: 2rem;
             font-weight: 700;
-            color: #667eea;
+            color: #1e3a8a;
         }
         .stat-label {
             color: #6b7280;
@@ -67,7 +67,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             margin-bottom: 1.5rem;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #1e3a8a;
             transition: all 0.3s ease;
         }
         .ra-card:hover {
@@ -164,7 +164,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
+            background: #1e3a8a;
             color: white;
         }
         .btn-secondary {
@@ -189,7 +189,7 @@
         }
         
         .btn-create {
-            background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
+            background: #1e3a8a;
             color: white;
             padding: 1rem 2rem;
             border-radius: 10px;
@@ -198,12 +198,12 @@
             display: inline-block;
             margin-bottom: 2rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
             font-size: 1rem;
         }
         .btn-create:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
         }
         
         .alert {
@@ -379,7 +379,7 @@
             <!-- TAB MENU -->
             <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb;">
                 <button onclick="switchTab('daftar-ra')" id="tab-btn-daftar-ra" 
-                        style="padding: 1rem 1.5rem; background: none; border: none; font-size: 1rem; font-weight: 600; color: #667eea; border-bottom: 3px solid #667eea; cursor: pointer; transition: all 0.3s;">
+                        style="padding: 1rem 1.5rem; background: none; border: none; font-size: 1rem; font-weight: 600; color: #1e3a8a; border-bottom: 3px solid #1e3a8a; cursor: pointer; transition: all 0.3s;">
                      Daftar Risk Assessment
                 </button>
                 <button onclick="switchTab('pilih-jadwal')" id="tab-btn-pilih-jadwal"
@@ -495,13 +495,13 @@
                             </p>
                         </div>
                         @elseif($ra->jadwal_wawancara_options && !$ra->jadwal_wawancara_dipilih_at)
-                        <div class="alert" style="background: #eef2ff; border-left-color: #667eea; color: #3730a3; margin-top: 1rem; border-left: 4px solid #667eea;">
+                        <div class="alert" style="background: #eef2ff; border-left-color: #1e3a8a; color: #3730a3; margin-top: 1rem; border-left: 4px solid #1e3a8a;">
                             <span>⏰</span>
                             <div>
                                 <strong>Jadwal Wawancara Menunggu Pilihan Anda</strong>
                                 <p style="margin: 0.5rem 0 0 0; font-size: 0.95rem;">
                                     Safety Officer telah menyediakan {{ count($ra->jadwal_wawancara_options) }} opsi jadwal wawancara.
-                                    <a href="#" onclick="switchTab('pilih-jadwal'); return false;" style="color: #667eea; font-weight: 600; text-decoration: underline;">Pilih sekarang →</a>
+                                    <a href="#" onclick="switchTab('pilih-jadwal'); return false;" style="color: #1e3a8a; font-weight: 600; text-decoration: underline;">Pilih sekarang →</a>
                                 </p>
                             </div>
                         </div>
@@ -631,7 +631,7 @@
 
                             <div style="display: flex; gap: 1rem;">
                                 <button type="submit" id="btn-confirm-{{ $ra->id }}" disabled
-                                        style="padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; opacity: 0.5; transition: all 0.3s;">
+                                        style="padding: 0.75rem 1.5rem; background: #1e3a8a; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; opacity: 0.5; transition: all 0.3s;">
                                      Konfirmasi Jadwal
                                 </button>
                             </div>
@@ -664,12 +664,12 @@ function switchTab(tabName) {
     // Show selected tab
     if (tabName === 'daftar-ra') {
         document.getElementById('tab-content-daftar-ra').style.display = 'block';
-        document.getElementById('tab-btn-daftar-ra').style.color = '#667eea';
-        document.getElementById('tab-btn-daftar-ra').style.borderBottomColor = '#667eea';
+        document.getElementById('tab-btn-daftar-ra').style.color = '#1e3a8a';
+        document.getElementById('tab-btn-daftar-ra').style.borderBottomColor = '#1e3a8a';
     } else if (tabName === 'pilih-jadwal') {
         document.getElementById('tab-content-pilih-jadwal').style.display = 'block';
-        document.getElementById('tab-btn-pilih-jadwal').style.color = '#667eea';
-        document.getElementById('tab-btn-pilih-jadwal').style.borderBottomColor = '#667eea';
+        document.getElementById('tab-btn-pilih-jadwal').style.color = '#1e3a8a';
+        document.getElementById('tab-btn-pilih-jadwal').style.borderBottomColor = '#1e3a8a';
     }
 }
 

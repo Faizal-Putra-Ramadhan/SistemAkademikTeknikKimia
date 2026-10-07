@@ -7,142 +7,174 @@
 <style>
     .page-header {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 12px;
+        align-items: center;
+        margin-bottom: 1.5rem;
     }
-    .page-header-info p { font-size: 13.5px; color: #6b7280; margin-top: 2px; }
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .status-publish { background: #d1fae5; color: #065f46; }
-    .status-draft { background: #fef3c7; color: #92400e; }
-    .pengumuman-title { font-weight: 500; max-width: 320px; }
-    .empty-state { text-align: center; padding: 48px 20px; color: #6b7280; }
-    .empty-state svg { width: 64px; height: 64px; color: #d1d5db; margin-bottom: 16px; }
-    .empty-state p { font-size: 14px; margin-bottom: 16px; }
+    .pengumuman-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .pengumuman-card {
+        background: #fafafa;
+        border: 1px solid #eaeaea;
+        padding: 1.25rem 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+    .status-publish {
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+    .status-draft {
+        background: #fffbeb;
+        color: #d97706;
+    }
+    .pengumuman-title-new h3 {
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    .pengumuman-excerpt {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 16px;
+    }
+    .pengumuman-footer-new {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .pengumuman-footer-new a {
+        color: #3b82f6;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .pengumuman-footer-new a:hover {
+        text-decoration: underline;
+    }
+    .pengumuman-date {
+        color: #9ca3af;
+        font-size: 13px;
+    }
+    .pengumuman-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .empty-state {
+        background: white;
+        padding: 3rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid #e5e7eb;
+    }
+    .empty-state p {
+        color: #666;
+        margin-bottom: 1rem;
+    }
 </style>
 @endpush
 
 @section('content')
-    <!-- Page Header -->
     <div class="page-header">
-        <div class="page-header-info">
-            <p>Buat dan kelola pengumuman untuk seluruh pengguna sistem</p>
+        <div>
+            <h2 style="font-size: 1.2rem; font-weight: 700; color: #111827;">Daftar Pengumuman</h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Kelola pengumuman untuk mahasiswa dan civitas lab.</p>
         </div>
-        <a href="{{ route('admin.pengumuman.create') }}" class="btn btn-primary">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            Buat Pengumuman Baru
+        <a href="{{ route('pengumuman.pengumuman.create') }}" class="btn btn-primary">
+            + Buat Pengumuman
         </a>
     </div>
 
-    <!-- Stats -->
-    <div class="stats-row">
-        <div class="stat-card">
-            <div class="stat-icon blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783M10.34 6.66a23.847 23.847 0 008.835-2.535"/></svg>
+    @if($pengumuman->count() > 0)
+    <div class="pengumuman-grid">
+        @foreach($pengumuman as $item)
+        <div class="pengumuman-card">
+            <div>
+                <span class="status-badge status-{{ $item->status }}">
+                    {{ ucfirst($item->status) }}
+                </span>
             </div>
-            <div class="stat-info">
-                <p>Total Pengumuman</p>
-                <h3>{{ $pengumuman->total() }}</h3>
+            <div class="pengumuman-title-new">
+                <h3>{{ $item->judul }}</h3>
             </div>
+            <div class="pengumuman-excerpt">
+                {{ Str::limit(strip_tags(str_replace(['</p>', '<br>', '</h1>', '</h2>', '</h3>', '</li>'], ' ', $item->isi)), 150) }}
+            </div>
+            <div class="pengumuman-footer-new">
+                <a href="javascript:void(0)" onclick="openPengumumanModal('modal-pengumuman-{{ $item->id }}')">Lihat Selengkapnya</a>
+                <span class="pengumuman-date">{{ \Carbon\Carbon::parse($item->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</span>
+                <span class="pengumuman-date" style="margin-left: 8px;">• {{ $item->author }}</span>
+            </div>
+            
+            <!-- Modal -->
+            <div id="modal-pengumuman-{{ $item->id }}" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                <div style="background: #fff; width: 90%; max-width: 650px; border-radius: 12px; padding: 30px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: left; white-space: normal;">
+                    <button type="button" onclick="closePengumumanModal('modal-pengumuman-{{ $item->id }}')" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 28px; cursor: pointer; color: #6b7280; line-height: 1;">&times;</button>
+                    <h2 style="margin-bottom: 8px; color: #1f2937; font-size: 20px;">{{ $item->judul }}</h2>
+                    <div style="font-size: 13px; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb;">
+                        {{ \Carbon\Carbon::parse($item->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                    </div>
+                    <div class="quill-content" style="color: #374151; line-height: 1.6;">
+                        {!! $item->isi !!}
+                    </div>
+                </div>
+            </div>
+            
+            @if($item->author === $user->Nama)
+            <div class="pengumuman-actions">
+                <a href="{{ route('pengumuman.pengumuman.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                     Edit
+                </a>
+                <form action="{{ route('pengumuman.pengumuman.destroy', $item->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus pengumuman ini?')">
+                         Hapus
+                    </button>
+                </form>
+            </div>
+            @endif
         </div>
-        <div class="stat-card">
-            <div class="stat-icon green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <div class="stat-info">
-                <p>Publish</p>
-                <h3>{{ $pengumuman->where('status', 'publish')->count() }}</h3>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon yellow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </div>
-            <div class="stat-info">
-                <p>Draft</p>
-                <h3>{{ $pengumuman->where('status', 'draft')->count() }}</h3>
-            </div>
-        </div>
+        @endforeach
     </div>
-
-    <!-- Alerts -->
-    
-
-    
-
-    <!-- Table Card -->
-    <div class="card">
-        <div class="card-header">
-            <h3>Daftar Pengumuman</h3>
-            <span class="badge badge-info">{{ $pengumuman->total() }} pengumuman</span>
-        </div>
-        <div class="card-body" style="padding: 0;">
-            <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">No</th>
-                            <th>Judul</th>
-                            <th style="width: 100px;">Status</th>
-                            <th style="width: 120px;">Tanggal</th>
-                            <th style="width: 150px;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($pengumuman as $i => $p)
-                        <tr>
-                            <td>{{ $pengumuman->firstItem() + $i }}</td>
-                            <td>
-                                <div class="pengumuman-title">{{ Str::limit($p->judul, 60) }}</div>
-                            </td>
-                            <td>
-                                <span class="badge {{ $p->status == 'publish' ? 'status-publish' : 'status-draft' }}">
-                                    {{ $p->status == 'publish' ? 'Publish' : 'Draft' }}
-                                </span>
-                            </td>
-                            <td>{{ $p->created_at->format('d M Y') }}</td>
-                            <td>
-                                <div style="display: flex; gap: 6px;">
-                                    <a href="{{ route('admin.pengumuman.edit', $p) }}" class="btn btn-warning btn-sm" title="Edit">
-                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('admin.pengumuman.destroy', $p) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengumuman ini?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-                                            Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783M10.34 6.66a23.847 23.847 0 008.835-2.535"/></svg>
-                                    <p>Belum ada pengumuman yang dibuat</p>
-                                    <a href="{{ route('admin.pengumuman.create') }}" class="btn btn-primary">
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                                        Buat Pengumuman Pertama
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pagination -->
-    @if($pengumuman->hasPages())
-    <div style="margin-top: 20px; display: flex; justify-content: center;">
-        {{ $pengumuman->links() }}
+    @else
+    <div class="empty-state">
+        <p>Belum ada pengumuman.</p>
+        <a href="{{ route('pengumuman.pengumuman.create') }}" class="btn btn-primary">Buat Pengumuman Pertama</a>
     </div>
     @endif
 @endsection
+
+@push('scripts')
+<script>
+    function openPengumumanModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePengumumanModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.id && event.target.id.startsWith('modal-pengumuman-')) {
+            closePengumumanModal(event.target.id);
+        }
+    }
+</script>
+@endpush

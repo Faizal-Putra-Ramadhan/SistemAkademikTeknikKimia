@@ -155,8 +155,8 @@
         </a>
         <a href="{{ route('dosen.pengumuman.index') }}" class="so-action act-amber" style="--ac:#d97706;">
             <div class="so-action-icon"><i class="fas fa-bullhorn"></i></div>
-            <h4>Kelola Pengumuman</h4>
-            <p>Buat dan kelola pengumuman</p>
+            <h4>Lihat Pengumuman</h4>
+            <p>Lihat informasi pengumuman</p>
         </a>
     </div>
 
@@ -251,7 +251,7 @@
                                     };
 
                                     $roomStatusLabel = match($item->status) {
-                                        'menunggu' => '⏳ Menunggu Laboran',
+                                        'menunggu' => ' Menunggu Laboran',
                                         'disetujui_laboran', 'menunggu_kepala_lab' => ' Menunggu Kepala Lab',
                                         'disetujui' => ' Disetujui',
                                         'dikembalikan' => ' Dikembalikan',
@@ -315,7 +315,7 @@
                                     };
 
                                     $alatStatusLabel = match($item->status) {
-                                        'menunggu' => '⏳ Menunggu Laboran',
+                                        'menunggu' => ' Menunggu Laboran',
                                         'disetujui' => ' Disetujui',
                                         'dikembalikan' => ' Dikembalikan',
                                         'ditolak' => ' Ditolak',

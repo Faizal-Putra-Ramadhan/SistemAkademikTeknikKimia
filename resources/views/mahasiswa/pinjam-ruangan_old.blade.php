@@ -12,7 +12,7 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             min-height: 100vh;
             padding: 2rem;
         }
@@ -71,7 +71,7 @@
             opacity: 0.8;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn-secondary {

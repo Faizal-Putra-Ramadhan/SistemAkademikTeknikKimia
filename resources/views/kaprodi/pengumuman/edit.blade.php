@@ -3,6 +3,15 @@
 @section('page-title', 'Edit Pengumuman')
 
 @push('styles')
+
+<!-- Quill Styles -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<style>
+    .quill-editor-container { height: 250px; background-color: white; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+    .ql-toolbar.ql-snow { background-color: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px; border-color: #d1d5db; }
+    .ql-container.ql-snow { border-color: #d1d5db; }
+</style>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -55,10 +64,8 @@
                                     <label class="font-weight-bold text-gray-700">
                                         Isi Pengumuman <span class="text-danger">*</span>
                                     </label>
-                                    <textarea name="isi" 
-                                              class="form-control rounded-lg @error('isi') is-invalid @enderror" 
-                                              rows="12"
-                                              required>{{ old('isi', $pengumuman->isi) }}</textarea>
+                                    <input type="hidden" name="isi" id="isi" value="{{ old('isi', $pengumuman->isi) }}">
+                    <div id="editor-container" class="quill-editor-container">{!! old('isi', $pengumuman->isi) !!}</div>
                                     @error('isi')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -147,6 +154,45 @@
 @endsection
 
 @push('scripts')
+
+<!-- Quill Scripts -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if(document.getElementById('editor-container')) {
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Tulis isi pengumuman di sini...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'align': [] }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            var isiInput = document.querySelector('#isi');
+            if (isiInput) {
+                var form = isiInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        if (quill.root.innerText.trim().length === 0 && !quill.root.innerHTML.includes('<img')) {
+                            isiInput.value = '';
+                        } else {
+                            isiInput.value = quill.root.innerHTML;
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 @endpush

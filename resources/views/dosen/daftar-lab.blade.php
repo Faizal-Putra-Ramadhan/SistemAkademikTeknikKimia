@@ -21,7 +21,7 @@
         transform: translateY(-5px);
     }
     .lab-card h3 {
-        color: #667eea;
+        color: #1e3a8a;
         margin-bottom: 1rem;
         font-size: 1.3rem;
     }
@@ -55,7 +55,7 @@
         opacity: 0.8;
     }
     .btn-lab-primary {
-        background: #667eea;
+        background: #1e3a8a;
         color: white;
     }
     .btn-lab-success {

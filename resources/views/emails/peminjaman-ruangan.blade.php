@@ -9,7 +9,7 @@
     <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: white;">
         <!-- Header -->
         <tr>
-            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center;">
+            <td style="background: #1e3a8a; color: white; padding: 30px; text-align: center;">
                 <h1 style="margin: 0; font-size: 24px;"> LIMS - Peminjaman Ruangan</h1>
             </td>
         </tr>
@@ -62,10 +62,10 @@
                 @endif
 
                 <!-- Detail Box -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="background: white; margin: 20px 0; border-radius: 8px; border-left: 4px solid #1e3a8a;">
                     <tr>
                         <td style="padding: 20px;">
-                            <h3 style="margin-top: 0; color: #667eea;"> Detail Peminjaman</h3>
+                            <h3 style="margin-top: 0; color: #1e3a8a;"> Detail Peminjaman</h3>
                             
                             <table width="100%" cellpadding="8" cellspacing="0">
                                 <tr style="border-bottom: 1px solid #eee;">
@@ -128,28 +128,28 @@
 
                 @if($type === 'pengajuan_ke_laboran')
                     <p style="margin-top: 20px; text-align: center;">
-                        <a href="{{ url('/laboran/peminjaman-ruangan/' . $peminjamanRuangan->daftar_lab_id) }}" style="display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px;">
+                        <a href="{{ url('/laboran/peminjaman-ruangan/' . $peminjamanRuangan->daftar_lab_id) }}" style="display: inline-block; padding: 12px 24px; background: #1e3a8a; color: white; text-decoration: none; border-radius: 5px;">
                             Review Peminjaman
                         </a>
                     </p>
 
                 @elseif($type === 'pengajuan_ke_kepala_lab')
                     <p style="margin-top: 20px; text-align: center;">
-                        <a href="{{ url('/kepala-lab/peminjaman-ruangan') }}" style="display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px;">
+                        <a href="{{ url('/kepala-lab/peminjaman-ruangan') }}" style="display: inline-block; padding: 12px 24px; background: #1e3a8a; color: white; text-decoration: none; border-radius: 5px;">
                             Review Peminjaman
                         </a>
                     </p>
 
                 @elseif($type === 'notifikasi_kaprodi')
                     <p style="margin-top: 20px; text-align: center;">
-                        <a href="{{ url('/kaprodi/dashboard') }}" style="display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px;">
+                        <a href="{{ url('/kaprodi/dashboard') }}" style="display: inline-block; padding: 12px 24px; background: #1e3a8a; color: white; text-decoration: none; border-radius: 5px;">
                             Lihat Dashboard
                         </a>
                     </p>
 
                 @else
                     <p style="margin-top: 20px; text-align: center;">
-                        <a href="{{ url('/mahasiswa/pinjam-ruangan/' . $peminjamanRuangan->daftar_lab_id) }}" style="display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px;">
+                        <a href="{{ url('/mahasiswa/pinjam-ruangan/' . $peminjamanRuangan->daftar_lab_id) }}" style="display: inline-block; padding: 12px 24px; background: #1e3a8a; color: white; text-decoration: none; border-radius: 5px;">
                             Lihat Detail
                         </a>
                     </p>

@@ -17,7 +17,7 @@
             font-weight: 600;
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1e3a8a;
         }
         .ra-card {
             background: #f9fafb;
@@ -100,11 +100,11 @@
             display: inline-block;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn-primary:hover {
-            background: #5568d3;
+            background: #1e3a8a;
         }
         .empty-state {
             text-align: center;
@@ -137,11 +137,11 @@
             transition: all 0.2s;
         }
         .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+            color: #1e3a8a;
+            border-bottom-color: #1e3a8a;
         }
         .tab:hover {
-            color: #667eea;
+            color: #1e3a8a;
         }
 </style>
 @endpush
@@ -162,7 +162,7 @@
             {{-- Tab Content: Pending --}}
             <div id="tab-pending" class="tab-content">
                 <div class="section-card">
-                    <h3 class="section-title">⏳ Pengajuan Perpanjangan Menunggu Persetujuan</h3>
+                    <h3 class="section-title">Pengajuan Perpanjangan Menunggu Persetujuan</h3>
 
                     @if($pengajuanPerpanjangan->count() > 0)
                         @foreach($pengajuanPerpanjangan as $ra)
@@ -175,39 +175,39 @@
                                     </p>
                                 </div>
                                 <span class="badge badge-pending">
-                                    ⏳ Menunggu Review
+                                    Menunggu Review
                                 </span>
                             </div>
 
                             <div class="ra-info">
                                 <div class="info-item">
-                                    <span class="info-label"> Laboratorium</span>
+                                    <span class="info-label">Laboratorium</span>
                                     <span class="info-value">{{ $ra->daftarLab->Nama_Laboratorium }}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label"> Diajukan</span>
+                                    <span class="info-label">Diajukan</span>
                                     <span class="info-value">{{ $ra->tanggal_pengajuan_perpanjangan->format('d M Y, H:i') }}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">⏰ Batas Waktu Saat Ini</span>
+                                    <span class="info-label">Batas Waktu Saat Ini</span>
                                     <span class="info-value" style="color: #ef4444;">
                                         {{ $ra->getBatasWaktuPeminjamanFormatted() }}
                                     </span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label"> Durasi Diminta</span>
+                                    <span class="info-label">Durasi Diminta</span>
                                     <span class="info-value">{{ $ra->durasi_perpanjangan_diminta }} Bulan</span>
                                 </div>
                                 @if($ra->jumlah_perpanjangan > 0)
                                 <div class="info-item">
-                                    <span class="info-label"> Riwayat Perpanjangan</span>
+                                    <span class="info-label">Riwayat Perpanjangan</span>
                                     <span class="info-value">{{ $ra->jumlah_perpanjangan }} kali</span>
                                 </div>
                                 @endif
                             </div>
 
                             <div class="alasan-box">
-                                <strong style="color: #1e40af;"> Alasan Perpanjangan:</strong>
+                                <strong style="color: #1e40af;">Alasan Perpanjangan:</strong>
                                 <p style="margin-top: 0.5rem; color: #374151; line-height: 1.6;">
                                     {{ $ra->alasan_perpanjangan }}
                                 </p>
@@ -235,7 +235,7 @@
             {{-- Tab Content: Riwayat --}}
             <div id="tab-riwayat" class="tab-content" style="display: none;">
                 <div class="section-card">
-                    <h3 class="section-title"> Riwayat Perpanjangan</h3>
+                    <h3 class="section-title">Riwayat Perpanjangan</h3>
 
                     @if($riwayatPerpanjangan->count() > 0)
                         @foreach($riwayatPerpanjangan as $ra)
@@ -254,20 +254,20 @@
 
                             <div class="ra-info">
                                 <div class="info-item">
-                                    <span class="info-label"> Diproses</span>
+                                    <span class="info-label">Diproses</span>
                                     <span class="info-value">{{ $ra->tanggal_persetujuan_perpanjangan->format('d M Y, H:i') }}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label"> Durasi Diminta</span>
+                                    <span class="info-label">Durasi Diminta</span>
                                     <span class="info-value">{{ $ra->durasi_perpanjangan_diminta }} Bulan</span>
                                 </div>
                                 @if($ra->persetujuan_perpanjangan_kaprodi)
                                 <div class="info-item">
-                                    <span class="info-label"> Durasi Disetujui</span>
+                                    <span class="info-label">Durasi Disetujui</span>
                                     <span class="info-value">{{ $ra->durasi_perpanjangan_disetujui }} Bulan</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">⏰ Batas Waktu Baru</span>
+                                    <span class="info-label">Batas Waktu Baru</span>
                                     <span class="info-value" style="color: #10b981;">
                                         {{ $ra->getBatasWaktuPeminjamanFormatted() }}
                                     </span>
@@ -277,7 +277,7 @@
 
                             @if($ra->catatan_perpanjangan_kaprodi)
                             <div class="alasan-box">
-                                <strong style="color: #1e40af;"> Catatan Kaprodi:</strong>
+                                <strong style="color: #1e40af;">Catatan Kaprodi:</strong>
                                 <p style="margin-top: 0.5rem; color: #374151;">
                                     {{ $ra->catatan_perpanjangan_kaprodi }}
                                 </p>

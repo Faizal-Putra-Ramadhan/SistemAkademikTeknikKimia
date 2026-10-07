@@ -39,7 +39,7 @@
     .form-icon {
         width: 60px;
         height: 60px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #1e3a8a;
         border-radius: 15px;
         display: flex;
         align-items: center;
@@ -61,7 +61,7 @@
 
     /* Lab Selection */
     .lab-selection-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #1e3a8a;
         padding: 1.5rem;
         border-radius: 15px;
         margin-bottom: 2rem;
@@ -114,9 +114,9 @@
         font-family: inherit;
     }
     .form-input:focus, .form-textarea:focus, .form-select:focus {
-        border-color: #667eea;
+        border-color: #1e3a8a;
         outline: none;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
     }
     .form-textarea {
         resize: vertical;
@@ -136,14 +136,14 @@
     /* Info Box */
     .info-box {
         background: #f0f4ff;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #1e3a8a;
         padding: 1.25rem;
         border-radius: 10px;
         margin-bottom: 2rem;
     }
     .info-box-title {
         font-weight: bold;
-        color: #667eea;
+        color: #1e3a8a;
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -163,7 +163,7 @@
     .btn-submit {
         width: 100%;
         padding: 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #1e3a8a;
         color: white;
         border: none;
         border-radius: 12px;
@@ -171,11 +171,11 @@
         font-weight: bold;
         cursor: pointer;
         transition: all 0.3s;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 20px rgba(30, 58, 138, 0.4);
     }
     .btn-submit:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        box-shadow: 0 12px 30px rgba(30, 58, 138, 0.5);
     }
 
     /* History Card Styles */

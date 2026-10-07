@@ -187,7 +187,10 @@ class LaboranController extends Controller
         $laboran = DaftarLaboranLaboratorium::where('UserID', $user->UserID)->first();
 
         
-        $pengumuman = Pengumuman::where('author', $user->Nama)
+        $pengumuman = Pengumuman::where(function($q) use ($user) {
+                $q->where('status', 'publish')
+                  ->orWhere('author', $user->Nama);
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -679,7 +682,13 @@ class LaboranController extends Controller
         $validated = $request->validate(['judul' => 'required|string', 'isi' => 'required|string', 'status' => 'required']);
         $validated['author'] = Auth::user()->Nama;
         Pengumuman::create($validated);
-        return back()->with('success', 'Pengumuman dibuat');
+        
+        $activeLabId = session('active_lab_id');
+        if (!$activeLabId) {
+            $laboran = \App\Models\DaftarLaboranLaboratorium::with('laboratoriums')->where('UserID', Auth::user()->UserID)->first();
+            $activeLabId = $laboran->laboratoriums->first()->id ?? 1;
+        }
+        return redirect()->route('laboran.pengumuman', ['id' => $activeLabId])->with('success', 'Pengumuman dibuat');
     }
 
     public function editPengumuman($id)
@@ -692,7 +701,13 @@ class LaboranController extends Controller
     {
         $pengumuman = Pengumuman::findOrFail($id);
         $pengumuman->update($request->validate(['judul' => 'required', 'isi' => 'required', 'status' => 'required']));
-        return back()->with('success', 'Pengumuman diupdate');
+        
+        $activeLabId = session('active_lab_id');
+        if (!$activeLabId) {
+            $laboran = \App\Models\DaftarLaboranLaboratorium::with('laboratoriums')->where('UserID', Auth::user()->UserID)->first();
+            $activeLabId = $laboran->laboratoriums->first()->id ?? 1;
+        }
+        return redirect()->route('laboran.pengumuman', ['id' => $activeLabId])->with('success', 'Pengumuman diupdate');
     }
 
     public function destroyPengumuman($id)

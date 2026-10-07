@@ -4,6 +4,15 @@
 @section('page-title', 'Edit Pengumuman')
 
 @push('styles')
+
+<!-- Quill Styles -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<style>
+    .quill-editor-container { height: 250px; background-color: white; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+    .ql-toolbar.ql-snow { background-color: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px; border-color: #d1d5db; }
+    .ql-container.ql-snow { border-color: #d1d5db; }
+</style>
+
 <style>
     .form-group .required { color: #dc2626; }
     .form-group .error-msg { color: #dc2626; font-size: 12px; margin-top: 4px; }
@@ -38,7 +47,8 @@
 
                 <div class="form-group">
                     <label for="isi" class="form-label">Isi Pengumuman <span class="required">*</span></label>
-                    <textarea name="isi" id="isi" class="form-control" placeholder="Tulis isi pengumuman di sini..." required>{{ old('isi', $pengumuman->isi) }}</textarea>
+                    <input type="hidden" name="isi" id="isi" value="{{ old('isi', $pengumuman->isi) }}">
+                    <div id="editor-container" class="quill-editor-container">{!! old('isi', $pengumuman->isi) !!}</div>
                     @error('isi') <span class="error-msg">{{ $message }}</span> @enderror
                 </div>
 
@@ -59,4 +69,45 @@
             </form>
         </div>
     </div>
+@push('scripts')
+
+<!-- Quill Scripts -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if(document.getElementById('editor-container')) {
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Tulis isi pengumuman di sini...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'align': [] }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            var isiInput = document.querySelector('#isi');
+            if (isiInput) {
+                var form = isiInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        if (quill.root.innerText.trim().length === 0 && !quill.root.innerHTML.includes('<img')) {
+                            isiInput.value = '';
+                        } else {
+                            isiInput.value = quill.root.innerHTML;
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>
+
+@endpush
 @endsection

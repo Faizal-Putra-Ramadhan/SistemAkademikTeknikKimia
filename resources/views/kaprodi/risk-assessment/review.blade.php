@@ -207,9 +207,9 @@ body { background-color: #f4f7f6; color: #333; }
                                     <i class="fas fa-paper-plane mr-2"></i> Kirim Keputusan
                                 </button>
                                 
-                                <button type="button" class="btn btn-link btn-block text-warning font-weight-bold mt-2" data-toggle="modal" data-target="#revisiModal">
+                                <!-- <button type="button" class="btn btn-link btn-block text-warning font-weight-bold mt-2" data-toggle="modal" data-target="#revisiModal">
                                     <i class="fas fa-edit mr-1"></i> Minta Revisi Mahasiswa
-                                </button>
+                                </button> -->
                             </form>
                         </div>
                     </div>

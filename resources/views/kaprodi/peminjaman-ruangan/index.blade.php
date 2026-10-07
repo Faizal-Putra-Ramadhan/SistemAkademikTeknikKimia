@@ -113,7 +113,7 @@ body { background-color: #f8f9fa; }
                 @empty
                     <div class="col-12">
                         <div class="text-center py-5 bg-white rounded shadow-sm">
-                            <img src="https://illustrations.popsy.co/gray/empty-folder.svg" alt="empty" style="width: 150px;" class="mb-3">
+                            <img src="https://illustrations.popsy.co/gray/empty-folder.svg" alt="" style="width: 150px;" class="mb-3">
                             <p class="text-muted">Tidak ada permohonan yang sedang aktif saat ini.</p>
                         </div>
                     </div>

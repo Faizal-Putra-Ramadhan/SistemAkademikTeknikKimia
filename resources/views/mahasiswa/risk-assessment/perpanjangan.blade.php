@@ -17,7 +17,7 @@
         font-weight: 600;
         margin-bottom: 1.5rem;
         padding-bottom: 0.75rem;
-        border-bottom: 2px solid #667eea;
+        border-bottom: 2px solid #1e3a8a;
     }
     .info-box {
         background: #f3f4f6;

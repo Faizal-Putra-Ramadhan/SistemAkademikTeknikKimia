@@ -17,7 +17,7 @@
         transition: width 0.5s ease-in-out;
     }
     .progress-fill.green { background: #059669; }
-    .progress-fill.blue { background: var(--color-primary, #667eea); }
+    .progress-fill.blue { background: var(--color-primary, #1e3a8a); }
 
     .approval-item {
         display: flex;
@@ -97,7 +97,7 @@
     }
     .select-ra:focus {
         outline: none;
-        border-color: var(--color-primary, #667eea);
+        border-color: var(--color-primary, #1e3a8a);
         box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
     }
 </style>

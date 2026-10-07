@@ -12,7 +12,7 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             min-height: 100vh;
         }
         .navbar {
@@ -24,7 +24,7 @@
             align-items: center;
         }
         .navbar h1 {
-            color: #667eea;
+            color: #1e3a8a;
             font-size: 1.5rem;
         }
         .user-info {
@@ -114,7 +114,7 @@
             transform: translateY(-5px);
         }
         .lab-card h3 {
-            color: #667eea;
+            color: #1e3a8a;
             margin-bottom: 1rem;
         }
         .lab-info {
@@ -145,7 +145,7 @@
             opacity: 0.8;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn-success {

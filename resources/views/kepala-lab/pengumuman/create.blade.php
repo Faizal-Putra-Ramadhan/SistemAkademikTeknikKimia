@@ -4,9 +4,19 @@
 @section('page-title', 'Buat Pengumuman')
 
 @push('styles')
+
+<!-- Quill Styles -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<style>
+    .quill-editor-container { height: 250px; background-color: white; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+    .ql-toolbar.ql-snow { background-color: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px; border-color: #d1d5db; }
+    .ql-container.ql-snow { border-color: #d1d5db; }
+</style>
+
 <style>
     .form-container {
         max-width: 800px;
+        margin: 0 auto;
     }
     .subtitle {
         color: #666;
@@ -56,7 +66,8 @@
 
                     <div class="form-group">
                         <label class="form-label" for="isi">Isi Pengumuman *</label>
-                        <textarea class="form-control" id="isi" name="isi" required placeholder="Tulis isi pengumuman di sini..." style="min-height: 200px; resize: vertical;">{{ old('isi') }}</textarea>
+                        <input type="hidden" name="isi" id="isi" value="{{ old('isi') }}">
+                    <div id="editor-container" class="quill-editor-container">{!! old('isi') !!}</div>
                         <div class="help-text">Tulis pengumuman dengan jelas dan detail</div>
                     </div>
 
@@ -77,4 +88,45 @@
             </div>
         </div>
     </div>
+@push('scripts')
+
+<!-- Quill Scripts -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if(document.getElementById('editor-container')) {
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Tulis isi pengumuman di sini...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'align': [] }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            var isiInput = document.querySelector('#isi');
+            if (isiInput) {
+                var form = isiInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        if (quill.root.innerText.trim().length === 0 && !quill.root.innerHTML.includes('<img')) {
+                            isiInput.value = '';
+                        } else {
+                            isiInput.value = quill.root.innerHTML;
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>
+
+@endpush
 @endsection

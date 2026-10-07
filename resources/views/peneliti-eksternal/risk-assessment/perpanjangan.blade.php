@@ -17,7 +17,7 @@
             font-weight: 600;
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1e3a8a;
         }
         .form-group {
             margin-bottom: 1.5rem;
@@ -38,7 +38,7 @@
         }
         .form-input:focus, .form-textarea:focus, .form-select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #1e3a8a;
         }
         .form-textarea {
             min-height: 150px;
@@ -65,11 +65,11 @@
             cursor: pointer;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn-primary:hover {
-            background: #5568d3;
+            background: #1e3a8a;
         }
         .btn-secondary {
             background: #6b7280;

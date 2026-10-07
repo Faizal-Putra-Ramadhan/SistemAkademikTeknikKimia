@@ -13,7 +13,7 @@
                     
                     <!-- Header -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                        <td style="background: #1e3a8a; padding: 30px; text-align: center;">
                             <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Reset Password</h1>
                             <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px;">LAB TEKIM UAD</p>
                         </td>
@@ -35,7 +35,7 @@
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td align="center" style="padding: 20px 0;">
-                                        <a href="{{ $resetUrl }}" style="display: inline-block; padding: 14px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
+                                        <a href="{{ $resetUrl }}" style="display: inline-block; padding: 14px 40px; background: #1e3a8a; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
                                             Reset Password
                                         </a>
                                     </td>
@@ -47,7 +47,7 @@
                             </p>
                             
                             <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; word-wrap: break-word;">
-                                <a href="{{ $resetUrl }}" style="color: #667eea; text-decoration: none; font-size: 13px;">{{ $resetUrl }}</a>
+                                <a href="{{ $resetUrl }}" style="color: #1e3a8a; text-decoration: none; font-size: 13px;">{{ $resetUrl }}</a>
                             </div>
                             
                             <!-- Warning Box -->

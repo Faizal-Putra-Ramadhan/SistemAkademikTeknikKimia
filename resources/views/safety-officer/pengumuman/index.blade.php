@@ -1,195 +1,180 @@
 @extends('layouts.app')
-@section('title', 'Pengumuman')
-@section('page-title', 'Pengumuman')
+
+@section('title', 'Kelola Pengumuman')
+@section('page-title', 'Kelola Pengumuman')
 
 @push('styles')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    /* ===== Pengumuman Index ===== */
-    .pn-page { max-width: 1000px; margin: 0 auto; }
-
-    /* Header */
-    .pn-header {
-        display: flex; align-items: flex-start;
-        justify-content: space-between; gap: 16px;
-        margin-bottom: 24px; flex-wrap: wrap;
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
     }
-    .pn-header-text h1 {
-        font-size: 22px; font-weight: 700; color: #111827;
-        display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    .pengumuman-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
     }
-    .pn-header-text h1 i { color: #2563eb; font-size: 20px; }
-    .pn-header-text p { font-size: 14px; color: #6b7280; }
-
-    .pn-create-btn {
-        display: inline-flex; align-items: center; gap: 8px;
-        padding: 10px 20px; border-radius: 10px;
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        color: #fff; font-size: 13.5px; font-weight: 600;
-        text-decoration: none; border: none; cursor: pointer;
-        box-shadow: 0 2px 8px rgba(37,99,235,0.25);
-        transition: all 0.2s;
+    .pengumuman-card {
+        background: #fafafa;
+        border: 1px solid #eaeaea;
+        padding: 1.25rem 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
     }
-    .pn-create-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
-    .pn-create-btn i { font-size: 13px; }
-
-    /* Alert */
-    .pn-alert {
-        display: flex; align-items: center; gap: 10px;
-        padding: 12px 18px; border-radius: 10px;
-        margin-bottom: 20px; font-size: 13.5px; font-weight: 500;
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 12px;
     }
-    .pn-alert.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-    .pn-alert i { font-size: 16px; }
-
-    /* Card container */
-    .pn-list { display: flex; flex-direction: column; gap: 14px; }
-
-    /* Card */
-    .pn-card {
-        background: #fff; border: 1px solid #e5e7eb;
-        border-radius: 14px; overflow: hidden;
-        transition: all 0.2s;
+    .status-publish {
+        background: #eff6ff;
+        color: #3b82f6;
     }
-    .pn-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-
-    .pn-card-inner { padding: 22px 24px; }
-
-    /* Top row: title + badge */
-    .pn-card-top {
-        display: flex; align-items: flex-start;
-        justify-content: space-between; gap: 14px;
-        margin-bottom: 10px;
+    .status-draft {
+        background: #fffbeb;
+        color: #d97706;
     }
-    .pn-card-title {
-        font-size: 16px; font-weight: 700; color: #111827;
-        line-height: 1.35; flex: 1;
+    .pengumuman-title-new h3 {
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
-
-    .pn-badge {
-        display: inline-flex; align-items: center; gap: 5px;
-        padding: 3px 11px; border-radius: 20px;
-        font-size: 11.5px; font-weight: 600; white-space: nowrap;
-        flex-shrink: 0;
-    }
-    .pn-badge.publish { background: #dcfce7; color: #166534; }
-    .pn-badge.draft   { background: #fef9c3; color: #854d0e; }
-
-    /* Meta info */
-    .pn-meta {
-        display: flex; align-items: center; gap: 16px;
-        margin-bottom: 14px; flex-wrap: wrap;
-    }
-    .pn-meta-item {
-        display: flex; align-items: center; gap: 6px;
-        font-size: 12.5px; color: #6b7280;
-    }
-    .pn-meta-item i { font-size: 12px; color: #9ca3af; }
-
-    /* Content preview */
-    .pn-content {
-        font-size: 13.5px; color: #4b5563; line-height: 1.65;
-        display: -webkit-box; -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical; overflow: hidden;
+    .pengumuman-excerpt {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
         margin-bottom: 16px;
     }
-
-    /* Actions row */
-    .pn-actions {
-        display: flex; align-items: center; gap: 8px;
-        padding-top: 14px; border-top: 1px solid #f3f4f6;
+    .pengumuman-footer-new {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
     }
-    .pn-btn {
-        display: inline-flex; align-items: center; gap: 6px;
-        padding: 7px 14px; border-radius: 8px;
-        font-size: 12.5px; font-weight: 600;
-        text-decoration: none; border: none; cursor: pointer;
-        transition: all 0.15s;
+    .pengumuman-footer-new a {
+        color: #3b82f6;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
     }
-    .pn-btn.edit {
-        background: #fef3c7; color: #92400e;
-        border: 1px solid #fde68a;
+    .pengumuman-footer-new a:hover {
+        text-decoration: underline;
     }
-    .pn-btn.edit:hover { background: #fde68a; }
-    .pn-btn.delete {
-        background: #fee2e2; color: #991b1b;
-        border: 1px solid #fecaca;
+    .pengumuman-date {
+        color: #9ca3af;
+        font-size: 13px;
     }
-    .pn-btn.delete:hover { background: #fecaca; }
-
-    /* Accent stripe */
-    .pn-stripe {
-        height: 4px; border-radius: 4px 4px 0 0;
+    .pengumuman-actions {
+        display: flex;
+        gap: 0.5rem;
     }
-    .pn-stripe.publish { background: linear-gradient(90deg, #22c55e, #16a34a); }
-    .pn-stripe.draft   { background: linear-gradient(90deg, #eab308, #ca8a04); }
-
-    /* Empty */
-    .pn-empty {
-        background: #fff; border: 1px solid #e5e7eb;
-        border-radius: 14px; padding: 60px 24px;
+    .empty-state {
+        background: white;
+        padding: 3rem;
+        border-radius: 8px;
         text-align: center;
+        border: 1px solid #e5e7eb;
     }
-    .pn-empty i { font-size: 48px; color: #d1d5db; margin-bottom: 14px; display: block; }
-    .pn-empty h4 { font-size: 15px; font-weight: 600; color: #6b7280; margin-bottom: 6px; }
-    .pn-empty p { font-size: 13px; color: #9ca3af; margin-bottom: 20px; }
+    .empty-state p {
+        color: #666;
+        margin-bottom: 1rem;
+    }
 </style>
 @endpush
 
 @section('content')
-<div class="pn-page">
-
-    {{-- Header --}}
-    <div class="pn-header">
-        <div class="pn-header-text">
-            <h1><i class="fas fa-bullhorn"></i> Pengumuman</h1>
-            <p>Daftar pengumuman terbaru untuk seluruh pengguna laboratorium</p>
+    <div class="page-header">
+        <div>
+            <h2 style="font-size: 1.2rem; font-weight: 700; color: #111827;">Daftar Pengumuman</h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Kelola pengumuman untuk mahasiswa dan civitas lab.</p>
         </div>
+        <a href="{{ route('safety-officer.pengumuman.create') }}" class="btn btn-primary">
+            + Buat Pengumuman
+        </a>
     </div>
 
-    {{-- Alert --}}
-    
-
-    {{-- List --}}
     @if($pengumuman->count() > 0)
-    <div class="pn-list">
+    <div class="pengumuman-grid">
         @foreach($pengumuman as $item)
-        <div class="pn-card">
-            <div class="pn-stripe {{ $item->status }}"></div>
-            <div class="pn-card-inner">
-                <div class="pn-card-top">
-                    <span class="pn-card-title">{{ $item->judul }}</span>
-                    <span class="pn-badge {{ $item->status }}">
-                        @if($item->status === 'publish')
-                            <i class="fas fa-globe"></i> Publish
-                        @else
-                            <i class="fas fa-file-pen"></i> Draft
-                        @endif
-                    </span>
-                </div>
-
-                <div class="pn-meta">
-                    <span class="pn-meta-item">
-                        <i class="fas fa-user"></i> {{ $item->author }}
-                    </span>
-                    <span class="pn-meta-item">
-                        <i class="fas fa-calendar"></i> {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}
-                    </span>
-                </div>
-
-                <div class="pn-content">{{ $item->isi }}</div>
-
+        <div class="pengumuman-card">
+            <div>
+                <span class="status-badge status-{{ $item->status }}">
+                    {{ ucfirst($item->status) }}
+                </span>
             </div>
+            <div class="pengumuman-title-new">
+                <h3>{{ $item->judul }}</h3>
+            </div>
+            <div class="pengumuman-excerpt">
+                {{ Str::limit(strip_tags(str_replace(['</p>', '<br>', '</h1>', '</h2>', '</h3>', '</li>'], ' ', $item->isi)), 150) }}
+            </div>
+            <div class="pengumuman-footer-new">
+                <a href="javascript:void(0)" onclick="openPengumumanModal('modal-pengumuman-{{ $item->id }}')">Lihat Selengkapnya</a>
+                <span class="pengumuman-date">{{ \Carbon\Carbon::parse($item->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</span>
+                <span class="pengumuman-date" style="margin-left: 8px;">• {{ $item->author }}</span>
+            </div>
+            
+            <!-- Modal -->
+            <div id="modal-pengumuman-{{ $item->id }}" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                <div style="background: #fff; width: 90%; max-width: 650px; border-radius: 12px; padding: 30px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: left; white-space: normal;">
+                    <button type="button" onclick="closePengumumanModal('modal-pengumuman-{{ $item->id }}')" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 28px; cursor: pointer; color: #6b7280; line-height: 1;">&times;</button>
+                    <h2 style="margin-bottom: 8px; color: #1f2937; font-size: 20px;">{{ $item->judul }}</h2>
+                    <div style="font-size: 13px; color: #6b7280; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb;">
+                        {{ \Carbon\Carbon::parse($item->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                    </div>
+                    <div class="quill-content" style="color: #374151; line-height: 1.6;">
+                        {!! $item->isi !!}
+                    </div>
+                </div>
+            </div>
+            
+            @if($item->author === $user->Nama)
+            <div class="pengumuman-actions">
+                <a href="{{ route('safety-officer.pengumuman.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                     Edit
+                </a>
+                <form action="{{ route('safety-officer.pengumuman.destroy', $item->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus pengumuman ini?')">
+                         Hapus
+                    </button>
+                </form>
+            </div>
+            @endif
         </div>
         @endforeach
     </div>
     @else
-    <div class="pn-empty">
-        <i class="fas fa-bullhorn"></i>
-        <h4>Belum ada pengumuman</h4>
-        <p>Pengumuman terbaru akan muncul di sini.</p>
+    <div class="empty-state">
+        <p>Belum ada pengumuman.</p>
+        <a href="{{ route('safety-officer.pengumuman.create') }}" class="btn btn-primary">Buat Pengumuman Pertama</a>
     </div>
     @endif
-
-</div>
 @endsection
+
+@push('scripts')
+<script>
+    function openPengumumanModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePengumumanModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.id && event.target.id.startsWith('modal-pengumuman-')) {
+            closePengumumanModal(event.target.id);
+        }
+    }
+</script>
+@endpush

@@ -101,7 +101,7 @@
     <!-- Tabs -->
     <div class="tab-navigation">
         <button class="tab-button active" onclick="showTab('waiting')">
-            ⏳ Menunggu Persetujuan ({{ $peminjamanMenunggu->total() ?? 0 }})
+            Menunggu Persetujuan ({{ $peminjamanMenunggu->total() ?? 0 }})
         </button>
         <button class="tab-button" onclick="showTab('processed')">
              Sudah Diproses ({{ $peminjamanDiproses->total() ?? 0 }})
@@ -119,7 +119,7 @@
                     <span class="badge {{ $peminjaman->status == 'menunggu_kepala_lab' ? 'badge-warning' : ($peminjaman->status == 'disetujui_laboran' ? 'badge-info' : 'badge-secondary') }}">
                         @switch($peminjaman->status)
                             @case('menunggu_kepala_lab')
-                                ⏳ Menunggu Persetujuan
+                                Menunggu Persetujuan
                                 @break
                             @case('disetujui_laboran')
                                  Disetujui Laboran
@@ -140,7 +140,7 @@
                         <span class="info-value">{{ $peminjaman->tanggal ? date('d/m/Y', strtotime($peminjaman->tanggal)) : 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">⏰ Jam</span>
+                        <span class="info-label">Jam</span>
                         <span class="info-value">{{ $peminjaman->jam_mulai ?? 'N/A' }} - {{ $peminjaman->jam_selesai ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">
@@ -213,7 +213,7 @@
                         <span class="info-value">{{ $peminjaman->tanggal ? date('d/m/Y', strtotime($peminjaman->tanggal)) : 'N/A' }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">⏰ Jam</span>
+                        <span class="info-label">Jam</span>
                         <span class="info-value">{{ $peminjaman->jam_mulai ?? 'N/A' }} - {{ $peminjaman->jam_selesai ?? 'N/A' }}</span>
                     </div>
                     <div class="info-item">

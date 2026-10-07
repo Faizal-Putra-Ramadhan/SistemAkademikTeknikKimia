@@ -282,11 +282,11 @@
             <h4>Laporan RA</h4>
             <p>Akses rekap data Risk Assessment</p>
         </a>
-        <a href="{{ route('kepala-lab.peminjaman-ruangan.report') }}" class="so-action act-blue" style="--ac:#2563eb;">
+        <!-- <a href="{{ route('kepala-lab.peminjaman-ruangan.report') }}" class="so-action act-blue" style="--ac:#2563eb;">
             <div class="so-action-icon"><i class="fas fa-history"></i></div>
             <h4>Laporan Ruangan</h4>
             <p>Riwayat peminjaman ruangan lab</p>
-        </a>
+        </a> -->
     </div>
 
 </div>

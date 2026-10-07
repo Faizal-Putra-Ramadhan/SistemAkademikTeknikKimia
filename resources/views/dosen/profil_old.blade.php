@@ -20,7 +20,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .navbar h1 {
-            color: #667eea;
+            color: #1e3a8a;
         }
         .container {
             max-width: 800px;
@@ -54,7 +54,7 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e3a8a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -100,7 +100,7 @@
             transition: opacity 0.3s;
         }
         .btn-primary {
-            background: #667eea;
+            background: #1e3a8a;
             color: white;
         }
         .btn:hover {

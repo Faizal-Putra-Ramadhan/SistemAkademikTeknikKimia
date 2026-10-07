@@ -18,7 +18,7 @@
         font-weight: 600;
         margin-bottom: 1.5rem;
         padding-bottom: 0.75rem;
-        border-bottom: 2px solid #667eea;
+        border-bottom: 2px solid #1e3a8a;
     }
     .detail-grid {
         display: grid;
@@ -59,7 +59,7 @@
         border-radius: 10px;
         box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         margin-top: 2rem;
-        border: 3px solid #667eea;
+        border: 3px solid #1e3a8a;
     }
     .form-group {
         margin-bottom: 1.5rem;
@@ -87,7 +87,7 @@
         transition: all 0.2s;
     }
     .radio-item:hover {
-        border-color: #667eea;
+        border-color: #1e3a8a;
         background-color: #f8f9ff;
     }
     .radio-item input[type="radio"] {
@@ -104,8 +104,8 @@
     }
     .form-control:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #1e3a8a;
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
     }
     .btn-review {
         padding: 0.875rem 2rem;
@@ -188,7 +188,7 @@
         <h3> Bahan Kimia yang Digunakan</h3>
         @foreach($riskAssessment->bahanKimias as $index => $bahan)
         <div style="border: 2px solid #e5e7eb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-            <h4 style="color: #667eea; margin-bottom: 1rem; font-weight: 600;">
+            <h4 style="color: #1e3a8a; margin-bottom: 1rem; font-weight: 600;">
                 Bahan #{{ $index + 1 }}: {{ $bahan->nama_bahan }}
             </h4>
             <div>
@@ -202,7 +202,7 @@
             </div>
             @if($bahan->msds_file)
             <div style="margin-top: 1rem;">
-                <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" style="color: #667eea; font-weight: 500;">
+                <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" style="color: #1e3a8a; font-weight: 500;">
                      Lihat/Download MSDS
                 </a>
             </div>
@@ -343,7 +343,7 @@
     </div>
     @else
     <!-- Keputusan yang sudah dibuat -->
-    <div class="detail-section" style="border: 3px solid #667eea;">
+    <div class="detail-section" style="border: 3px solid #1e3a8a;">
         <h3> Keputusan Dosen Pembimbing</h3>
         
         <div class="detail-grid">
@@ -366,7 +366,7 @@
         </div>
 
         @if($riskAssessment->catatan_dosen)
-        <div style="margin-top: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #667eea;">
+        <div style="margin-top: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #1e3a8a;">
             <strong style="color: #374151;"> Catatan:</strong>
             <div style="margin-top: 0.5rem; color: #4b5563;">
                 {{ $riskAssessment->catatan_dosen }}

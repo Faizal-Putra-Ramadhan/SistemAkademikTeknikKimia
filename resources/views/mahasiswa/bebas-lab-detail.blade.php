@@ -12,7 +12,7 @@
         margin-bottom: 1.5rem;
     }
     .card-header {
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #1e3a8a;
         padding-left: 1rem;
         margin-bottom: 1.5rem;
     }

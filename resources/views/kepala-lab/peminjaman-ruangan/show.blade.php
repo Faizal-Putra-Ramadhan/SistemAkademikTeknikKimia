@@ -92,7 +92,7 @@
                 <span class="badge {{ $peminjaman->status == 'menunggu_kepala_lab' ? 'badge-warning' : ($peminjaman->status == 'disetujui_laboran' ? 'badge-info' : ($peminjaman->status == 'disetujui' ? 'badge-success' : ($peminjaman->status == 'ditolak' ? 'badge-danger' : 'badge-secondary'))) }}">
                     @switch($peminjaman->status)
                         @case('menunggu_kepala_lab')
-                            ⏳ Menunggu Persetujuan
+                            Menunggu Persetujuan
                             @break
                         @case('disetujui_laboran')
                              Disetujui Laboran
@@ -117,7 +117,10 @@
                 </div>
                 <div class="info-item">
                     <span class="info-label"> Email</span>
-                    <span class="info-value">{{ $peminjaman->user?->Email ?? 'N/A' }}</span>
+                    @php
+                        $email = $peminjaman->user->Email ?? \App\Models\DaftarUser::where('Nama', $peminjaman->user_nama)->value('Email') ?? 'N/A';
+                    @endphp
+                    <span class="info-value">{{ $email }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label"> Laboratorium</span>
@@ -128,11 +131,11 @@
                     <span class="info-value">{{ $peminjaman->tanggal ? date('d/m/Y', strtotime($peminjaman->tanggal)) : 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">⏰ Jam Mulai</span>
+                    <span class="info-label">Jam Mulai</span>
                     <span class="info-value">{{ $peminjaman->jam_mulai ?? 'N/A' }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">⏰ Jam Selesai</span>
+                    <span class="info-label">Jam Selesai</span>
                     <span class="info-value">{{ $peminjaman->jam_selesai ?? 'N/A' }}</span>
                 </div>
             </div>
