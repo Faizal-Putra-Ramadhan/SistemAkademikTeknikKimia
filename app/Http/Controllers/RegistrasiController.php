@@ -38,7 +38,7 @@ class RegistrasiController extends Controller
     {
         
 
-        $pattern = '/^(\d{2})(\d{3})(18)(\d{3})@webmail\.uad\.ac\.id$/';
+        $pattern = '/^(\d{2})(\d{3})(20)(\d{3})@webmail\.uad\.ac\.id$/';
 
         if (! preg_match($pattern, $email, $matches)) {
             return [
@@ -53,7 +53,7 @@ class RegistrasiController extends Controller
         $nomorMahasiswa = $matches[4];
 
         
-        if ($kodeProdi !== '18') {
+        if ($kodeProdi !== '20') {
             return [
                 'valid' => false,
                 'message' => 'Email bukan untuk Prodi Teknik Kimia. Kode prodi harus 20.',
