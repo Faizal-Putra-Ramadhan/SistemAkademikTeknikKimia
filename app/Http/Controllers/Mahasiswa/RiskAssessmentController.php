@@ -674,10 +674,10 @@ class RiskAssessmentController extends Controller
             'kategori_hazard_bahan' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
 
             
-            'peralatan.tekanan_tinggi' => 'required|boolean',
-            'peralatan.suhu_tinggi' => 'required|boolean',
-            'peralatan.nyala_api' => 'required|boolean',
-            'peralatan.peralatan_berputar' => 'required|boolean',
+            'peralatan.tekanan_tinggi' => 'nullable|boolean',
+            'peralatan.suhu_tinggi' => 'nullable|boolean',
+            'peralatan.nyala_api' => 'nullable|boolean',
+            'peralatan.peralatan_berputar' => 'nullable|boolean',
             'peralatan.temperatur_maksimum' => 'nullable|numeric',
             'peralatan.tekanan_maksimum' => 'nullable|numeric',
             'peralatan.kategori_hazard' => 'required|in:sangat_hazardous,hazardous,moderat,tidak_hazardous',
