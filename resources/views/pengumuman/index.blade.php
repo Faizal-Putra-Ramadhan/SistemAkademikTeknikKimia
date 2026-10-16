@@ -94,7 +94,7 @@
             <h2 style="font-size: 1.2rem; font-weight: 700; color: #111827;">Daftar Pengumuman</h2>
             <p style="color: #64748b; font-size: 0.9rem;">Kelola pengumuman untuk mahasiswa dan civitas lab.</p>
         </div>
-        <a href="{{ route('pengumuman.pengumuman.create') }}" class="btn btn-primary">
+        <a href="{{ route('admin.pengumuman.create') }}" class="btn btn-primary">
             + Buat Pengumuman
         </a>
     </div>
@@ -134,12 +134,12 @@
                 </div>
             </div>
             
-            @if($item->author === $user->Nama)
+            @if($item->author === auth()->user()->Nama)
             <div class="pengumuman-actions">
-                <a href="{{ route('pengumuman.pengumuman.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                <a href="{{ route('admin.pengumuman.edit', $item->id) }}" class="btn btn-warning btn-sm">
                      Edit
                 </a>
-                <form action="{{ route('pengumuman.pengumuman.destroy', $item->id) }}" method="POST" style="display: inline;">
+                <form action="{{ route('admin.pengumuman.destroy', $item->id) }}" method="POST" style="display: inline;">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus pengumuman ini?')">
@@ -154,7 +154,7 @@
     @else
     <div class="empty-state">
         <p>Belum ada pengumuman.</p>
-        <a href="{{ route('pengumuman.pengumuman.create') }}" class="btn btn-primary">Buat Pengumuman Pertama</a>
+        <a href="{{ route('admin.pengumuman.create') }}" class="btn btn-primary">Buat Pengumuman Pertama</a>
     </div>
     @endif
 @endsection
