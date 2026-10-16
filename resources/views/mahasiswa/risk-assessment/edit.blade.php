@@ -584,6 +584,9 @@
     
             </div>
     </div>
+
+    @push('scripts')
+    <script>
     // Counter untuk bahan kimia - mulai dari jumlah existing
     let bahanKimiaIndex = {{ $riskAssessment->bahanKimias->count() }};
     
@@ -662,4 +665,5 @@
         }
     });
     </script>
+    @endpush
 @endsection
