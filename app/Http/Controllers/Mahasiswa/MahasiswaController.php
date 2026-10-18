@@ -669,6 +669,7 @@ class MahasiswaController extends Controller
 
         // Ambil status peminjaman
         $peminjamanRuangan = PeminjamanRuangan::where('user_nama', $user->Nama)
+            ->with('daftarLab')
             ->where('daftar_lab_id', $labId)
             ->orderBy('created_at', 'desc')
             ->get();

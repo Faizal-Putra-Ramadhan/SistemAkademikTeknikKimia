@@ -225,3 +225,23 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function openPengumumanModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePengumumanModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('click', function(event) {
+        if (event.target.id && event.target.id.startsWith('modal-pengumuman-')) {
+            closePengumumanModal(event.target.id);
+        }
+    });
+</script>
+@endpush

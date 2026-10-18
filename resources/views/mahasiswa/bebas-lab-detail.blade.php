@@ -91,9 +91,10 @@
         <div class="card-header" style="border-left-color: #16a34a;">
             <h2>Persetujuan Laboran</h2>
         </div>
-        @if($bebasLabRequest->approvals->isNotEmpty())
+        @php $activeApprovals = $bebasLabRequest->approvals->filter(fn($a) => $a->laboranUser !== null); @endphp
+        @if($activeApprovals->isNotEmpty())
             <ul class="text-sm text-gray-700 space-y-2">
-                @foreach($bebasLabRequest->approvals as $approval)
+                @foreach($activeApprovals as $approval)
                     <li>
                         {{ $approval->lab?->Nama_Laboratorium ?? '-' }} - {{ $approval->laboran_nama ?? '-' }}
                         ({{ $approval->status === 'disetujui' ? 'Disetujui' : 'Menunggu' }})

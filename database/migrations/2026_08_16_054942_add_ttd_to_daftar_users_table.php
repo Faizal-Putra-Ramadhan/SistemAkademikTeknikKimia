@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('daftar_users', function (Blueprint $table) {
-            $table->string('ttd')->nullable()->after('foto');
-        });
+        // Kolom 'ttd' sudah ada di migration gabungan 2024_01_01_000002.
+        // Guard ini mencegah error "duplicate column name" saat migrate
+        // pada database baru (mis. deployment ke VPS).
+        if (! Schema::hasColumn('daftar_users', 'ttd')) {
+            Schema::table('daftar_users', function (Blueprint $table) {
+                $table->string('ttd')->nullable()->after('foto');
+            });
+        }
     }
 
     /**
@@ -21,8 +26,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('daftar_users', function (Blueprint $table) {
-            $table->dropColumn('ttd');
-        });
+        if (Schema::hasColumn('daftar_users', 'ttd')) {
+            Schema::table('daftar_users', function (Blueprint $table) {
+                $table->dropColumn('ttd');
+            });
+        }
     }
 };

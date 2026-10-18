@@ -23,7 +23,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->index('bebas_lab_requests_user_id_foreign');
             $table->string('user_nama');
-            $table->enum('status', ['menunggu', 'disetujui'])->default('menunggu');
+            // 'dibatalkan' dipakai BebasLabController::cancel saat mahasiswa menarik pengajuan.
+            $table->enum('status', ['menunggu', 'disetujui', 'dibatalkan'])->default('menunggu');
             $table->timestamp('kepala_lab_approved_at')->nullable();
             $table->timestamp('tanggal_berlaku_dari')->nullable();
             $table->timestamp('tanggal_berlaku_sampai')->nullable();
@@ -42,7 +43,8 @@ return new class extends Migration
             $table->unsignedBigInteger('daftar_lab_id')->index('bebas_lab_approvals_daftar_lab_id_foreign');
             $table->string('laboran_user_id')->nullable();
             $table->string('laboran_nama')->nullable();
-            $table->enum('status', ['menunggu', 'disetujui'])->default('menunggu');
+            // 'ditolak' dipakai LaboranController saat laboran menolak approval bebas lab.
+            $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
 

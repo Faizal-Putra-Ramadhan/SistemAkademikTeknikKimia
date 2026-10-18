@@ -297,7 +297,17 @@ class DosenController extends Controller
             ->latest()
             ->get();
 
-        return view('dosen.pinjam-ruangan', compact('lab', 'user', 'labs', 'peminjaman_ruangans'));
+        $peminjaman_aktif_per_lab = [];
+        foreach ($labs as $labItem) {
+            $peminjaman_aktif_per_lab[$labItem->id] = PeminjamanRuangan::where('daftar_lab_id', $labItem->id)
+                ->whereIn('status', ['menunggu', 'disetujui_laboran', 'menunggu_kaprodi', 'disetujui', 'disetujui_final'])
+                ->where('tanggal_selesai', '>=', now()->format('Y-m-d'))
+                ->orderBy('tanggal', 'asc')
+                ->orderBy('jam_mulai', 'asc')
+                ->get();
+        }
+
+        return view('dosen.pinjam-ruangan', compact('lab', 'user', 'labs', 'peminjaman_ruangans', 'peminjaman_aktif_per_lab'));
     }
 
     /**

@@ -359,7 +359,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">{{ $riskAssessments->where('status', 'menunggu_dosen')->count() }}</div>
-                    <div class="stat-label">⏳ Menunggu Review</div>
+                    <div class="stat-label">Menunggu Review</div>
                 </div>
             </div>
             @endif

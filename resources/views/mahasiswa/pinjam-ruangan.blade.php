@@ -661,7 +661,7 @@ body { background: #f5f7fa; }
                                             </div>
 
                                             @if(isset($peminjaman_aktif_per_lab[$labItem->id]) && $peminjaman_aktif_per_lab[$labItem->id]->count() > 0)
-                                                <div class="warning-box">
+                                                <div class="warning-box" style="display:block !important;">
                                                     <div class="warning-box-header">
                                                         <span class="warning-icon"></span>
                                                         <span>Jadwal Terpakai ({{ $peminjaman_aktif_per_lab[$labItem->id]->count() }} booking)</span>
@@ -703,7 +703,7 @@ body { background: #f5f7fa; }
                                                     </div>
                                                 </div>
                                             @else
-                                                <div class="warning-box">
+                                                <div class="warning-box" style="display:block !important;">
                                                     <div class="no-schedule">
                                                         <span class="no-schedule-icon"></span>
                                                         <strong>Tidak ada jadwal terpakai</strong>

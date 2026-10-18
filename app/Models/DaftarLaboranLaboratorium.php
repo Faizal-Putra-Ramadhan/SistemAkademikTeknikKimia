@@ -29,4 +29,12 @@ class DaftarLaboranLaboratorium extends Model
     {
         return $this->belongsTo(DaftarLab::class, 'daftar_lab_id');
     }
+
+    /**
+     * Relasi ke DaftarUser via UserID
+     */
+    public function user()
+    {
+        return $this->belongsTo(DaftarUser::class, 'UserID', 'UserID');
+    }
 }

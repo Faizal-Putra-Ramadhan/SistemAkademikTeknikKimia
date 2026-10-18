@@ -92,6 +92,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>Laboratorium</th>
                     <th>Tanggal</th>
                     <th>Waktu</th>
                     <th>Keperluan</th>
@@ -101,6 +102,7 @@
             <tbody>
                 @foreach($peminjamanRuangan as $item)
                 <tr>
+                    <td>{{ $item->daftarLab->Nama_Laboratorium ?? '-' }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</td>
                     <td>{{ $item->jam_mulai }} - {{ $item->jam_selesai }}</td>
                     <td>{{ $item->keperluan }}</td>

@@ -8,6 +8,22 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        .quill-content ol {
+            list-style-type: decimal;
+            padding-left: 1.5em;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+        .quill-content ul {
+            list-style-type: disc;
+            padding-left: 1.5em;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+        .quill-content li {
+            margin-bottom: 0.25em;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;

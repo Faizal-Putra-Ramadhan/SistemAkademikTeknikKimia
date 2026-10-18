@@ -54,7 +54,7 @@
                 </h2>
                 @if($riskAssessment->id_ra)
                     <p style="color: #1e3a8a; margin-top: 0.5rem; font-weight: 600; font-size: 1.1rem;">
-                        🆔 ID: {{ $riskAssessment->id_ra }}
+                        ID: {{ $riskAssessment->id_ra }}
                     </p>
                 @elseif($riskAssessment->status === 'disetujui')
                     <p style="color: #10b981; margin-top: 0.5rem; font-weight: 600; font-size: 0.95rem;">
@@ -62,7 +62,7 @@
                     </p>
                 @else
                     <p style="color: #f59e0b; margin-top: 0.5rem; font-weight: 600; font-size: 0.95rem;">
-                        ⏳ ID Risk Assessment akan muncul setelah disetujui oleh kepala lab
+                         ID Risk Assessment akan muncul setelah disetujui oleh kepala lab
                     </p>
                 @endif
                 <p style="color: #6b7280; margin-top: 0.5rem;">
@@ -246,7 +246,7 @@
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">{{ $riskAssessment->tanggal_persetujuan_dosen->format('d M Y, H:i') }}</p>
                     @else
-                        <p style="margin-top: 0.5rem; color: #fbbf24;">⏳ Menunggu review</p>
+                        <p style="margin-top: 0.5rem; color: #fbbf24;">Menunggu review</p>
                     @endif
                 </div>
             </div>
@@ -272,7 +272,7 @@
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">{{ $riskAssessment->tanggal_persetujuan_safety_officer->format('d M Y, H:i') }}</p>
                     @elseif($riskAssessment->status === 'menunggu_safety_officer')
-                        <p style="margin-top: 0.5rem; color: #fbbf24;">⏳ Menunggu review</p>
+                        <p style="margin-top: 0.5rem; color: #fbbf24;"> Menunggu review</p>
                     @endif
                 </div>
             </div>
@@ -292,7 +292,7 @@
                         @endif
                         <p style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.85rem;">{{ $riskAssessment->tanggal_persetujuan_kepala_lab->format('d M Y, H:i') }}</p>
                     @elseif($riskAssessment->status === 'menunggu_kepala_lab')
-                        <p style="margin-top: 0.5rem; color: #fbbf24;">⏳ Menunggu review</p>
+                        <p style="margin-top: 0.5rem; color: #fbbf24;">Menunggu review</p>
                     @endif
                 </div>
             </div>

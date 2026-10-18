@@ -176,8 +176,9 @@
             </div>
             <div class="card-body">
                 @php
-                    $totalApprovals = $bebasLabRequest->approvals->count();
-                    $approvedCount = $bebasLabRequest->approvals->where('status', 'disetujui')->count();
+                    $activeApprovals = $bebasLabRequest->approvals->filter(fn($a) => $a->laboranUser !== null);
+                    $totalApprovals = $activeApprovals->count();
+                    $approvedCount = $activeApprovals->where('status', 'disetujui')->count();
                     $isApproved = $bebasLabRequest->isFullyApproved();
                     $isActive = $bebasLabRequest->is_active && $bebasLabRequest->isMasihBerlaku() && !$bebasLabRequest->hasPeminjamanAktif();
                     $canDownload = $isApproved && $isActive;
@@ -246,8 +247,8 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <h3 style="font-size: 15px; font-weight: 600; color: #374151; margin: 0;">Detail Persetujuan Laboran</h3>
                         @php
-                            $totalLabs = $bebasLabRequest->approvals->count();
-                            $approvedLabs = $bebasLabRequest->approvals->where('status', 'disetujui')->count();
+                            $totalLabs = $activeApprovals->count();
+                            $approvedLabs = $activeApprovals->where('status', 'disetujui')->count();
                         @endphp
                         <span class="badge badge-secondary">{{ $approvedLabs }}/{{ $totalLabs }} Disetujui</span>
                     </div>
@@ -271,7 +272,7 @@
                         </div>
                     @endif
 
-                    @foreach($bebasLabRequest->approvals as $approval)
+                    @foreach($activeApprovals as $approval)
                         <div class="approval-item {{ $approval->status === 'disetujui' ? 'approved' : '' }}">
                             <div class="approval-icon {{ $approval->status === 'disetujui' ? 'green' : 'yellow' }}">
                                 @if($approval->status === 'disetujui')

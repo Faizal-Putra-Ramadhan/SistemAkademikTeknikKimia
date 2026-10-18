@@ -97,7 +97,10 @@ class ForgotPasswordController extends Controller
             return back()->with('error', 'Token reset password tidak valid.');
         }
 
-        $tokenAge = now()->diffInMinutes($resetRecord->created_at);
+        // Carbon 3 mengembalikan nilai bertanda (signed) untuk diffInMinutes, sehingga
+        // token berusia > 60 menit menghasilkan angka negatif dan lolos dari pengecekan.
+        // abs() memulihkan perilaku "umur token dalam menit" seperti seharusnya.
+        $tokenAge = abs(now()->diffInMinutes($resetRecord->created_at));
         if ($tokenAge > 60) {
             return back()->with('error', 'Token reset password sudah kadaluarsa. Silakan request ulang.');
         }

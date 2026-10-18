@@ -223,6 +223,8 @@ class LaboranController extends Controller
 
             
             if ($alat->jumlah_tersedia < $peminjaman->jumlah) {
+                DB::rollBack();
+
                 return redirect()->back()->with('error', 'Stok alat tidak mencukupi. Stok tersedia: '.$alat->jumlah_tersedia.', diminta: '.$peminjaman->jumlah);
             }
 

@@ -437,6 +437,7 @@ class PenelitiEksternalController extends Controller
             ->get();
 
         $peminjamanRuangan = PeminjamanRuangan::where('user_nama', $user->Nama)
+            ->with('daftarLab')
             ->where('daftar_lab_id', $id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -467,36 +468,23 @@ class PenelitiEksternalController extends Controller
         $user = Auth::user();
         $labs = DaftarLab::penelitian()->get();
 
-        
-        $allBebasLabRaIds = BebasLabRequest::where('user_id', $user->id)
+        // Nonaktifkan dulu bebas lab aktif yang pemiliknya sudah punya peminjaman aktif
+        foreach (BebasLabRequest::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('status', 'disetujui')
+            ->get() as $blr) {
+            if ($blr->hasPeminjamanAktif()) {
+                $blr->deactivate();
+            }
+        }
+
+        // RA hanya tidak bisa diajukan lagi jika masih ada bebas lab yang AKTIF.
+        // Setelah dibatalkan / otomatis nonaktif karena peminjaman, RA bisa diajukan lagi (periode berikutnya).
+        $excludeRaIds = BebasLabRequest::where('user_id', $user->id)
+            ->where('is_active', true)
             ->pluck('risk_assessment_id')
             ->unique()
             ->toArray();
-
-        $excludeRaIds = [];
-        foreach ($allBebasLabRaIds as $raId) {
-            $hasActiveBebas = BebasLabRequest::where('user_id', $user->id)
-                ->where('risk_assessment_id', $raId)
-                ->where('is_active', true)
-                ->exists();
-
-            if ($hasActiveBebas) {
-                $excludeRaIds[] = $raId;
-            } else {
-                $hasActivePeminjaman = PeminjamanAlat::where('user_nama', $user->Nama)
-                    ->where('risk_assessment_id', $raId)
-                    ->whereIn('status', ['menunggu', 'disetujui'])
-                    ->exists()
-                || PeminjamanRuangan::where('user_nama', $user->Nama)
-                    ->where('risk_assessment_id', $raId)
-                    ->whereIn('status', ['menunggu_laboran', 'disetujui_laboran', 'menunggu_kepala_lab', 'disetujui'])
-                    ->exists();
-
-                if (! $hasActivePeminjaman) {
-                    $excludeRaIds[] = $raId;
-                }
-            }
-        }
 
         
         $riskAssessments = RiskAssessment::where('user_id', $user->id)
@@ -506,20 +494,11 @@ class PenelitiEksternalController extends Controller
             ->get();
 
         
-        $bebasLabRequests = BebasLabRequest::with(['approvals.lab', 'riskAssessment.daftarLab'])
+        $bebasLabRequests = BebasLabRequest::with(['approvals.lab', 'approvals.laboranUser', 'riskAssessment.daftarLab'])
             ->where('user_id', $user->id)
             ->where('is_active', true)
             ->latest()
             ->get();
-
-        
-        foreach ($bebasLabRequests as $key => $blr) {
-            if ($blr->status === 'disetujui' && $blr->hasPeminjamanAktif()) {
-                $blr->deactivate();
-                $bebasLabRequests->forget($key);
-            }
-        }
-        $bebasLabRequests = $bebasLabRequests->values(); 
 
         $peminjamanAlats = PeminjamanAlat::with('alatLab.daftarLab')
             ->where('user_nama', $user->Nama)
@@ -579,7 +558,9 @@ class PenelitiEksternalController extends Controller
             'periode' => $periode,
         ]);
 
-        $laborans = DaftarLaboranLaboratorium::with(['laboratoriums', 'daftarLab'])->get();
+        $laborans = DaftarLaboranLaboratorium::with(['laboratoriums', 'daftarLab'])
+            ->whereHas('user')
+            ->get();
 
         
         foreach ($laborans as $laboran) {

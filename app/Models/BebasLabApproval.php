@@ -31,4 +31,12 @@ class BebasLabApproval extends Model
     {
         return $this->belongsTo(DaftarLab::class, 'daftar_lab_id');
     }
+
+    /**
+     * Relasi ke user laboran (menggunakan UserID sebagai key)
+     */
+    public function laboranUser(): BelongsTo
+    {
+        return $this->belongsTo(DaftarUser::class, 'laboran_user_id', 'UserID');
+    }
 }

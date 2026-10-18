@@ -21,6 +21,17 @@ class PeminjamanAlat extends Model
         'notifikasi_7_hari_terkirim',
         'tanggal_notifikasi_7_hari',
         'deadline_status',
+        // Field alur pengembalian alat. Sebelumnya tidak didaftarkan di $fillable
+        // sehingga $peminjaman->update([...]) pada controller diam-diam membuang
+        // pengajuan pengembalian (fitur pengembalian tidak pernah tersimpan).
+        'pengajuan_pengembalian',
+        'tanggal_pengajuan_pengembalian',
+        'keterangan_pengembalian',
+        'pengembalian_disetujui',
+        'tanggal_persetujuan_pengembalian',
+        'laboran_nama',
+        'catatan_laboran',
+        'kondisi_barang',
     ];
 
     protected $casts = [
@@ -29,6 +40,10 @@ class PeminjamanAlat extends Model
         'batas_waktu_peminjaman' => 'datetime',
         'notifikasi_7_hari_terkirim' => 'boolean',
         'tanggal_notifikasi_7_hari' => 'datetime',
+        'pengajuan_pengembalian' => 'boolean',
+        'tanggal_pengajuan_pengembalian' => 'datetime',
+        'pengembalian_disetujui' => 'boolean',
+        'tanggal_persetujuan_pengembalian' => 'datetime',
     ];
 
     public function alatLab()

@@ -178,8 +178,13 @@
                                         <div class="info-box" style="margin-top:0; margin-bottom:1.5rem;">
                                             <strong> Jadwal Terpakai ({{ $peminjaman_aktif_per_lab[$labItem->id]->count() }} booking)</strong>
                                             @foreach($peminjaman_aktif_per_lab[$labItem->id] as $aktif)
-                                            <p> {{ $aktif->user_nama }} —  {{ \Carbon\Carbon::parse($aktif->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($aktif->tanggal_selesai)->format('d M Y') }},  {{ \Carbon\Carbon::parse($aktif->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($aktif->jam_selesai)->format('H:i') }}</p>
+                                            <p> {{ $aktif->user_nama }}  {{ \Carbon\Carbon::parse($aktif->tanggal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($aktif->tanggal_selesai)->format('d M Y') }},  {{ \Carbon\Carbon::parse($aktif->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($aktif->jam_selesai)->format('H:i') }}</p>
                                             @endforeach
+                                        </div>
+                                    @else
+                                        <div class="info-box" style="margin-top:0; margin-bottom:1.5rem; background: #e8f5e9; border-color: #4caf50;">
+                                            <strong style="color: #2e7d32;">Tidak ada jadwal terpakai</strong>
+                                            <p style="color: #388e3c;">Ruangan tersedia untuk semua waktu</p>
                                         </div>
                                     @endif
                                     

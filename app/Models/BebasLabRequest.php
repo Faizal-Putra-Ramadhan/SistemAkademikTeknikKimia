@@ -44,20 +44,28 @@ class BebasLabRequest extends Model
         return $this->hasMany(BebasLabApproval::class, 'bebas_lab_request_id');
     }
 
+    /**
+     * Hanya approval yang laboran-nya masih aktif (user belum dihapus)
+     */
+    public function activeApprovals(): HasMany
+    {
+        return $this->approvals()->whereHas('laboranUser');
+    }
+
     public function isFullyApproved(): bool
     {
-        // Hitung total approval yang ada
-        $totalApprovals = $this->approvals()->count();
+        // Hanya hitung approval dari laboran yang masih ada akunnya
+        $totalApprovals = $this->activeApprovals()->count();
 
-        // Jika tidak ada approval, berarti belum disetujui
+        // Jika tidak ada approval aktif, berarti belum disetujui
         if ($totalApprovals === 0) {
             return false;
         }
 
         // Hitung approval yang sudah disetujui
-        $approvedCount = $this->approvals()->where('status', 'disetujui')->count();
+        $approvedCount = $this->activeApprovals()->where('status', 'disetujui')->count();
 
-        // Return true jika SEMUA approval sudah disetujui
+        // Return true jika SEMUA approval aktif sudah disetujui
         return $approvedCount === $totalApprovals;
     }
 
