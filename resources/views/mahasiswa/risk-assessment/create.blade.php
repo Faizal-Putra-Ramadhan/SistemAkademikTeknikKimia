@@ -263,6 +263,13 @@
 @endpush
 
 @section('content')
+    @php
+        // Restore baris bahan kimia dari old input ketika validasi gagal
+        $bahanKimiaOld = old('bahan_kimia', []);
+        $bahanKimiaOld = is_array($bahanKimiaOld) ? $bahanKimiaOld : [];
+        $bahanRows = count($bahanKimiaOld) ? $bahanKimiaOld : [[]];
+        $sifatOptions = ['explosive' => 'exp', 'flammable' => 'flam', 'toxic' => 'tox', 'corrosive' => 'cor', 'irritant' => 'irr', 'oxidizing' => 'oxi'];
+    @endphp
     <!-- BREADCRUMB -->
                 <div class="breadcrumb">
                     <span></span>
@@ -297,12 +304,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="required">NIM</label>
-                                <input type="text" name="nim" class="form-control" value="{{ old('nomor_identitas', $user->nomor_identitas) }}" required>
+                                <input type="text" name="nim" class="form-control" value="{{ old('nim', $user->nomor_identitas) }}" required>
                             </div>
     
                             <div class="form-group">
                                 <label class="required">No. Kontak</label>
-                                <input type="text" name="no_kontak" class="form-control" value="{{ old('nomor_identitas', $user->Phone) }}" required>
+                                <input type="text" name="no_kontak" class="form-control" value="{{ old('no_kontak', $user->Phone) }}" required>
                             </div>
                         </div>
     
@@ -359,54 +366,45 @@
                         <h3> Identifikasi Bahan Kimia</h3>
                         
                         <div id="bahan-kimia-container">
-                            <div class="bahan-kimia-item" data-index="0">
-                                <h4 style="color: #1e3a8a; margin-bottom: 1rem;">Bahan Kimia #1</h4>
+                            @foreach($bahanRows as $index => $bahan)
+                            @php $sifatDipilih = isset($bahan['sifat']) ? (array) $bahan['sifat'] : []; @endphp
+                            <div class="bahan-kimia-item" data-index="{{ $index }}">
+                                @if($index > 0)
+                                <button type="button" class="btn-remove" onclick="removeBahanKimia(this)"> Hapus</button>
+                                @endif
+                                <h4 style="color: #1e3a8a; margin-bottom: 1rem;">Bahan Kimia #{{ $index + 1 }}</h4>
                                 
                                 <div class="form-group">
                                     <label class="required">Nama Bahan Kimia</label>
-                                    <input type="text" name="bahan_kimia[0][nama_bahan]" class="form-control" required>
+                                    <input type="text" name="bahan_kimia[{{ $index }}][nama_bahan]" class="form-control" value="{{ $bahan['nama_bahan'] ?? '' }}" required>
                                 </div>
     
                                 <div class="form-group">
-                                    <label class="required">Sifat Bahan (Pilih yang sesuai)</label>
+                                    <label>Sifat Bahan (Pilih yang sesuai)</label>
                                     <div class="checkbox-group">
+                                        @foreach($sifatOptions as $nilaiSifat => $prefix)
                                         <div class="checkbox-item">
-                                            <input type="checkbox" name="bahan_kimia[0][sifat][]" value="explosive" id="exp_0">
-                                            <label for="exp_0"> Explosive</label>
+                                            <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="{{ $nilaiSifat }}" id="{{ $prefix }}_{{ $index }}" {{ in_array($nilaiSifat, $sifatDipilih) ? 'checked' : '' }}>
+                                            <label for="{{ $prefix }}_{{ $index }}"> {{ ucfirst($nilaiSifat) }}</label>
                                         </div>
-                                        <div class="checkbox-item">
-                                            <input type="checkbox" name="bahan_kimia[0][sifat][]" value="flammable" id="flam_0">
-                                            <label for="flam_0"> Flammable</label>
-                                        </div>
-                                        <div class="checkbox-item">
-                                            <input type="checkbox" name="bahan_kimia[0][sifat][]" value="toxic" id="tox_0">
-                                            <label for="tox_0"> Toxic</label>
-                                        </div>
-                                        <div class="checkbox-item">
-                                            <input type="checkbox" name="bahan_kimia[0][sifat][]" value="corrosive" id="cor_0">
-                                            <label for="cor_0"> Corrosive</label>
-                                        </div>
-                                        <div class="checkbox-item">
-                                            <input type="checkbox" name="bahan_kimia[0][sifat][]" value="irritant" id="irr_0">
-                                            <label for="irr_0"> Irritant</label>
-                                        </div>
-                                        <div class="checkbox-item">
-                                            <input type="checkbox" name="bahan_kimia[0][sifat][]" value="oxidizing" id="oxi_0">
-                                            <label for="oxi_0"> Oxidizing</label>
-                                        </div>
+                                        @endforeach
                                     </div>
                                 </div>
     
                                 <div class="form-group">
                                     <label>Lain-lain (jelaskan)</label>
-                                    <input type="text" name="bahan_kimia[0][lain_lain]" class="form-control" placeholder="Sebutkan sifat lain jika ada">
+                                    <input type="text" name="bahan_kimia[{{ $index }}][lain_lain]" class="form-control" value="{{ $bahan['lain_lain'] ?? '' }}" placeholder="Sebutkan sifat lain jika ada">
                                 </div>
     
                                 <div class="form-group">
                                     <label>Upload MSDS (PDF, max 5MB)</label>
-                                    <input type="file" name="bahan_kimia[0][msds_file]" class="form-control" accept=".pdf">
+                                    <input type="file" name="bahan_kimia[{{ $index }}][msds_file]" class="form-control" accept=".pdf">
+                                    @if(count($bahanKimiaOld))
+                                    <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem;">File MSDS perlu dipilih ulang karena file tidak bisa disimpan saat terjadi kesalahan.</p>
+                                    @endif
                                 </div>
                             </div>
+                            @endforeach
                         </div>
     
                         <button type="button" class="btn-add" onclick="addBahanKimia()">+ Tambah Bahan Kimia</button>
@@ -415,19 +413,19 @@
                             <label class="required">Kategori Tingkat Hazard Bahan</label>
                             <div class="radio-group">
                                 <label class="radio-item">
-                                    <input type="radio" name="kategori_hazard_bahan" value="sangat_hazardous" required>
+                                    <input type="radio" name="kategori_hazard_bahan" value="sangat_hazardous" {{ old('kategori_hazard_bahan') == 'sangat_hazardous' ? 'checked' : '' }} required>
                                     <span> Sangat Hazardous</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="kategori_hazard_bahan" value="hazardous" required>
+                                    <input type="radio" name="kategori_hazard_bahan" value="hazardous" {{ old('kategori_hazard_bahan') == 'hazardous' ? 'checked' : '' }} required>
                                     <span> Hazardous</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="kategori_hazard_bahan" value="moderat" required>
+                                    <input type="radio" name="kategori_hazard_bahan" value="moderat" {{ old('kategori_hazard_bahan') == 'moderat' ? 'checked' : '' }} required>
                                     <span> Moderat</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="kategori_hazard_bahan" value="tidak_hazardous" required>
+                                    <input type="radio" name="kategori_hazard_bahan" value="tidak_hazardous" {{ old('kategori_hazard_bahan') == 'tidak_hazardous' ? 'checked' : '' }} required>
                                     <span> Tidak Hazardous</span>
                                 </label>
                             </div>
@@ -442,19 +440,19 @@
                             <label>Kondisi Percobaan (Centang yang sesuai)</label>
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="peralatan[tekanan_tinggi]" value="1" id="tek_tinggi">
+                                    <input type="checkbox" name="peralatan[tekanan_tinggi]" value="1" id="tek_tinggi" {{ old('peralatan.tekanan_tinggi') ? 'checked' : '' }}>
                                     <label for="tek_tinggi">Menggunakan Tekanan Tinggi</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="peralatan[suhu_tinggi]" value="1" id="suhu_tinggi">
+                                    <input type="checkbox" name="peralatan[suhu_tinggi]" value="1" id="suhu_tinggi" {{ old('peralatan.suhu_tinggi') ? 'checked' : '' }}>
                                     <label for="suhu_tinggi">Menggunakan Suhu Tinggi</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="peralatan[nyala_api]" value="1" id="nyala_api">
+                                    <input type="checkbox" name="peralatan[nyala_api]" value="1" id="nyala_api" {{ old('peralatan.nyala_api') ? 'checked' : '' }}>
                                     <label for="nyala_api">Menggunakan Nyala Api</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="peralatan[peralatan_berputar]" value="1" id="per_putar">
+                                    <input type="checkbox" name="peralatan[peralatan_berputar]" value="1" id="per_putar" {{ old('peralatan.peralatan_berputar') ? 'checked' : '' }}>
                                     <label for="per_putar">Menggunakan Peralatan Berputar</label>
                                 </div>
                             </div>
@@ -463,12 +461,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label>Temperatur Maksimum (°C)</label>
-                                <input type="number" step="0.01" name="peralatan[temperatur_maksimum]" class="form-control" placeholder="Contoh: 80">
+                                <input type="number" step="0.01" name="peralatan[temperatur_maksimum]" class="form-control" value="{{ old('peralatan.temperatur_maksimum') }}" placeholder="Contoh: 80">
                             </div>
     
                             <div class="form-group">
                                 <label>Tekanan Maksimum (atm)</label>
-                                <input type="number" step="0.01" name="peralatan[tekanan_maksimum]" class="form-control" placeholder="Contoh: 1">
+                                <input type="number" step="0.01" name="peralatan[tekanan_maksimum]" class="form-control" value="{{ old('peralatan.tekanan_maksimum') }}" placeholder="Contoh: 1">
                             </div>
                         </div>
     
@@ -476,19 +474,19 @@
                             <label class="required">Kategori Hazard Peralatan</label>
                             <div class="radio-group">
                                 <label class="radio-item">
-                                    <input type="radio" name="peralatan[kategori_hazard]" value="sangat_hazardous" required>
+                                    <input type="radio" name="peralatan[kategori_hazard]" value="sangat_hazardous" {{ old('peralatan.kategori_hazard') == 'sangat_hazardous' ? 'checked' : '' }} required>
                                     <span> Sangat Hazardous</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="peralatan[kategori_hazard]" value="hazardous" required>
+                                    <input type="radio" name="peralatan[kategori_hazard]" value="hazardous" {{ old('peralatan.kategori_hazard') == 'hazardous' ? 'checked' : '' }} required>
                                     <span> Hazardous</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="peralatan[kategori_hazard]" value="moderat" required>
+                                    <input type="radio" name="peralatan[kategori_hazard]" value="moderat" {{ old('peralatan.kategori_hazard') == 'moderat' ? 'checked' : '' }} required>
                                     <span> Moderat</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="peralatan[kategori_hazard]" value="tidak_hazardous" required>
+                                    <input type="radio" name="peralatan[kategori_hazard]" value="tidak_hazardous" {{ old('peralatan.kategori_hazard') == 'tidak_hazardous' ? 'checked' : '' }} required>
                                     <span> Tidak Hazardous</span>
                                 </label>
                             </div>
@@ -503,27 +501,27 @@
                             <label class="required">Pemahaman Keselamatan (Centang semua yang benar)</label>
                             <div class="checkbox-group" style="grid-template-columns: 1fr;">
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="pelaku_kerja[menyadari_faktor_manusia]" value="1" id="pk1" required>
+                                    <input type="checkbox" name="pelaku_kerja[menyadari_faktor_manusia]" value="1" id="pk1" {{ old('pelaku_kerja.menyadari_faktor_manusia') ? 'checked' : '' }} required>
                                     <label for="pk1">Saya menyadari bahwa faktor manusia mempunyai andil yang besar terhadap terjadinya suatu kecelakaan kerja</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_diri]" value="1" id="pk2" required>
+                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_diri]" value="1" id="pk2" {{ old('pelaku_kerja.memahami_bahaya_diri') ? 'checked' : '' }} required>
                                     <label for="pk2">Saya memahami bahaya yang ditimbulkan dari bahan yang saya pergunakan terhadap diri saya sendiri</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_orang_lain]" value="1" id="pk3" required>
+                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_orang_lain]" value="1" id="pk3" {{ old('pelaku_kerja.memahami_bahaya_orang_lain') ? 'checked' : '' }} required>
                                     <label for="pk3">Saya memaklumi bahaya yang dapat ditimbulkan dari bahan yang saya pergunakan terhadap orang lain</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_lingkungan]" value="1" id="pk4" required>
+                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_lingkungan]" value="1" id="pk4" {{ old('pelaku_kerja.memahami_bahaya_lingkungan') ? 'checked' : '' }} required>
                                     <label for="pk4">Saya memahami bahaya yang ditimbulkan dari bahan yang saya pergunakan terhadap lingkungan</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_peralatan]" value="1" id="pk5" required>
+                                    <input type="checkbox" name="pelaku_kerja[memahami_bahaya_peralatan]" value="1" id="pk5" {{ old('pelaku_kerja.memahami_bahaya_peralatan') ? 'checked' : '' }} required>
                                     <label for="pk5">Saya memahami bahaya apa saja yang dapat ditimbulkan dari peralatan yang saya pergunakan</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="pelaku_kerja[paham_tindakan_kecelakaan]" value="1" id="pk6" required>
+                                    <input type="checkbox" name="pelaku_kerja[paham_tindakan_kecelakaan]" value="1" id="pk6" {{ old('pelaku_kerja.paham_tindakan_kecelakaan') ? 'checked' : '' }} required>
                                     <label for="pk6">Saya paham tindakan apa yang harus dilakukan jika terjadi kecelakaan yang disebabkan oleh percobaan yang saya lakukan</label>
                                 </div>
                             </div>
@@ -533,19 +531,19 @@
                             <label class="required">Penilaian Keterampilan Diri</label>
                             <div class="radio-group">
                                 <label class="radio-item">
-                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="ceroboh" required>
+                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="ceroboh" {{ old('pelaku_kerja.penilaian_keterampilan') == 'ceroboh' ? 'checked' : '' }} required>
                                     <span>Ceroboh</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="kurang_terampil" required>
+                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="kurang_terampil" {{ old('pelaku_kerja.penilaian_keterampilan') == 'kurang_terampil' ? 'checked' : '' }} required>
                                     <span>Kurang Terampil</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="cukup_terampil" required>
+                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="cukup_terampil" {{ old('pelaku_kerja.penilaian_keterampilan') == 'cukup_terampil' ? 'checked' : '' }} required>
                                     <span>Cukup Terampil</span>
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="sangat_terampil" required>
+                                    <input type="radio" name="pelaku_kerja[penilaian_keterampilan]" value="sangat_terampil" {{ old('pelaku_kerja.penilaian_keterampilan') == 'sangat_terampil' ? 'checked' : '' }} required>
                                     <span>Sangat Terampil</span>
                                 </label>
                             </div>
@@ -558,7 +556,7 @@
                         
                         <div class="form-group">
                             <div class="checkbox-item" style="background: #f8f9ff; padding: 1.5rem; border-radius: 6px; border: 2px solid #1e3a8a;">
-                                <input type="checkbox" name="setuju_bertanggung_jawab" value="1" id="pernyataan" required>
+                                <input type="checkbox" name="setuju_bertanggung_jawab" value="1" id="pernyataan" {{ old('setuju_bertanggung_jawab') ? 'checked' : '' }} required>
                                 <label for="pernyataan" style="line-height: 1.6;">
                                     <strong>Saya menyatakan bahwa:</strong><br>
                                     Saya memahami tentang apa yang akan saya lakukan dalam percobaan tersebut dan bertanggung jawab terhadap keselamatan jalannya percobaan serta tidak melakukan kegiatan laboratorium di luar pekerjaan yang diijinkan.
@@ -578,8 +576,8 @@
 
 @push('scripts')
 <script>
-// Counter untuk bahan kimia
-let bahanKimiaIndex = 1;
+// Counter untuk bahan kimia - lanjutkan dari jumlah baris yang sudah terisi
+let bahanKimiaIndex = {{ count($bahanRows) > 0 ? max(array_keys($bahanRows)) + 1 : 1 }};
 
 function addBahanKimia() {
     const container = document.getElementById('bahan-kimia-container');
@@ -594,7 +592,7 @@ function addBahanKimia() {
             </div>
 
             <div class="form-group">
-                <label class="required">Sifat Bahan</label>
+                <label>Sifat Bahan</label>
                 <div class="checkbox-group">
                     <div class="checkbox-item">
                         <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="explosive" id="exp_${bahanKimiaIndex}">

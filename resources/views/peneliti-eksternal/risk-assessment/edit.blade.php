@@ -358,60 +358,84 @@
                     <h3> Identifikasi Bahan Kimia</h3>
                     
                     <div id="bahan-kimia-container">
-                        @foreach($riskAssessment->bahanKimias as $index => $bahan)
+                        @php
+                            // Gabungkan data database dengan old input ketika validasi gagal
+                            $bahanKimiaOld = old('bahan_kimia', []);
+                            $bahanKimiaOld = is_array($bahanKimiaOld) ? $bahanKimiaOld : [];
+                            $existingBahan = $riskAssessment->bahanKimias;
+                            $bahanRows = [];
+                            foreach ($existingBahan as $index => $bahan) {
+                                $oldRow = $bahanKimiaOld[$index] ?? null;
+                                $bahanRows[] = [
+                                    'index' => $index,
+                                    'id' => $bahan->id,
+                                    'nama_bahan' => $oldRow !== null ? ($oldRow['nama_bahan'] ?? '') : $bahan->nama_bahan,
+                                    'sifat' => $oldRow !== null
+                                        ? (array) ($oldRow['sifat'] ?? [])
+                                        : array_values(array_filter([
+                                            $bahan->explosive ? 'explosive' : null,
+                                            $bahan->flammable ? 'flammable' : null,
+                                            $bahan->toxic ? 'toxic' : null,
+                                            $bahan->corrosive ? 'corrosive' : null,
+                                            $bahan->irritant ? 'irritant' : null,
+                                            $bahan->oxidizing ? 'oxidizing' : null,
+                                        ])),
+                                    'lain_lain' => $oldRow !== null ? ($oldRow['lain_lain'] ?? '') : $bahan->lain_lain,
+                                    'msds_file' => $bahan->msds_file,
+                                ];
+                            }
+                            foreach ($bahanKimiaOld as $index => $oldRow) {
+                                if ($index < $existingBahan->count()) continue;
+                                $bahanRows[] = [
+                                    'index' => $index,
+                                    'id' => null,
+                                    'nama_bahan' => $oldRow['nama_bahan'] ?? '',
+                                    'sifat' => (array) ($oldRow['sifat'] ?? []),
+                                    'lain_lain' => $oldRow['lain_lain'] ?? '',
+                                    'msds_file' => null,
+                                ];
+                            }
+                            $isRepost = !empty(old());
+                        @endphp
+                        @foreach($bahanRows as $row)
+                        @php $index = $row['index']; @endphp
                         <div class="bahan-kimia-item" data-index="{{ $index }}">
                             @if($index > 0)
                             <button type="button" class="btn-remove" onclick="removeBahanKimia(this)"> Hapus</button>
                             @endif
                             <h4 style="color: #1e3a8a; margin-bottom: 1rem;">Bahan Kimia #{{ $index + 1 }}</h4>
                             
-                            <input type="hidden" name="bahan_kimia[{{ $index }}][id]" value="{{ $bahan->id }}">
+                            @if($row['id'])
+                            <input type="hidden" name="bahan_kimia[{{ $index }}][id]" value="{{ $row['id'] }}">
+                            @endif
                             
                             <div class="form-group">
                                 <label class="required">Nama Bahan Kimia</label>
-                                <input type="text" name="bahan_kimia[{{ $index }}][nama_bahan]" class="form-control" value="{{ old('bahan_kimia.'.$index.'.nama_bahan', $bahan->nama_bahan) }}" required>
+                                <input type="text" name="bahan_kimia[{{ $index }}][nama_bahan]" class="form-control" value="{{ $row['nama_bahan'] }}" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="required">Sifat Bahan (Pilih yang sesuai)</label>
+                                <label>Sifat Bahan (Pilih yang sesuai)</label>
                                 <div class="checkbox-group">
+                                    @foreach(['explosive' => 'exp', 'flammable' => 'flam', 'toxic' => 'tox', 'corrosive' => 'cor', 'irritant' => 'irr', 'oxidizing' => 'oxi'] as $nilaiSifat => $prefix)
                                     <div class="checkbox-item">
-                                        <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="explosive" id="exp_{{ $index }}" {{ $bahan->explosive ? 'checked' : '' }}>
-                                        <label for="exp_{{ $index }}"> Explosive</label>
+                                        <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="{{ $nilaiSifat }}" id="{{ $prefix }}_{{ $index }}" {{ in_array($nilaiSifat, $row['sifat']) ? 'checked' : '' }}>
+                                        <label for="{{ $prefix }}_{{ $index }}"> {{ ucfirst($nilaiSifat) }}</label>
                                     </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="flammable" id="flam_{{ $index }}" {{ $bahan->flammable ? 'checked' : '' }}>
-                                        <label for="flam_{{ $index }}"> Flammable</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="toxic" id="tox_{{ $index }}" {{ $bahan->toxic ? 'checked' : '' }}>
-                                        <label for="tox_{{ $index }}"> Toxic</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="corrosive" id="cor_{{ $index }}" {{ $bahan->corrosive ? 'checked' : '' }}>
-                                        <label for="cor_{{ $index }}"> Corrosive</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="irritant" id="irr_{{ $index }}" {{ $bahan->irritant ? 'checked' : '' }}>
-                                        <label for="irr_{{ $index }}"> Irritant</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" name="bahan_kimia[{{ $index }}][sifat][]" value="oxidizing" id="oxi_{{ $index }}" {{ $bahan->oxidizing ? 'checked' : '' }}>
-                                        <label for="oxi_{{ $index }}"> Oxidizing</label>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>Lain-lain (jelaskan)</label>
-                                <input type="text" name="bahan_kimia[{{ $index }}][lain_lain]" class="form-control" value="{{ old('bahan_kimia.'.$index.'.lain_lain', $bahan->lain_lain) }}" placeholder="Sebutkan sifat lain jika ada">
+                                <input type="text" name="bahan_kimia[{{ $index }}][lain_lain]" class="form-control" value="{{ $row['lain_lain'] }}" placeholder="Sebutkan sifat lain jika ada">
                             </div>
 
                             <div class="form-group">
                                 <label>Upload MSDS Baru (PDF, max 5MB)</label>
-                                @if($bahan->msds_file)
+                                @if($row['msds_file'])
                                 <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">
-                                    File saat ini: <a href="{{ route('msds.show', $bahan->id) }}" target="_blank" rel="noopener noreferrer" style="color: #1e3a8a;">Lihat/Download MSDS</a>
+                                    File saat ini: <a href="{{ route('msds.show', $row['id']) }}" target="_blank" rel="noopener noreferrer" style="color: #1e3a8a;">Lihat/Download MSDS</a>
                                 </p>
                                 @endif
                                 <input type="file" name="bahan_kimia[{{ $index }}][msds_file]" class="form-control" accept=".pdf">
@@ -454,19 +478,19 @@
                         <label>Kondisi Percobaan (Centang yang sesuai)</label>
                         <div class="checkbox-group">
                             <div class="checkbox-item">
-                                <input type="checkbox" name="peralatan[tekanan_tinggi]" value="1" id="tek_tinggi" {{ $riskAssessment->peralatanOperasi->tekanan_tinggi ? 'checked' : '' }}>
+                                <input type="checkbox" name="peralatan[tekanan_tinggi]" value="1" id="tek_tinggi" {{ ($isRepost ? (bool) old('peralatan.tekanan_tinggi') : (bool) $riskAssessment->peralatanOperasi->tekanan_tinggi) ? 'checked' : '' }}>
                                 <label for="tek_tinggi">Menggunakan Tekanan Tinggi</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="peralatan[suhu_tinggi]" value="1" id="suhu_tinggi" {{ $riskAssessment->peralatanOperasi->suhu_tinggi ? 'checked' : '' }}>
+                                <input type="checkbox" name="peralatan[suhu_tinggi]" value="1" id="suhu_tinggi" {{ ($isRepost ? (bool) old('peralatan.suhu_tinggi') : (bool) $riskAssessment->peralatanOperasi->suhu_tinggi) ? 'checked' : '' }}>
                                 <label for="suhu_tinggi">Menggunakan Suhu Tinggi</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="peralatan[nyala_api]" value="1" id="nyala_api" {{ $riskAssessment->peralatanOperasi->nyala_api ? 'checked' : '' }}>
+                                <input type="checkbox" name="peralatan[nyala_api]" value="1" id="nyala_api" {{ ($isRepost ? (bool) old('peralatan.nyala_api') : (bool) $riskAssessment->peralatanOperasi->nyala_api) ? 'checked' : '' }}>
                                 <label for="nyala_api">Menggunakan Nyala Api</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="peralatan[peralatan_berputar]" value="1" id="per_putar" {{ $riskAssessment->peralatanOperasi->peralatan_berputar ? 'checked' : '' }}>
+                                <input type="checkbox" name="peralatan[peralatan_berputar]" value="1" id="per_putar" {{ ($isRepost ? (bool) old('peralatan.peralatan_berputar') : (bool) $riskAssessment->peralatanOperasi->peralatan_berputar) ? 'checked' : '' }}>
                                 <label for="per_putar">Menggunakan Peralatan Berputar</label>
                             </div>
                         </div>
@@ -515,27 +539,27 @@
                         <label class="required">Pemahaman Keselamatan (Centang semua yang benar)</label>
                         <div class="checkbox-group" style="grid-template-columns: 1fr;">
                             <div class="checkbox-item">
-                                <input type="checkbox" name="pelaku_kerja[menyadari_faktor_manusia]" value="1" id="pk1" {{ $riskAssessment->pelakuKerja->menyadari_faktor_manusia ? 'checked' : '' }} required>
+                                <input type="checkbox" name="pelaku_kerja[menyadari_faktor_manusia]" value="1" id="pk1" {{ ($isRepost ? (bool) old('pelaku_kerja.menyadari_faktor_manusia') : (bool) $riskAssessment->pelakuKerja->menyadari_faktor_manusia) ? 'checked' : '' }} required>
                                 <label for="pk1">Saya menyadari bahwa faktor manusia mempunyai andil yang besar terhadap terjadinya suatu kecelakaan kerja</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_diri]" value="1" id="pk2" {{ $riskAssessment->pelakuKerja->memahami_bahaya_diri ? 'checked' : '' }} required>
+                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_diri]" value="1" id="pk2" {{ ($isRepost ? (bool) old('pelaku_kerja.memahami_bahaya_diri') : (bool) $riskAssessment->pelakuKerja->memahami_bahaya_diri) ? 'checked' : '' }} required>
                                 <label for="pk2">Saya memahami bahaya yang ditimbulkan dari bahan yang saya pergunakan terhadap diri saya sendiri</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_orang_lain]" value="1" id="pk3" {{ $riskAssessment->pelakuKerja->memahami_bahaya_orang_lain ? 'checked' : '' }} required>
+                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_orang_lain]" value="1" id="pk3" {{ ($isRepost ? (bool) old('pelaku_kerja.memahami_bahaya_orang_lain') : (bool) $riskAssessment->pelakuKerja->memahami_bahaya_orang_lain) ? 'checked' : '' }} required>
                                 <label for="pk3">Saya memaklumi bahaya yang dapat ditimbulkan dari bahan yang saya pergunakan terhadap orang lain</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_lingkungan]" value="1" id="pk4" {{ $riskAssessment->pelakuKerja->memahami_bahaya_lingkungan ? 'checked' : '' }} required>
+                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_lingkungan]" value="1" id="pk4" {{ ($isRepost ? (bool) old('pelaku_kerja.memahami_bahaya_lingkungan') : (bool) $riskAssessment->pelakuKerja->memahami_bahaya_lingkungan) ? 'checked' : '' }} required>
                                 <label for="pk4">Saya memahami bahaya yang ditimbulkan dari bahan yang saya pergunakan terhadap lingkungan</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_peralatan]" value="1" id="pk5" {{ $riskAssessment->pelakuKerja->memahami_bahaya_peralatan ? 'checked' : '' }} required>
+                                <input type="checkbox" name="pelaku_kerja[memahami_bahaya_peralatan]" value="1" id="pk5" {{ ($isRepost ? (bool) old('pelaku_kerja.memahami_bahaya_peralatan') : (bool) $riskAssessment->pelakuKerja->memahami_bahaya_peralatan) ? 'checked' : '' }} required>
                                 <label for="pk5">Saya memahami bahaya apa saja yang dapat ditimbulkan dari peralatan yang saya pergunakan</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="pelaku_kerja[paham_tindakan_kecelakaan]" value="1" id="pk6" {{ $riskAssessment->pelakuKerja->paham_tindakan_kecelakaan ? 'checked' : '' }} required>
+                                <input type="checkbox" name="pelaku_kerja[paham_tindakan_kecelakaan]" value="1" id="pk6" {{ ($isRepost ? (bool) old('pelaku_kerja.paham_tindakan_kecelakaan') : (bool) $riskAssessment->pelakuKerja->paham_tindakan_kecelakaan) ? 'checked' : '' }} required>
                                 <label for="pk6">Saya paham tindakan apa yang harus dilakukan jika terjadi kecelakaan yang disebabkan oleh percobaan yang saya lakukan</label>
                             </div>
                         </div>
@@ -570,7 +594,7 @@
                     
                     <div class="form-group">
                         <div class="checkbox-item" style="background: #f8f9ff; padding: 1.5rem; border-radius: 6px; border: 2px solid #1e3a8a;">
-                            <input type="checkbox" name="setuju_bertanggung_jawab" value="1" id="pernyataan" {{ $riskAssessment->pernyataanMahasiswa->setuju_bertanggung_jawab ? 'checked' : '' }} required>
+                            <input type="checkbox" name="setuju_bertanggung_jawab" value="1" id="pernyataan" {{ ($isRepost ? (bool) old('setuju_bertanggung_jawab') : (bool) $riskAssessment->pernyataanMahasiswa->setuju_bertanggung_jawab) ? 'checked' : '' }} required>
                             <label for="pernyataan" style="line-height: 1.6;">
                                 <strong>Saya menyatakan bahwa:</strong><br>
                                 Saya memahami tentang apa yang akan saya lakukan dalam percobaan tersebut dan bertanggung jawab terhadap keselamatan jalannya percobaan serta tidak melakukan kegiatan laboratorium di luar pekerjaan yang diijinkan.
@@ -587,3 +611,71 @@
 
             </form>
 @endsection
+
+@push('scripts')
+<script>
+// Counter untuk bahan kimia - mulai dari baris terakhir yang terisi (termasuk old input)
+let bahanKimiaIndex = {{ count($bahanRows) > 0 ? max(array_column($bahanRows, 'index')) + 1 : 1 }};
+
+function addBahanKimia() {
+    const container = document.getElementById('bahan-kimia-container');
+    const sifatOptions = { explosive: 'Explosive', flammable: 'Flammable', toxic: 'Toxic', corrosive: 'Corrosive', irritant: 'Irritant', oxidizing: 'Oxidizing' };
+    const prefixMap = { explosive: 'exp', flammable: 'flam', toxic: 'tox', corrosive: 'cor', irritant: 'irr', oxidizing: 'oxi' };
+    let checkboxHtml = '';
+    for (const [nilai, label] of Object.entries(sifatOptions)) {
+        checkboxHtml += `
+            <div class="checkbox-item">
+                <input type="checkbox" name="bahan_kimia[${bahanKimiaIndex}][sifat][]" value="${nilai}" id="${prefixMap[nilai]}_${bahanKimiaIndex}">
+                <label for="${prefixMap[nilai]}_${bahanKimiaIndex}"> ${label}</label>
+            </div>`;
+    }
+    const newItem = `
+        <div class="bahan-kimia-item" data-index="${bahanKimiaIndex}">
+            <button type="button" class="btn-remove" onclick="removeBahanKimia(this)"> Hapus</button>
+            <h4 style="color: #1e3a8a; margin-bottom: 1rem;">Bahan Kimia #${bahanKimiaIndex + 1}</h4>
+
+            <div class="form-group">
+                <label class="required">Nama Bahan Kimia</label>
+                <input type="text" name="bahan_kimia[${bahanKimiaIndex}][nama_bahan]" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label>Sifat Bahan (Pilih yang sesuai)</label>
+                <div class="checkbox-group">${checkboxHtml}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Lain-lain (jelaskan)</label>
+                <input type="text" name="bahan_kimia[${bahanKimiaIndex}][lain_lain]" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Upload MSDS (PDF)</label>
+                <input type="file" name="bahan_kimia[${bahanKimiaIndex}][msds_file]" class="form-control" accept=".pdf">
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', newItem);
+    bahanKimiaIndex++;
+}
+
+function removeBahanKimia(button) {
+    if (confirm('Hapus bahan kimia ini?')) {
+        button.closest('.bahan-kimia-item').remove();
+    }
+}
+
+// Checkbox validation
+document.getElementById('raForm').addEventListener('submit', function(e) {
+    const checkboxes = document.querySelectorAll('input[name^="pelaku_kerja"]:not([type="radio"])');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+    if (!allChecked) {
+        e.preventDefault();
+        alert('Mohon centang semua pemahaman keselamatan pada bagian Pelaku Kerja Laboratorium');
+        return false;
+    }
+});
+</script>
+@endpush

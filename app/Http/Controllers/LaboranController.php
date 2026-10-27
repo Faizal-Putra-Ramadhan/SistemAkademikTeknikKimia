@@ -537,17 +537,26 @@ class LaboranController extends Controller
             }
         }
 
-        $fileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.docx';
+        // Kode unik agar download PDF bersamaan tidak saling menimpa file
+        $uniqueCode = date('YmdHis') . '_' . \Illuminate\Support\Str::random(6);
+        $fileName = 'Bebas_Lab_'.$bebasLabRequest->id.'_'.$uniqueCode.'.docx';
         $savePath = storage_path('app/public/'.$fileName);
         $phpWord->saveAs($savePath);
 
         if (request()->query('format') === 'pdf') {
             $outDir = storage_path('app/public');
-            $pdfFileName = 'Bebas_Lab_'.$bebasLabRequest->id.'.pdf';
+            $pdfFileName = 'Bebas_Lab_'.$bebasLabRequest->id.'_'.$uniqueCode.'.pdf';
             $pdfPath = $outDir.'/'.$pdfFileName;
             
-            $command = 'soffice --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
+            // Profil LibreOffice unik per request agar konversi paralel tidak saling mengunci (lock profil)
+            $loProfileDir = sys_get_temp_dir() . '/lo_profile_' . $uniqueCode;
+            $command = 'soffice -env:UserInstallation=file://' . $loProfileDir . ' --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
             exec($command);
+
+            // Bersihkan profil sementara LibreOffice
+            if (is_dir($loProfileDir)) {
+                exec('rm -rf "' . $loProfileDir . '"');
+            }
 
             if (file_exists($savePath)) {
                 @unlink($savePath);
@@ -1079,17 +1088,26 @@ class LaboranController extends Controller
             'PTKT' => $tidak($ops->paham_tindakan_kecelakaan ?? null),
         ]);
 
-        $fileName = 'Risk_Assessment_'.$riskAssessment->id.'.docx';
+        // Kode unik agar download PDF bersamaan tidak saling menimpa file
+        $uniqueCode = date('YmdHis') . '_' . \Illuminate\Support\Str::random(6);
+        $fileName = 'Risk_Assessment_'.$riskAssessment->id.'_'.$uniqueCode.'.docx';
         $savePath = storage_path('app/public/'.$fileName);
         $phpWord->saveAs($savePath);
 
         // Convert to PDF using LibreOffice (soffice) untuk hasil yang 100% sama dengan Word
         $outDir = storage_path('app/public');
-        $pdfFileName = 'Risk_Assessment_'.$riskAssessment->id.'.pdf';
+        $pdfFileName = 'Risk_Assessment_'.$riskAssessment->id.'_'.$uniqueCode.'.pdf';
         $pdfPath = $outDir.'/'.$pdfFileName;
         
-        $command = 'soffice --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
+        // Profil LibreOffice unik per request agar konversi paralel tidak saling mengunci (lock profil)
+        $loProfileDir = sys_get_temp_dir() . '/lo_profile_' . $uniqueCode;
+        $command = 'soffice -env:UserInstallation=file://' . $loProfileDir . ' --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
         exec($command);
+
+        // Bersihkan profil sementara LibreOffice
+        if (is_dir($loProfileDir)) {
+            exec('rm -rf "' . $loProfileDir . '"');
+        }
 
         // Hapus file docx sementara
         if (file_exists($savePath)) {
