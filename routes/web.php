@@ -25,7 +25,7 @@ Route::get('/registrasi', [RegistrasiController::class , 'index'])->name('regist
 
 // Submit registration (send verification email)
 Route::post('/registrasi', [RegistrasiController::class , 'store'])
-    ->middleware('throttle:10,1')
+    ->middleware('throttle:100,1')
     ->name('registrasi.store');
 
 // Pending verification page
@@ -39,7 +39,7 @@ Route::get('/registrasi/success', [RegistrasiController::class , 'success'])->na
 
 // Resend verification email
 Route::post('/registrasi/resend', [RegistrasiController::class , 'resendVerification'])
-    ->middleware('throttle:5,1')
+    ->middleware('throttle:30,1')
     ->name('registrasi.resend');
 
 Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
