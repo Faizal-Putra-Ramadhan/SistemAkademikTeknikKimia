@@ -537,7 +537,6 @@ class LaboranController extends Controller
             }
         }
 
-        // Kode unik agar download PDF bersamaan tidak saling menimpa file
         $uniqueCode = date('YmdHis') . '_' . \Illuminate\Support\Str::random(6);
         $fileName = 'Bebas_Lab_'.$bebasLabRequest->id.'_'.$uniqueCode.'.docx';
         $savePath = storage_path('app/public/'.$fileName);
@@ -545,18 +544,15 @@ class LaboranController extends Controller
 
         if (request()->query('format') === 'pdf') {
             $outDir = storage_path('app/public');
+
+            if ($cachedPdf = \App\Services\LibreOfficeService::findFreshCachedPdf('Bebas_Lab_'.$bebasLabRequest->id, $bebasLabRequest->updated_at?->toDateTimeString(), (int) ($_SERVER['REQUEST_TIME_FLOAT'] ?? time()))) {
+                return response()->download($cachedPdf, basename($cachedPdf), ['Content-Type' => 'application/pdf']);
+            }
+
             $pdfFileName = 'Bebas_Lab_'.$bebasLabRequest->id.'_'.$uniqueCode.'.pdf';
             $pdfPath = $outDir.'/'.$pdfFileName;
             
-            // Profil LibreOffice unik per request agar konversi paralel tidak saling mengunci (lock profil)
-            $loProfileDir = sys_get_temp_dir() . '/lo_profile_' . $uniqueCode;
-            $command = 'soffice -env:UserInstallation=file://' . $loProfileDir . ' --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
-            exec($command);
-
-            // Bersihkan profil sementara LibreOffice
-            if (is_dir($loProfileDir)) {
-                exec('rm -rf "' . $loProfileDir . '"');
-            }
+            \App\Services\LibreOfficeService::convertDocxToPdf($savePath, $outDir, $uniqueCode);
 
             if (file_exists($savePath)) {
                 @unlink($savePath);
@@ -565,7 +561,7 @@ class LaboranController extends Controller
             if (file_exists($pdfPath)) {
                 return response()->download($pdfPath, $pdfFileName, [
                     'Content-Type' => 'application/pdf',
-                ])->deleteFileAfterSend(true);
+                ]);
             } else {
                 return redirect()->back()->with('error', 'Gagal menghasilkan file PDF.');
             }
@@ -915,6 +911,10 @@ class LaboranController extends Controller
             'pernyataanMahasiswa',
         ])->findOrFail($id);
 
+        if ($format === 'pdf' && $cachedPdf = \App\Services\LibreOfficeService::findFreshCachedPdf('Risk_Assessment_'.$riskAssessment->id, $riskAssessment->updated_at?->toDateTimeString(), (int) ($_SERVER['REQUEST_TIME_FLOAT'] ?? time()))) {
+            return response()->download($cachedPdf, basename($cachedPdf), ['Content-Type' => 'application/pdf']);
+        }
+
         $templatePath = storage_path('app/templates/template1.docx');
         App::setLocale('id');
         Carbon::setLocale('id');
@@ -1088,26 +1088,16 @@ class LaboranController extends Controller
             'PTKT' => $tidak($ops->paham_tindakan_kecelakaan ?? null),
         ]);
 
-        // Kode unik agar download PDF bersamaan tidak saling menimpa file
         $uniqueCode = date('YmdHis') . '_' . \Illuminate\Support\Str::random(6);
         $fileName = 'Risk_Assessment_'.$riskAssessment->id.'_'.$uniqueCode.'.docx';
         $savePath = storage_path('app/public/'.$fileName);
         $phpWord->saveAs($savePath);
 
-        // Convert to PDF using LibreOffice (soffice) untuk hasil yang 100% sama dengan Word
         $outDir = storage_path('app/public');
         $pdfFileName = 'Risk_Assessment_'.$riskAssessment->id.'_'.$uniqueCode.'.pdf';
         $pdfPath = $outDir.'/'.$pdfFileName;
         
-        // Profil LibreOffice unik per request agar konversi paralel tidak saling mengunci (lock profil)
-        $loProfileDir = sys_get_temp_dir() . '/lo_profile_' . $uniqueCode;
-        $command = 'soffice -env:UserInstallation=file://' . $loProfileDir . ' --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
-        exec($command);
-
-        // Bersihkan profil sementara LibreOffice
-        if (is_dir($loProfileDir)) {
-            exec('rm -rf "' . $loProfileDir . '"');
-        }
+        \App\Services\LibreOfficeService::convertDocxToPdf($savePath, $outDir, $uniqueCode);
 
         // Hapus file docx sementara
         if (file_exists($savePath)) {
@@ -1117,7 +1107,7 @@ class LaboranController extends Controller
         if (file_exists($pdfPath)) {
             return response()->download($pdfPath, $pdfFileName, [
                 'Content-Type' => 'application/pdf',
-            ])->deleteFileAfterSend(true);
+            ]);
         } else {
             return back()->with('error', 'Gagal menghasilkan PDF.');
         }

@@ -241,6 +241,11 @@ class BebasLabController extends Controller
             return redirect()->back()->with('error', 'Anda memiliki peminjaman aktif. Bebas Lab harus diajukan ulang setelah peminjaman selesai.');
         }
 
+       
+        if ($cachedPdf = \App\Services\LibreOfficeService::findFreshCachedPdf('Bebas_Lab_'.$bebasLabRequest->id, $bebasLabRequest->updated_at?->toDateTimeString(), (int) ($_SERVER['REQUEST_TIME_FLOAT'] ?? time()))) {
+            return response()->download($cachedPdf, basename($cachedPdf), ['Content-Type' => 'application/pdf']);
+        }
+
         $peminjamanAlats = PeminjamanAlat::with('alatLab.daftarLab')
             ->where('user_nama', $user->Nama)
             ->orderBy('created_at', 'desc')
@@ -359,23 +364,17 @@ class BebasLabController extends Controller
             $pdfPath = $outDir.'/'.$pdfFileName;
             
             // Profil LibreOffice unik per request agar konversi paralel tidak saling mengunci (lock profil)
-            $loProfileDir = sys_get_temp_dir() . '/lo_profile_' . $uniqueCode;
-            $command = 'soffice -env:UserInstallation=file://' . $loProfileDir . ' --headless --convert-to pdf "' . $savePath . '" --outdir "' . $outDir . '"';
-            exec($command);
-
-            // Bersihkan profil sementara LibreOffice
-            if (is_dir($loProfileDir)) {
-                exec('rm -rf "' . $loProfileDir . '"');
-            }
+            \App\Services\LibreOfficeService::convertDocxToPdf($savePath, $outDir, $uniqueCode);
 
             if (file_exists($savePath)) {
                 @unlink($savePath);
             }
 
             if (file_exists($pdfPath)) {
+               
                 return response()->download($pdfPath, $pdfFileName, [
                     'Content-Type' => 'application/pdf',
-                ])->deleteFileAfterSend(true);
+                ]);
             } else {
                 return redirect()->back()->with('error', 'Gagal menghasilkan file PDF.');
             }
