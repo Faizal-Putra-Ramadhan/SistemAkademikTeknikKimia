@@ -719,7 +719,7 @@ class RiskAssessmentController extends Controller
             $phpWord->setValue("CORROSIVE_{$i}", $bahan ? $cek($bahan->corrosive) : '');
             $phpWord->setValue("IRRITANT_{$i}", $bahan ? $cek($bahan->irritant) : '');
             $phpWord->setValue("OXIDIXING_{$i}", $bahan ? $cek($bahan->oxidizing) : '');
-            $phpWord->setValue("BAHAN_LAIN_{$i}", $bahan ? $cek($bahan->lain_lain) : '');
+            $phpWord->setValue("BAHAN_LAIN_{$i}", $bahan && !empty($bahan->lain_lain) ? $bahan->lain_lain : '');
         }
 
         $ops = $riskAssessment->pernyataanMahasiswa;
